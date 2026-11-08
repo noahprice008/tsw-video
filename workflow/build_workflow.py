@@ -248,7 +248,8 @@ upload_params = [{"parameterType": "formData", "name": "user", "value": "={{ $js
     {"parameterType": "formData", "name": "youtube_title", "value": "={{ $json.meta.title }}"},
     {"parameterType": "formData", "name": "youtube_description", "value": "={{ $json.meta.caption + '\\n\\nFree travel safety alerts: https://travelsafetywatch.com' + (($json.meta.sources||[]).length ? '\\nSource: ' + $json.meta.sources.join(' ') : '') }}"},
     {"parameterType": "formData", "name": "instagram_title", "value": "={{ $json.meta.caption }}"},
-    {"parameterType": "formData", "name": "facebook_title", "value": "={{ $json.meta.caption }}"},
+    {"parameterType": "formData", "name": "facebook_title", "value": "={{ $json.meta.title }}"},
+    {"parameterType": "formData", "name": "facebook_description", "value": "={{ $json.meta.caption + '\\n\\nFree travel safety alerts: travelsafetywatch.com' }}"},
     {"parameterType": "formData", "name": "tiktok_title", "value": "={{ $json.meta.caption }}"}]
 for p in ["youtube", "instagram", "facebook"]:   # to add TikTok later: duplicate one of these rows in n8n and set it to tiktok
     upload_params.append({"parameterType": "formData", "name": "platform[]", "value": p})
