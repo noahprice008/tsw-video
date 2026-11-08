@@ -191,11 +191,16 @@ node("TSW alerts (72h)", "n8n-nodes-base.httpRequest", {
     "sendHeaders": True, "headerParameters": {"parameters": [{"name": "apikey", "value": ANON}]},
     "options": {}}, [660, 110], 4.2, alwaysOutputData=True)
 node("Write prompt", "n8n-nodes-base.code", {"jsCode": PROMPT.replace("__ICONS__", ICONS)}, [880, 110], 2)
-node("Gemini: write script", "n8n-nodes-base.httpRequest", {
-    "method": "POST", "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-    "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
-    "sendBody": True, "specifyBody": "json", "jsonBody": "={{ JSON.stringify($json.body) }}",
-    "options": {"timeout": 120000}}, [1100, 110], 4.2, retryOnFail=True, maxTries=5, waitBetweenTries=10000)
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{}:generateContent"
+def gemini(name, model, body, pos, tries, wait):
+    return node(name, "n8n-nodes-base.httpRequest", {
+        "method": "POST", "url": GEMINI_URL.format(model),
+        "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
+        "sendBody": True, "specifyBody": "json", "jsonBody": body,
+        "options": {"timeout": 90000}}, pos, 4.2, retryOnFail=True, maxTries=tries, waitBetweenTries=wait, onError="continueErrorOutput")
+# Main model first; if Google says it is busy, the lighter model takes over so the day's video still goes out.
+gemini("Gemini: write script", "gemini-3.8-flash", "={{ JSON.stringify($json.body) }}", [1100, 110], 2, 15000)
+gemini("Gemini: backup model", "gemini-3.5-flash-lite", "={{ JSON.stringify($('Write prompt').first().json.body) }}", [1100, 330], 3, 20000)
 node("Check script", "n8n-nodes-base.code", {"jsCode": CHECK}, [1320, 110], 2)
 def ifnode(name, expr, pos):
     return node(name, "n8n-nodes-base.if", {"conditions": {"options": {"caseSensitive": True, "leftValue": "", "typeValidation": "loose"},
@@ -256,7 +261,9 @@ mail("Email: problem", "TSW video problem: nothing posted", "={{ '<p>Something w
 link("Main video 19:00", "Main"); link("Quick video 13:00", "Quick")
 link("Main", "Plan today"); link("Quick", "Plan today")
 link("Plan today", "TSW alerts (72h)"); link("TSW alerts (72h)", "Write prompt"); link("Write prompt", "Gemini: write script")
-link("Gemini: write script", "Check script"); link("Check script", "Script OK?")
+link("Gemini: write script", "Check script", 0); link("Gemini: write script", "Gemini: backup model", 1)
+link("Gemini: backup model", "Check script", 0); link("Gemini: backup model", "Email: problem", 1)
+link("Check script", "Script OK?")
 link("Script OK?", "Story with clips?", 0); link("Script OK?", "Email: needs you", 1)
 link("Story with clips?", "Stock queries", 0); link("Story with clips?", "Render video", 1)
 link("Stock queries", "Pixabay search"); link("Pixabay search", "Attach clips"); link("Attach clips", "Render video")
