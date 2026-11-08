@@ -24,16 +24,19 @@ const S = {
   uploadUser: 'default',
   timelyWaitMinutes: 120,     // Before You Fly, alerts, Week Ahead: time to tap Stop
   evergreenWaitMinutes: 10,   // tips, Did You Know?, stories
-  timeZone: 'Asia/Jerusalem',
+  timeZone: 'Asia/Jerusalem',          // times shown in your emails
+  mainAudienceZone: 'Europe/London',     // main video (22:00 Israel = 20:00 UK): its day follows UK time
+  quickAudienceZone: 'America/New_York', // quick video (02:00 Israel = 19:00 New York): its day follows US time
 };
 // =================================
 const format = $json.format;
-const day = new Date().toLocaleDateString('en-GB', { weekday: 'short', timeZone: S.timeZone });
+const zone = format === 'main' ? S.mainAudienceZone : S.quickAudienceZone;
+const day = new Date().toLocaleDateString('en-GB', { weekday: 'short', timeZone: zone });
 const MAIN = { Mon: 'BEFORE YOU FLY', Tue: 'TRAVEL SMART', Wed: 'GLAD WE CHECKED', Thu: 'BEFORE YOU FLY', Fri: 'TRAVEL SMART', Sat: 'GLAD WE CHECKED', Sun: 'THE WEEK AHEAD' };
 const QUICK = { Mon: 'DID YOU KNOW?', Tue: 'TRAVEL ALERT', Wed: 'TRAVEL SMART', Thu: 'DID YOU KNOW?', Fri: 'TRAVEL ALERT', Sat: 'DID YOU KNOW?', Sun: 'TRAVEL SMART' };
 const series = (format === 'main' ? MAIN : QUICK)[day];
 const kind = ['BEFORE YOU FLY', 'THE WEEK AHEAD', 'TRAVEL ALERT'].includes(series) ? 'timely' : series === 'GLAD WE CHECKED' ? 'story' : 'evergreen';
-return [{ json: { ...S, format, series, kind, day, date: new Date().toISOString().slice(0, 10) } }];
+return [{ json: { ...S, format, series, kind, day, date: new Date().toLocaleDateString('en-CA', { timeZone: zone }) } }];
 """
 
 PROMPT = r"""
@@ -174,8 +177,8 @@ return [{ json: { posted: true, topic: c.meta.topic, result: $json } }];
 """
 
 # ---------------- nodes ----------------
-node("Main video 19:00", "n8n-nodes-base.scheduleTrigger", {"rule": {"interval": [{"field": "cronExpression", "expression": "0 19 * * *"}]}}, [0, 0], 1.2)
-node("Quick video 13:00", "n8n-nodes-base.scheduleTrigger", {"rule": {"interval": [{"field": "cronExpression", "expression": "0 13 * * *"}]}}, [0, 220], 1.2)
+node("Main video 22:00", "n8n-nodes-base.scheduleTrigger", {"rule": {"interval": [{"field": "cronExpression", "expression": "0 22 * * *"}]}}, [0, 0], 1.2)
+node("Quick video 02:00", "n8n-nodes-base.scheduleTrigger", {"rule": {"interval": [{"field": "cronExpression", "expression": "0 2 * * *"}]}}, [0, 220], 1.2)
 def setfmt(name, fmt, pos):
     return node(name, "n8n-nodes-base.set", {"assignments": {"assignments": [{"id": str(uuid.uuid4()), "name": "format", "value": fmt, "type": "string"}]}, "options": {}}, pos, 3.4)
 setfmt("Main", "main", [220, 0]); setfmt("Quick", "quick", [220, 220])
@@ -258,7 +261,7 @@ node("Remember topic", "n8n-nodes-base.code", {"jsCode": REMEMBER}, [4180, 0], 2
 mail("Email: posted", "={{ 'TSW video posted: ' + $('Check script').first().json.meta.title }}", "={{ '<p>Posted to ' + $('Plan today').first().json.uploadUser + ' accounts: ' + $('Check script').first().json.meta.title + '</p>' }}", [4400, 0])
 mail("Email: problem", "TSW video problem: nothing posted", "={{ '<p>Something went wrong, nothing was posted.</p><pre>' + JSON.stringify($json.error || $json).slice(0, 800) + '</pre>' }}", [3080, 320])
 
-link("Main video 19:00", "Main"); link("Quick video 13:00", "Quick")
+link("Main video 22:00", "Main"); link("Quick video 02:00", "Quick")
 link("Main", "Plan today"); link("Quick", "Plan today")
 link("Plan today", "TSW alerts (72h)"); link("TSW alerts (72h)", "Write prompt"); link("Write prompt", "Gemini: write script")
 link("Gemini: write script", "Check script", 0); link("Gemini: write script", "Gemini: backup model", 1)

@@ -1,8 +1,8 @@
 # TSW video system
 
 Makes and posts two Travel Safety Watch videos a day:
-- a main video (25–35 s) at 19:00 Israel time
-- a quick video (12–15 s) at 13:00 Israel time
+- a main video (25–35 s) at 22:00 Israel time (20:00 UK, 12:00 Los Angeles)
+- a quick video (12–15 s) at 02:00 Israel time (19:00 New York, 11:00 Sydney)
 
 ```
 n8n (daily)  ->  TSW alerts  ->  Gemini writes the script  ->  automatic checks
@@ -79,11 +79,11 @@ Previews and notices arrive by email (to `noah@elevex.digital`, set in the **Pla
 
 ## 4. Test without posting
 
-1. Open the workflow, click **Execute workflow** and choose the **Quick video 13:00** trigger.
+1. Open the workflow, click **Execute workflow** and choose the **Quick video 02:00** trigger.
 2. About 2 minutes later you get an email with the video attached and **Stop** / **Post now** links.
 3. Click **Stop**. You get a second email: "Stopped. That video was not posted." That proves the whole chain without using any uploads.
 4. When you're happy, run it again and tap **Post now** once, to check the post reaches YouTube, Instagram and Facebook.
-5. Switch the workflow to **Active**. From then on it runs every day at 13:00 and 19:00.
+5. Switch the workflow to **Active**. From then on it runs every day at 02:00 and 22:00 Israel time.
 
 ## Adding TikTok later
 
