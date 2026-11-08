@@ -242,16 +242,16 @@ node("Window to stop", "n8n-nodes-base.wait", {
 ifnode("Stopped?", "={{ $json.query?.action === 'stop' }}", [3520, 0])
 mail("Email: cancelled", "TSW video stopped", "<p>Stopped. That video was not posted.</p>", [3740, -120])
 node("Restore video", "n8n-nodes-base.code", {"jsCode": RESTORE}, [3740, 100], 2)
-upload_params = [{"name": "user", "value": "={{ $json.plan.uploadUser }}"},
+upload_params = [{"parameterType": "formData", "name": "user", "value": "={{ $json.plan.uploadUser }}"},
     {"parameterType": "formBinaryData", "name": "video", "inputDataFieldName": "data"},
-    {"name": "title", "value": "={{ $json.meta.title }}"},
-    {"name": "youtube_title", "value": "={{ $json.meta.title }}"},
-    {"name": "youtube_description", "value": "={{ $json.meta.caption + '\\n\\nFree travel safety alerts: https://travelsafetywatch.com' + (($json.meta.sources||[]).length ? '\\nSource: ' + $json.meta.sources.join(' ') : '') }}"},
-    {"name": "instagram_title", "value": "={{ $json.meta.caption }}"},
-    {"name": "facebook_title", "value": "={{ $json.meta.caption }}"},
-    {"name": "tiktok_title", "value": "={{ $json.meta.caption }}"}]
+    {"parameterType": "formData", "name": "title", "value": "={{ $json.meta.title }}"},
+    {"parameterType": "formData", "name": "youtube_title", "value": "={{ $json.meta.title }}"},
+    {"parameterType": "formData", "name": "youtube_description", "value": "={{ $json.meta.caption + '\\n\\nFree travel safety alerts: https://travelsafetywatch.com' + (($json.meta.sources||[]).length ? '\\nSource: ' + $json.meta.sources.join(' ') : '') }}"},
+    {"parameterType": "formData", "name": "instagram_title", "value": "={{ $json.meta.caption }}"},
+    {"parameterType": "formData", "name": "facebook_title", "value": "={{ $json.meta.caption }}"},
+    {"parameterType": "formData", "name": "tiktok_title", "value": "={{ $json.meta.caption }}"}]
 for p in ["youtube", "instagram", "facebook"]:   # to add TikTok later: duplicate one of these rows in n8n and set it to tiktok
-    upload_params.append({"name": "platform[]", "value": p})
+    upload_params.append({"parameterType": "formData", "name": "platform[]", "value": p})
 node("Post to socials", "n8n-nodes-base.httpRequest", {
     "method": "POST", "url": "https://api.upload-post.com/api/upload",
     "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",

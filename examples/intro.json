@@ -1,0 +1,37 @@
+{
+ "format": "main",
+ "series": "MEET TSW",
+ "seed": 7,
+ "scenes": [
+  {
+   "type": "hook",
+   "headline": "Do you know what's happening where you're going?",
+   "say": "Planning a trip? The news that matters most is local, and it's usually not in your language.",
+   "pill": { "icon": "globe", "text": "Local news, any language", "at": "local" }
+  },
+  {
+   "type": "point",
+   "n": 1,
+   "headline": "Official advice, in one place",
+   "icon": "shield",
+   "say": "Travel Safety Watch puts official travel advice from several governments in one place.",
+   "pills": [ { "text": "Several governments, one view", "icon": "check", "at": "official" } ]
+  },
+  {
+   "type": "point",
+   "n": 2,
+   "headline": "Storms, strikes and hazards",
+   "icon": "storm",
+   "say": "It flags storms, heat, strikes and other hazards for the places on your trip.",
+   "pills": [ { "text": "Alerts for your places", "icon": "alert", "at": "places" } ]
+  },
+  {
+   "type": "point",
+   "n": 3,
+   "headline": "Local news, translated",
+   "icon": "search",
+   "say": "And it translates local news into plain English, so you know what the locals know.",
+   "pills": [ { "text": "Free, no ads", "icon": "check", "at": "know" } ]
+  }
+ ]
+}
