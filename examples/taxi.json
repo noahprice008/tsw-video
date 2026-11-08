@@ -1,0 +1,68 @@
+{
+ "format": "main",
+ "series": "TRAVEL SMART",
+ "cta": "soon",
+ "seed": 1,
+ "scenes": [
+  {
+   "type": "hook",
+   "big": "3",
+   "headline": "taxi tricks to know",
+   "say": "Getting a taxi from the airport? Here are three tricks to watch for.",
+   "pill": {
+    "icon": "plane",
+    "text": "Airport arrivals",
+    "at": "airport"
+   }
+  },
+  {
+   "type": "point",
+   "n": 1,
+   "headline": "\"The meter's broken\"",
+   "icon": "taxi",
+   "say": "One. The meter's broken. Agree the price before you get in, or use the official taxi rank, or a ride app.",
+   "caption": "One. \"The meter's broken.\" Agree the price before you get in, or use the official taxi rank or a ride app.",
+   "pills": [
+    {
+     "text": "Agree the price first",
+     "icon": "check",
+     "at": "agree"
+    },
+    {
+     "text": "or use the official rank or a ride app",
+     "style": "note",
+     "at": "official"
+    }
+   ]
+  },
+  {
+   "type": "point",
+   "n": 2,
+   "headline": "\"Your hotel is closed\"",
+   "icon": "hotel",
+   "say": "Two. Your hotel is closed, so they'll take you somewhere better. Call your hotel yourself before you change plans.",
+   "caption": "Two. \"Your hotel is closed,\" so they'll take you somewhere better. Call your hotel yourself before you change plans.",
+   "pills": [
+    {
+     "text": "Call your hotel yourself",
+     "icon": "phone",
+     "at": "call"
+    }
+   ]
+  },
+  {
+   "type": "point",
+   "n": 3,
+   "headline": "The scenic route",
+   "icon": "map",
+   "say": "Three. The scenic route. Follow the trip on your own map, so you know you're going the right way.",
+   "pills": [
+    {
+     "text": "Follow it on your own map",
+     "icon": "pin",
+     "at": "follow"
+    }
+   ]
+  }
+ ]
+}

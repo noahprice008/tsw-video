@@ -1,0 +1,35 @@
+{
+ "format": "quick",
+ "series": "DID YOU KNOW?",
+ "cta": "soon",
+ "seed": 2,
+ "scenes": [
+  {
+   "type": "hook",
+   "icon": "alert",
+   "headline": "No gum in Singapore",
+   "say": "Did you know you can't buy chewing gum in Singapore?"
+  },
+  {
+   "type": "number",
+   "label": "SALE BANNED SINCE",
+   "value": "1992",
+   "at": "1992",
+   "say": "Selling it has been banned since nineteen ninety two. Only medical gum, like nicotine gum, is sold in pharmacies. So leave your pack at home.",
+   "caption": "Selling it has been banned since 1992. Only medical gum, like nicotine gum, is sold in pharmacies. So leave your pack at home.",
+   "pills": [
+    {
+     "text": "Medical gum: pharmacies only",
+     "icon": "pharmacy",
+     "style": "teal",
+     "at": "medical"
+    },
+    {
+     "text": "Leave your pack at home",
+     "icon": "bag",
+     "at": "leave"
+    }
+   ]
+  }
+ ]
+}

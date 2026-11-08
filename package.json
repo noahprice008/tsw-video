@@ -1,0 +1,16 @@
+{
+  "name": "tsw-video",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Travel Safety Watch short-video renderer (script JSON in, vertical MP4 out)",
+  "scripts": {
+    "start": "node server.mjs",
+    "render": "node cli.mjs"
+  },
+  "dependencies": {
+    "@fontsource/fraunces": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
+    "playwright": "1.63.0"
+  }
+}
