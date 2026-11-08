@@ -19,7 +19,7 @@ def link(a, b, out=0):
 PLAN = r"""
 // ===== SETTINGS: edit these =====
 const S = {
-  telegramChatId: 'PUT_YOUR_CHAT_ID_HERE',
+  notifyEmail: 'noah@elevex.digital',
   renderUrl: 'http://tsw-video:8090',
   uploadUser: 'default',
   timelyWaitMinutes: 120,     // Before You Fly, alerts, Week Ahead: time to tap Stop
@@ -158,7 +158,7 @@ $input.all().forEach((res, k) => {
 return [{ json: d }];
 """
 
-PREVIEW_CAPTION = r"""={{ (() => { const d = $('Render video').item.json; const c = $('Check script').first().json; const mins = c.timely ? c.plan.timelyWaitMinutes : c.plan.evergreenWaitMinutes; const at = new Date(Date.now() + mins * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: c.plan.timeZone }); return `${c.spec.series} · ${c.plan.format} · ${d.duration}s\n\n${c.meta.title}\n\n${c.meta.caption}\n\nSources: ${(c.meta.sources || []).join(' ') || 'none (evergreen)'}\n\nPosts automatically at ${at} unless you tap Stop.`; })() }}"""
+PREVIEW_HTML = r"""={{ (() => { const d = $('Render video').item.json; const c = $('Check script').first().json; const mins = c.timely ? c.plan.timelyWaitMinutes : c.plan.evergreenWaitMinutes; const at = new Date(Date.now() + mins * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: c.plan.timeZone }); const stop = $execution.resumeUrl + '?action=stop', now = $execution.resumeUrl + '?action=post'; return `<p><b>${c.spec.series}</b> · ${c.plan.format} · ${d.duration}s</p><p><b>${c.meta.title}</b><br>${c.meta.caption}</p><p>Sources: ${(c.meta.sources || []).join(' ') || 'none (evergreen tip)'}</p><p>The video is attached. It posts automatically at <b>${at}</b> unless you click Stop.</p><p><a href="${stop}" style="background:#E05A47;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Stop: don't post</a> &nbsp; <a href="${now}" style="background:#1F7A8C;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Post now</a></p>`; })() }}"""
 
 RESTORE = r"""
 const v = $('Download video').first();
@@ -202,9 +202,13 @@ def ifnode(name, expr, pos):
         "conditions": [{"id": str(uuid.uuid4()), "leftValue": expr, "rightValue": "", "operator": {"type": "boolean", "operation": "true", "singleValue": True}}],
         "combinator": "and"}, "options": {}}, pos, 2.2)
 ifnode("Script OK?", "={{ $json.ok }}", [1540, 110])
-node("Telegram: needs you", "n8n-nodes-base.telegram", {"chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "={{ `TSW video held back (${$json.plan.series}, ${$json.plan.format}). Nothing was posted.\\n\\nProblems:\\n- ${$json.problems.join('\\n- ')}\\n\\nIt will try again at the next scheduled time.` }}",
-    "additionalFields": {"appendAttribution": False}}, [1760, 300], 1.2)
+def mail(name, subject, message, pos, attach=False):
+    opts = {"appendAttribution": False}
+    if attach: opts["attachmentsUi"] = {"attachmentsBinary": [{"property": "data"}]}
+    return node(name, "n8n-nodes-base.gmail", {"sendTo": "={{ $('Plan today').first().json.notifyEmail }}", "subject": subject,
+        "emailType": "html", "message": message, "options": opts}, pos, 2.1)
+mail("Email: needs you", "={{ 'TSW video held back: ' + $json.plan.series }}",
+    "={{ `<p>A TSW video (${$json.plan.series}, ${$json.plan.format}) was held back. Nothing was posted.</p><p>Problems:</p><ul>${$json.problems.map(p => '<li>' + p + '</li>').join('')}</ul><p>It will try again at the next scheduled time.</p>` }}", [1760, 300])
 ifnode("Story with clips?", "={{ $json.story && $json.spec.scenes.some(s => s.type === 'stock') }}", [1760, 0])
 node("Stock queries", "n8n-nodes-base.code", {"jsCode": STOCKQ}, [1980, -120], 2)
 node("Pixabay search", "n8n-nodes-base.httpRequest", {
@@ -222,20 +226,13 @@ node("Download video", "n8n-nodes-base.httpRequest", {
     "url": "={{ $('Plan today').first().json.renderUrl + $json.file }}",
     "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
     "options": {"response": {"response": {"responseFormat": "file", "outputPropertyName": "data"}}}}, [2860, 0], 4.2)
-node("Telegram: preview", "n8n-nodes-base.telegram", {
-    "operation": "sendVideo", "chatId": "={{ $('Plan today').first().json.telegramChatId }}", "binaryData": True, "binaryPropertyName": "data",
-    "replyMarkup": "inlineKeyboard",
-    "inlineKeyboard": {"rows": [{"row": {"buttons": [
-        {"text": "Stop: don't post", "additionalFields": {"url": "={{ $execution.resumeUrl }}?action=stop"}},
-        {"text": "Post now", "additionalFields": {"url": "={{ $execution.resumeUrl }}?action=post"}}]}}]},
-    "additionalFields": {"caption": PREVIEW_CAPTION}}, [3080, 0], 1.2)
+mail("Email: preview", "={{ 'TSW video ready: ' + $('Check script').first().json.meta.title }}", PREVIEW_HTML, [3080, 0], attach=True)
 node("Window to stop", "n8n-nodes-base.wait", {
     "resume": "webhook", "httpMethod": "GET", "limitWaitTime": True, "limitType": "afterTimeInterval",
     "resumeAmount": "={{ $('Check script').first().json.timely ? $('Plan today').first().json.timelyWaitMinutes : $('Plan today').first().json.evergreenWaitMinutes }}",
     "resumeUnit": "minutes", "options": {}}, [3300, 0], 1.1, webhookId=str(uuid.uuid4()))
 ifnode("Stopped?", "={{ $json.query?.action === 'stop' }}", [3520, 0])
-node("Telegram: cancelled", "n8n-nodes-base.telegram", {"chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "Stopped. That video was not posted.", "additionalFields": {"appendAttribution": False}}, [3740, -120], 1.2)
+mail("Email: cancelled", "TSW video stopped", "<p>Stopped. That video was not posted.</p>", [3740, -120])
 node("Restore video", "n8n-nodes-base.code", {"jsCode": RESTORE}, [3740, 100], 2)
 upload_params = [{"name": "user", "value": "={{ $json.plan.uploadUser }}"},
     {"parameterType": "formBinaryData", "name": "video", "inputDataFieldName": "data"},
@@ -253,23 +250,21 @@ node("Post to socials", "n8n-nodes-base.httpRequest", {
     "sendBody": True, "contentType": "multipart-form-data", "bodyParameters": {"parameters": upload_params},
     "options": {"timeout": 600000}}, [3960, 100], 4.2, onError="continueErrorOutput")
 node("Remember topic", "n8n-nodes-base.code", {"jsCode": REMEMBER}, [4180, 0], 2)
-node("Telegram: posted", "n8n-nodes-base.telegram", {"chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "={{ 'Posted: ' + $('Check script').first().json.meta.title }}", "additionalFields": {"appendAttribution": False}}, [4400, 0], 1.2)
-node("Telegram: problem", "n8n-nodes-base.telegram", {"chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "={{ 'TSW video problem, nothing posted: ' + JSON.stringify($json.error || $json).slice(0, 600) }}", "additionalFields": {"appendAttribution": False}}, [3080, 320], 1.2)
+mail("Email: posted", "={{ 'TSW video posted: ' + $('Check script').first().json.meta.title }}", "={{ '<p>Posted to ' + $('Plan today').first().json.uploadUser + ' accounts: ' + $('Check script').first().json.meta.title + '</p>' }}", [4400, 0])
+mail("Email: problem", "TSW video problem: nothing posted", "={{ '<p>Something went wrong, nothing was posted.</p><pre>' + JSON.stringify($json.error || $json).slice(0, 800) + '</pre>' }}", [3080, 320])
 
 link("Main video 19:00", "Main"); link("Quick video 13:00", "Quick")
 link("Main", "Plan today"); link("Quick", "Plan today")
 link("Plan today", "TSW alerts (72h)"); link("TSW alerts (72h)", "Write prompt"); link("Write prompt", "Gemini: write script")
 link("Gemini: write script", "Check script"); link("Check script", "Script OK?")
-link("Script OK?", "Story with clips?", 0); link("Script OK?", "Telegram: needs you", 1)
+link("Script OK?", "Story with clips?", 0); link("Script OK?", "Email: needs you", 1)
 link("Story with clips?", "Stock queries", 0); link("Story with clips?", "Render video", 1)
 link("Stock queries", "Pixabay search"); link("Pixabay search", "Attach clips"); link("Attach clips", "Render video")
-link("Render video", "Download video", 0); link("Render video", "Telegram: problem", 1)
-link("Download video", "Telegram: preview"); link("Telegram: preview", "Window to stop"); link("Window to stop", "Stopped?")
-link("Stopped?", "Telegram: cancelled", 0); link("Stopped?", "Restore video", 1)
-link("Restore video", "Post to socials"); link("Post to socials", "Remember topic", 0); link("Post to socials", "Telegram: problem", 1)
-link("Remember topic", "Telegram: posted")
+link("Render video", "Download video", 0); link("Render video", "Email: problem", 1)
+link("Download video", "Email: preview"); link("Email: preview", "Window to stop"); link("Window to stop", "Stopped?")
+link("Stopped?", "Email: cancelled", 0); link("Stopped?", "Restore video", 1)
+link("Restore video", "Post to socials"); link("Post to socials", "Remember topic", 0); link("Post to socials", "Email: problem", 1)
+link("Remember topic", "Email: posted")
 
 wf = {"name": "TSW: daily videos", "nodes": nodes, "connections": conns, "active": False,
       "settings": {"executionOrder": "v1", "timezone": "Asia/Jerusalem", "saveDataSuccessExecution": "all"}, "pinData": {}}

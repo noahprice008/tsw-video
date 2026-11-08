@@ -12,7 +12,7 @@
      ]
     }
    },
-   "id": "70ffd24b-7d44-4be1-8fad-06e595283c37",
+   "id": "e121fb03-09e7-4530-ad2b-e182e433ef6d",
    "name": "Main video 19:00",
    "type": "n8n-nodes-base.scheduleTrigger",
    "typeVersion": 1.2,
@@ -32,7 +32,7 @@
      ]
     }
    },
-   "id": "18282540-3a38-4782-a8da-64acb8474c52",
+   "id": "86ef688f-1314-43ae-9b94-ad3007722cfe",
    "name": "Quick video 13:00",
    "type": "n8n-nodes-base.scheduleTrigger",
    "typeVersion": 1.2,
@@ -46,7 +46,7 @@
     "assignments": {
      "assignments": [
       {
-       "id": "ff5c295a-4b68-4fc9-adde-e3c295ab5cd6",
+       "id": "33ff4433-8ca6-43fd-92e0-9f34716e2e8a",
        "name": "format",
        "value": "main",
        "type": "string"
@@ -55,7 +55,7 @@
     },
     "options": {}
    },
-   "id": "9007581e-6258-4d53-a8fb-d1b9f70878ad",
+   "id": "e70cd51c-d813-4303-872d-6fd4cc7abfac",
    "name": "Main",
    "type": "n8n-nodes-base.set",
    "typeVersion": 3.4,
@@ -69,7 +69,7 @@
     "assignments": {
      "assignments": [
       {
-       "id": "3d45094b-0848-4ed3-872d-e85b27b63a31",
+       "id": "87d4d684-1104-40b4-8d1a-aa9aec693cca",
        "name": "format",
        "value": "quick",
        "type": "string"
@@ -78,7 +78,7 @@
     },
     "options": {}
    },
-   "id": "6e7e40d5-5366-4b8d-b6d2-24fbebcfda83",
+   "id": "ac3add18-97f5-49e5-897b-65d761a79f53",
    "name": "Quick",
    "type": "n8n-nodes-base.set",
    "typeVersion": 3.4,
@@ -89,9 +89,9 @@
   },
   {
    "parameters": {
-    "jsCode": "\n// ===== SETTINGS: edit these =====\nconst S = {\n  telegramChatId: 'PUT_YOUR_CHAT_ID_HERE',\n  renderUrl: 'http://tsw-video:8090',\n  uploadUser: 'default',\n  timelyWaitMinutes: 120,     // Before You Fly, alerts, Week Ahead: time to tap Stop\n  evergreenWaitMinutes: 10,   // tips, Did You Know?, stories\n  timeZone: 'Asia/Jerusalem',\n};\n// =================================\nconst format = $json.format;\nconst day = new Date().toLocaleDateString('en-GB', { weekday: 'short', timeZone: S.timeZone });\nconst MAIN = { Mon: 'BEFORE YOU FLY', Tue: 'TRAVEL SMART', Wed: 'GLAD WE CHECKED', Thu: 'BEFORE YOU FLY', Fri: 'TRAVEL SMART', Sat: 'GLAD WE CHECKED', Sun: 'THE WEEK AHEAD' };\nconst QUICK = { Mon: 'DID YOU KNOW?', Tue: 'TRAVEL ALERT', Wed: 'TRAVEL SMART', Thu: 'DID YOU KNOW?', Fri: 'TRAVEL ALERT', Sat: 'DID YOU KNOW?', Sun: 'TRAVEL SMART' };\nconst series = (format === 'main' ? MAIN : QUICK)[day];\nconst kind = ['BEFORE YOU FLY', 'THE WEEK AHEAD', 'TRAVEL ALERT'].includes(series) ? 'timely' : series === 'GLAD WE CHECKED' ? 'story' : 'evergreen';\nreturn [{ json: { ...S, format, series, kind, day, date: new Date().toISOString().slice(0, 10) } }];\n"
+    "jsCode": "\n// ===== SETTINGS: edit these =====\nconst S = {\n  notifyEmail: 'noah@elevex.digital',\n  renderUrl: 'http://tsw-video:8090',\n  uploadUser: 'default',\n  timelyWaitMinutes: 120,     // Before You Fly, alerts, Week Ahead: time to tap Stop\n  evergreenWaitMinutes: 10,   // tips, Did You Know?, stories\n  timeZone: 'Asia/Jerusalem',\n};\n// =================================\nconst format = $json.format;\nconst day = new Date().toLocaleDateString('en-GB', { weekday: 'short', timeZone: S.timeZone });\nconst MAIN = { Mon: 'BEFORE YOU FLY', Tue: 'TRAVEL SMART', Wed: 'GLAD WE CHECKED', Thu: 'BEFORE YOU FLY', Fri: 'TRAVEL SMART', Sat: 'GLAD WE CHECKED', Sun: 'THE WEEK AHEAD' };\nconst QUICK = { Mon: 'DID YOU KNOW?', Tue: 'TRAVEL ALERT', Wed: 'TRAVEL SMART', Thu: 'DID YOU KNOW?', Fri: 'TRAVEL ALERT', Sat: 'DID YOU KNOW?', Sun: 'TRAVEL SMART' };\nconst series = (format === 'main' ? MAIN : QUICK)[day];\nconst kind = ['BEFORE YOU FLY', 'THE WEEK AHEAD', 'TRAVEL ALERT'].includes(series) ? 'timely' : series === 'GLAD WE CHECKED' ? 'story' : 'evergreen';\nreturn [{ json: { ...S, format, series, kind, day, date: new Date().toISOString().slice(0, 10) } }];\n"
    },
-   "id": "4fdfd24b-8c16-4f4c-9e2c-58a03e4f300c",
+   "id": "f31248dd-7c54-4a8a-9c66-b6d4b98a485b",
    "name": "Plan today",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -139,7 +139,7 @@
     },
     "options": {}
    },
-   "id": "3815fb73-7978-4778-98fe-7b843d6429a4",
+   "id": "3a5ac5fe-c772-45ea-9292-dbc0f5244166",
    "name": "TSW alerts (72h)",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -153,7 +153,7 @@
    "parameters": {
     "jsCode": "\nconst plan = $('Plan today').first().json;\nconst alerts = $input.all().map(i => i.json).filter(a => a && a.title).slice(0, 30).map(a => ({\n  place: a.regions?.name || '', category: a.category, severity: a.severity, title: a.title, summary: (a.summary || '').slice(0, 400),\n  authority: a.issuing_authority || '', url: a.primary_source_url || '', published: (a.published_at || '').slice(0, 10) }));\nconst recent = ($getWorkflowStaticData('global').recent || []).slice(-30);\n\nconst rules = `You write short vertical videos for Travel Safety Watch (TSW), a free app with official travel advice, weather and local news translated into plain English.\nAUDIENCE: independent travellers aged 18-35 from the UK, US, Canada and Australia, many of them women travelling solo or as couples. Speak to one person, like a calm, well-travelled friend.\nTODAY: ${plan.date}. FORMAT: ${plan.format} (${plan.format === 'main' ? '25-35 seconds' : '12-15 seconds'}). SERIES: ${plan.series}.\n\nSERIES GUIDE\n- BEFORE YOU FLY (main): one destination with something real happening in the alerts below (strike, storm, heat, protest, rule change). Hook \"Going to X this week?\". Say what is happening, where, when, and one practical thing to do. Name the source authority.\n- THE WEEK AHEAD (main): three places from the alerts below to keep an eye on this week, one list scene plus a closing practical tip.\n- TRAVEL ALERT (quick): one alert from the list below in one or two sentences, with the source.\n- TRAVEL SMART (main or quick): a practical, evergreen habit, scam to know, or solo-safety tip. Useful anywhere, widely known to be true.\n- DID YOU KNOW? (quick): a surprising, well-documented custom, rule or law travellers should know. Must be true today.\n- GLAD WE CHECKED (main): a short fictional mini-story told with stock footage. A traveller, couple or family hits a moment where locals know something they don't (language barrier), and the TSW app explains it in plain English. Never use a real current event or a real named place with an invented event; keep places generic (\"the station\", \"the old town\"). If danger is involved, the people move to safety first and read the app on the way; the narration says \"follow local authorities first\".\n\nFACTS (most important)\n- For BEFORE YOU FLY, THE WEEK AHEAD and TRAVEL ALERT use ONLY the alerts provided. Never invent places, dates, numbers or events. Put the URL(s) you used in \"sources\" (copied exactly from the list).\n- If no alert below is suitable for a calm, useful video, write a TRAVEL SMART video instead and set \"series\" to \"TRAVEL SMART\".\n- For evergreen series use only well-established facts. No statistics unless they are widely documented. When unsure, give advice instead of facts.\n- Never mention deaths, victims or attacks as the hook. Never use fear: no \"don't go\", \"deadly\", \"nightmare\", \"shocking\". No politics. No \"download now\".\n- Do not write the app scene or the ending: they are added automatically.\n\nOUTPUT: JSON only, with this shape:\n{\n \"series\": \"...\", \"format\": \"${plan.format}\",\n \"topic\": \"short-slug-of-the-topic\",\n \"title\": \"searchable YouTube title, max 80 characters, no emoji\",\n \"caption\": \"social caption, max 150 characters, then 3-5 hashtags\",\n \"sources\": [\"https://...\"],\n \"scenes\": [ ...${plan.format === 'main' ? '3 to 4' : '2'} scenes... ]\n}\nTotal spoken words across scenes: ${plan.format === 'main' ? '55-80' : '22-38'}.\n\nSCENE TYPES (every scene has \"type\" and \"say\"; optional \"caption\")\n- hook: {\"type\":\"hook\",\"headline\":\"max 40 chars\",\"big\":\"optional short number or word shown huge, e.g. 3\",\"icon\":\"optional icon\",\"pill\":{\"text\":\"max 28 chars\",\"icon\":\"...\",\"at\":\"word\"}}  Always the first scene.\n- point: {\"type\":\"point\",\"n\":\"optional 1/2/3 for numbered tips\",\"headline\":\"max 32 chars\",\"icon\":\"optional\",\"pills\":[{\"text\":\"max 30 chars\",\"icon\":\"optional\",\"style\":\"light|teal|coral|note\",\"at\":\"word\"}]}  max 2 pills.\n- number: {\"type\":\"number\",\"label\":\"max 28 chars, capitals\",\"value\":\"max 6 chars, e.g. 1992 or 112\",\"at\":\"word\",\"pills\":[...]}\n- place: {\"type\":\"place\",\"name\":\"place name\",\"country\":\"country\",\"level\":\"optional: avoid|reconsider|take_care|be_aware|clear (only if the alert says so)\",\"level_at\":\"word\",\"source\":\"Source: <authority> · as of <date>\",\"pills\":[...]}\n- list: {\"type\":\"list\",\"headline\":\"max 32 chars\",\"items\":[{\"name\":\"place\",\"tag\":\"max 26 chars\",\"level\":\"optional\",\"at\":\"word\"}]}  exactly 3 items.\n- stock (GLAD WE CHECKED only): {\"type\":\"stock\",\"stock_query\":\"2-4 English words for a stock video search, e.g. train station crowd\",\"headline\":\"optional max 40 chars\",\"phone\":{\"title\":\"max 32 chars, what the app shows\",\"text\":\"max 70 chars\",\"at\":\"word\"},\"pills\":[...]}\nICONS (use only these names): taxi, plane, hotel, phone, passport, shield, map, pin, check, clock, calendar, search, train, storm, sun, wave, fire, alert, money, bag, nowifi, pharmacy, globe, people, lock, camera, card, food, water, health, info, bus, compass\n- \"say\" is what the narrator speaks: write numbers as words when they could be misread (\"nine one one\", \"nineteen ninety two\"), and say web addresses as words.\n- \"caption\" is the on-screen text of the same words in British spelling with digits (\"911\", \"1992\"). Leave it out when identical to \"say\".\n- Every \"at\" must be ONE word that appears in that scene's caption (or say). It times the animation.\n- Keep each scene to 1-3 short sentences.\n\nAVOID REPEATING THESE RECENT TOPICS: ${recent.join(', ') || 'none yet'}\n\nALERTS FROM TSW (last 72 hours):\n${alerts.length ? JSON.stringify(alerts) : 'none'}`;\n\nreturn [{ json: { body: { contents: [{ role: 'user', parts: [{ text: rules }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.8 } }, alertUrls: alerts.map(a => a.url).filter(Boolean) } }];\n"
    },
-   "id": "13d909ca-9538-445a-a98b-1e63458493d5",
+   "id": "b3dde849-2d20-4c38-a068-dbe51e6f85b8",
    "name": "Write prompt",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -175,7 +175,7 @@
      "timeout": 120000
     }
    },
-   "id": "614bb475-8c19-4cfd-81cf-613ec6150a16",
+   "id": "8425df6e-4cc4-4a9c-9ab5-5e4b6a1cc94f",
    "name": "Gemini: write script",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -191,7 +191,7 @@
    "parameters": {
     "jsCode": "\nconst plan = $('Plan today').first().json;\nconst alertUrls = $('Write prompt').first().json.alertUrls || [];\nconst ICONS = new Set(`taxi, plane, hotel, phone, passport, shield, map, pin, check, clock, calendar, search, train, storm, sun, wave, fire, alert, money, bag, nowifi, pharmacy, globe, people, lock, camera, card, food, water, health, info, bus, compass`.split(',').map(s => s.trim()));\nconst TYPES = new Set(['hook', 'point', 'number', 'place', 'list', 'stock']);\nconst problems = [];\nlet spec;\ntry {\n  const txt = $json.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';\n  spec = JSON.parse(txt.replace(/^```json\\s*|\\s*```$/g, ''));\n} catch (e) { return [{ json: { ok: false, problems: ['Gemini did not return valid JSON'], plan } }]; }\n\nspec.format = plan.format;\nconst timely = ['BEFORE YOU FLY', 'THE WEEK AHEAD', 'TRAVEL ALERT'].includes(spec.series);\nconst story = spec.series === 'GLAD WE CHECKED';\nif (!Array.isArray(spec.scenes) || spec.scenes.length < 2 || spec.scenes.length > 5) problems.push('wrong number of scenes');\nconst words = [];\nfor (const sc of spec.scenes || []) {\n  if (!TYPES.has(sc.type)) problems.push(`unknown scene type ${sc.type}`);\n  if (!sc.say || !String(sc.say).trim()) problems.push(`a ${sc.type} scene has nothing to say`);\n  if (sc.type === 'stock' && !story) sc.type = 'point';\n  if (sc.type === 'stock' && !sc.stock_query) problems.push('stock scene without stock_query');\n  if (sc.icon && !ICONS.has(sc.icon)) delete sc.icon;\n  if (sc.pill?.icon && !ICONS.has(sc.pill.icon)) delete sc.pill.icon;\n  if (Array.isArray(sc.pills)) { sc.pills = sc.pills.slice(0, 2); sc.pills.forEach(p => { if (p.icon && !ICONS.has(p.icon)) delete p.icon; }); }\n  const capWords = String(sc.caption || sc.say || '').toLowerCase().replace(/[^\\w'\\s]/g, ' ').split(/\\s+/);\n  const fixAt = o => { if (o && o.at && !capWords.includes(String(o.at).toLowerCase().replace(/[^\\w']/g, ''))) delete o.at; };\n  fixAt(sc); fixAt(sc.pill); fixAt(sc.phone); (sc.pills || []).forEach(fixAt); (sc.items || []).forEach(fixAt);\n  if (sc.level && !['avoid', 'reconsider', 'take_care', 'be_aware', 'clear'].includes(sc.level)) delete sc.level;\n  words.push(...String(sc.say || '').split(/\\s+/).filter(Boolean));\n}\nconst [lo, hi] = plan.format === 'main' ? [40, 95] : [16, 45];\nif (words.length < lo || words.length > hi) problems.push(`spoken length ${words.length} words (want ${lo}-${hi})`);\nconst all = JSON.stringify(spec).toLowerCase();\nconst banned = [\"don't go\", 'deadly', 'terrifying', 'horrifying', 'nightmare', 'shocking', 'download now', 'massacre', 'killed', 'slaughter'];\nfor (const b of banned) if (all.includes(b)) problems.push(`uses the word \"${b}\"`);\nif (timely) {\n  const srcs = (spec.sources || []).filter(u => alertUrls.includes(u));\n  if (!srcs.length) problems.push('timely video without a source from the TSW alerts');\n}\nif (!spec.title || spec.title.length > 100) problems.push('missing or long title');\nspec.title = String(spec.title || '').slice(0, 100);\nspec.caption = String(spec.caption || '').slice(0, 300);\nreturn [{ json: { ok: problems.length === 0, problems, plan, timely, story, spec: { format: spec.format, series: spec.series, cta: 'auto', scenes: spec.scenes }, meta: { title: spec.title, caption: spec.caption, sources: spec.sources || [], topic: spec.topic || spec.title } } }];\n"
    },
-   "id": "f6ea9e18-2b08-4311-9e8a-0b85397bf1f1",
+   "id": "e0254187-34af-48d0-ad3e-0aa3bc18ed88",
    "name": "Check script",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -210,7 +210,7 @@
      },
      "conditions": [
       {
-       "id": "0cf69c6a-2e29-43f4-9011-d61f2409d509",
+       "id": "c01fe851-e86e-4800-8434-d3b4be8833b2",
        "leftValue": "={{ $json.ok }}",
        "rightValue": "",
        "operator": {
@@ -224,7 +224,7 @@
     },
     "options": {}
    },
-   "id": "6809a64c-cf3f-4269-821c-aa3dbcb00a30",
+   "id": "d0957459-97b9-47ce-8bac-5c3ebca45850",
    "name": "Script OK?",
    "type": "n8n-nodes-base.if",
    "typeVersion": 2.2,
@@ -235,16 +235,18 @@
   },
   {
    "parameters": {
-    "chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "={{ `TSW video held back (${$json.plan.series}, ${$json.plan.format}). Nothing was posted.\\n\\nProblems:\\n- ${$json.problems.join('\\n- ')}\\n\\nIt will try again at the next scheduled time.` }}",
-    "additionalFields": {
+    "sendTo": "={{ $('Plan today').first().json.notifyEmail }}",
+    "subject": "={{ 'TSW video held back: ' + $json.plan.series }}",
+    "emailType": "html",
+    "message": "={{ `<p>A TSW video (${$json.plan.series}, ${$json.plan.format}) was held back. Nothing was posted.</p><p>Problems:</p><ul>${$json.problems.map(p => '<li>' + p + '</li>').join('')}</ul><p>It will try again at the next scheduled time.</p>` }}",
+    "options": {
      "appendAttribution": false
     }
    },
-   "id": "0a754ec3-ec57-4c6d-8b08-9a778ede4ca1",
-   "name": "Telegram: needs you",
-   "type": "n8n-nodes-base.telegram",
-   "typeVersion": 1.2,
+   "id": "8b0d309b-110f-4c86-882f-31acc931c4ed",
+   "name": "Email: needs you",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
    "position": [
     1760,
     300
@@ -260,7 +262,7 @@
      },
      "conditions": [
       {
-       "id": "c3c854ec-e092-483e-b068-cf20d364cf89",
+       "id": "73e2595d-de13-48b3-91f8-99153519f266",
        "leftValue": "={{ $json.story && $json.spec.scenes.some(s => s.type === 'stock') }}",
        "rightValue": "",
        "operator": {
@@ -274,7 +276,7 @@
     },
     "options": {}
    },
-   "id": "62a13d3d-6841-4a8f-a523-4d2c6972b478",
+   "id": "ed3c3cfd-e07d-4246-92ca-32e764126959",
    "name": "Story with clips?",
    "type": "n8n-nodes-base.if",
    "typeVersion": 2.2,
@@ -287,7 +289,7 @@
    "parameters": {
     "jsCode": "\nconst d = $('Check script').first().json;\nreturn d.spec.scenes.map((sc, i) => ({ i, sc })).filter(x => x.sc.type === 'stock').map(x => ({ json: { i: x.i, q: x.sc.stock_query } }));\n"
    },
-   "id": "143613df-aed0-47f7-897c-087057332c86",
+   "id": "1b5f013a-ffcd-41bb-95f0-7045d56c5ef8",
    "name": "Stock queries",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -328,7 +330,7 @@
     },
     "options": {}
    },
-   "id": "7489c59a-b88b-4a4d-9fb7-890c13972307",
+   "id": "f140e600-f50d-4889-8ada-c22dc995e972",
    "name": "Pixabay search",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -342,7 +344,7 @@
    "parameters": {
     "jsCode": "\nconst d = JSON.parse(JSON.stringify($('Check script').first().json));\nconst qs = $('Stock queries').all().map(x => x.json);\n$input.all().forEach((res, k) => {\n  const hits = res.json.hits || [];\n  const pick = hits.find(h => h.videos?.medium?.url) || hits[0];\n  const url = pick?.videos?.medium?.url || pick?.videos?.small?.url;\n  const target = qs[k];\n  if (target && url) d.spec.scenes[target.i].clip_url = url;\n});\nreturn [{ json: d }];\n"
    },
-   "id": "c24a2727-76fe-4996-ad0d-408d2f7aee7e",
+   "id": "8e5d1382-7632-408b-89c7-8c86f026055c",
    "name": "Attach clips",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -364,7 +366,7 @@
      "timeout": 900000
     }
    },
-   "id": "ac53b678-c32e-4bbd-bfe6-66951cdebaa4",
+   "id": "43daec93-5e43-4633-b814-64593415b9c3",
    "name": "Render video",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -388,7 +390,7 @@
      }
     }
    },
-   "id": "70c373dc-0170-48d0-94ae-6922c096db1f",
+   "id": "4c57ce6d-c07b-4462-933f-d61582fc4cb5",
    "name": "Download video",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -399,41 +401,25 @@
   },
   {
    "parameters": {
-    "operation": "sendVideo",
-    "chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "binaryData": true,
-    "binaryPropertyName": "data",
-    "replyMarkup": "inlineKeyboard",
-    "inlineKeyboard": {
-     "rows": [
-      {
-       "row": {
-        "buttons": [
-         {
-          "text": "Stop: don't post",
-          "additionalFields": {
-           "url": "={{ $execution.resumeUrl }}?action=stop"
-          }
-         },
-         {
-          "text": "Post now",
-          "additionalFields": {
-           "url": "={{ $execution.resumeUrl }}?action=post"
-          }
-         }
-        ]
+    "sendTo": "={{ $('Plan today').first().json.notifyEmail }}",
+    "subject": "={{ 'TSW video ready: ' + $('Check script').first().json.meta.title }}",
+    "emailType": "html",
+    "message": "={{ (() => { const d = $('Render video').item.json; const c = $('Check script').first().json; const mins = c.timely ? c.plan.timelyWaitMinutes : c.plan.evergreenWaitMinutes; const at = new Date(Date.now() + mins * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: c.plan.timeZone }); const stop = $execution.resumeUrl + '?action=stop', now = $execution.resumeUrl + '?action=post'; return `<p><b>${c.spec.series}</b> · ${c.plan.format} · ${d.duration}s</p><p><b>${c.meta.title}</b><br>${c.meta.caption}</p><p>Sources: ${(c.meta.sources || []).join(' ') || 'none (evergreen tip)'}</p><p>The video is attached. It posts automatically at <b>${at}</b> unless you click Stop.</p><p><a href=\"${stop}\" style=\"background:#E05A47;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold\">Stop: don't post</a> &nbsp; <a href=\"${now}\" style=\"background:#1F7A8C;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold\">Post now</a></p>`; })() }}",
+    "options": {
+     "appendAttribution": false,
+     "attachmentsUi": {
+      "attachmentsBinary": [
+       {
+        "property": "data"
        }
-      }
-     ]
-    },
-    "additionalFields": {
-     "caption": "={{ (() => { const d = $('Render video').item.json; const c = $('Check script').first().json; const mins = c.timely ? c.plan.timelyWaitMinutes : c.plan.evergreenWaitMinutes; const at = new Date(Date.now() + mins * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: c.plan.timeZone }); return `${c.spec.series} · ${c.plan.format} · ${d.duration}s\\n\\n${c.meta.title}\\n\\n${c.meta.caption}\\n\\nSources: ${(c.meta.sources || []).join(' ') || 'none (evergreen)'}\\n\\nPosts automatically at ${at} unless you tap Stop.`; })() }}"
+      ]
+     }
     }
    },
-   "id": "3cb9bc0a-7c16-4312-8676-c83e61c23bfb",
-   "name": "Telegram: preview",
-   "type": "n8n-nodes-base.telegram",
-   "typeVersion": 1.2,
+   "id": "0e046276-1422-42ab-a789-90866fc8099c",
+   "name": "Email: preview",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
    "position": [
     3080,
     0
@@ -449,7 +435,7 @@
     "resumeUnit": "minutes",
     "options": {}
    },
-   "id": "76b98577-742c-45d5-b0ba-63f8779519f5",
+   "id": "9ab1c4a3-1389-4683-bf70-63b74b258c6f",
    "name": "Window to stop",
    "type": "n8n-nodes-base.wait",
    "typeVersion": 1.1,
@@ -457,7 +443,7 @@
     3300,
     0
    ],
-   "webhookId": "7d28162f-0650-40e1-b535-44a88049c87c"
+   "webhookId": "1c85a192-3283-4f1e-b21b-f289700cd107"
   },
   {
    "parameters": {
@@ -469,7 +455,7 @@
      },
      "conditions": [
       {
-       "id": "a7017728-f7f8-4dbc-90df-924d11d1f183",
+       "id": "239f5490-f83f-4364-8fd1-b812ebac8112",
        "leftValue": "={{ $json.query?.action === 'stop' }}",
        "rightValue": "",
        "operator": {
@@ -483,7 +469,7 @@
     },
     "options": {}
    },
-   "id": "7736d236-f74c-4ca2-96cd-08a7adc05e79",
+   "id": "9aa38068-6c77-4c2f-a3c6-3b100b65bbfe",
    "name": "Stopped?",
    "type": "n8n-nodes-base.if",
    "typeVersion": 2.2,
@@ -494,16 +480,18 @@
   },
   {
    "parameters": {
-    "chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "Stopped. That video was not posted.",
-    "additionalFields": {
+    "sendTo": "={{ $('Plan today').first().json.notifyEmail }}",
+    "subject": "TSW video stopped",
+    "emailType": "html",
+    "message": "<p>Stopped. That video was not posted.</p>",
+    "options": {
      "appendAttribution": false
     }
    },
-   "id": "fc282649-31ee-4546-9ed8-d2d11683f41d",
-   "name": "Telegram: cancelled",
-   "type": "n8n-nodes-base.telegram",
-   "typeVersion": 1.2,
+   "id": "a1a77d39-de9d-43fd-898a-86da7e4807cc",
+   "name": "Email: cancelled",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
    "position": [
     3740,
     -120
@@ -513,7 +501,7 @@
    "parameters": {
     "jsCode": "\nconst v = $('Download video').first();\nconst c = $('Check script').first().json;\nreturn [{ json: c, binary: v.binary }];\n"
    },
-   "id": "87a6cf79-8dc3-43a8-9242-7dff90d9afe3",
+   "id": "dfc4419f-5c1c-4ea2-9310-30e30feacd91",
    "name": "Restore video",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -583,7 +571,7 @@
      "timeout": 600000
     }
    },
-   "id": "7068e8f0-c96d-4663-9333-a8fc0710da71",
+   "id": "743e837e-9119-4841-85fd-3c540b974691",
    "name": "Post to socials",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -597,7 +585,7 @@
    "parameters": {
     "jsCode": "\nconst s = $getWorkflowStaticData('global');\nconst c = $('Check script').first().json;\ns.recent = [...(s.recent || []), c.meta.topic].slice(-60);\nreturn [{ json: { posted: true, topic: c.meta.topic, result: $json } }];\n"
    },
-   "id": "9fde937d-1512-4ade-bb17-1f6967190ff8",
+   "id": "472624ca-35d7-4bbe-8ea6-265cf5bfa4a2",
    "name": "Remember topic",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -608,16 +596,18 @@
   },
   {
    "parameters": {
-    "chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "={{ 'Posted: ' + $('Check script').first().json.meta.title }}",
-    "additionalFields": {
+    "sendTo": "={{ $('Plan today').first().json.notifyEmail }}",
+    "subject": "={{ 'TSW video posted: ' + $('Check script').first().json.meta.title }}",
+    "emailType": "html",
+    "message": "={{ '<p>Posted to ' + $('Plan today').first().json.uploadUser + ' accounts: ' + $('Check script').first().json.meta.title + '</p>' }}",
+    "options": {
      "appendAttribution": false
     }
    },
-   "id": "61a2efeb-0bfe-4be3-b195-1f3e9e308d4d",
-   "name": "Telegram: posted",
-   "type": "n8n-nodes-base.telegram",
-   "typeVersion": 1.2,
+   "id": "25a044da-38fd-40d6-8234-f63cf74f740c",
+   "name": "Email: posted",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
    "position": [
     4400,
     0
@@ -625,16 +615,18 @@
   },
   {
    "parameters": {
-    "chatId": "={{ $('Plan today').first().json.telegramChatId }}",
-    "text": "={{ 'TSW video problem, nothing posted: ' + JSON.stringify($json.error || $json).slice(0, 600) }}",
-    "additionalFields": {
+    "sendTo": "={{ $('Plan today').first().json.notifyEmail }}",
+    "subject": "TSW video problem: nothing posted",
+    "emailType": "html",
+    "message": "={{ '<p>Something went wrong, nothing was posted.</p><pre>' + JSON.stringify($json.error || $json).slice(0, 800) + '</pre>' }}",
+    "options": {
      "appendAttribution": false
     }
    },
-   "id": "2227f69f-d5e2-4568-842a-1b06cf7e7a40",
-   "name": "Telegram: problem",
-   "type": "n8n-nodes-base.telegram",
-   "typeVersion": 1.2,
+   "id": "172d2f86-b6d4-4bdc-a707-fd0e8f73b7df",
+   "name": "Email: problem",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
    "position": [
     3080,
     320
@@ -752,7 +744,7 @@
     ],
     [
      {
-      "node": "Telegram: needs you",
+      "node": "Email: needs you",
       "type": "main",
       "index": 0
      }
@@ -821,7 +813,7 @@
     ],
     [
      {
-      "node": "Telegram: problem",
+      "node": "Email: problem",
       "type": "main",
       "index": 0
      }
@@ -832,14 +824,14 @@
    "main": [
     [
      {
-      "node": "Telegram: preview",
+      "node": "Email: preview",
       "type": "main",
       "index": 0
      }
     ]
    ]
   },
-  "Telegram: preview": {
+  "Email: preview": {
    "main": [
     [
      {
@@ -865,7 +857,7 @@
    "main": [
     [
      {
-      "node": "Telegram: cancelled",
+      "node": "Email: cancelled",
       "type": "main",
       "index": 0
      }
@@ -901,7 +893,7 @@
     ],
     [
      {
-      "node": "Telegram: problem",
+      "node": "Email: problem",
       "type": "main",
       "index": 0
      }
@@ -912,7 +904,7 @@
    "main": [
     [
      {
-      "node": "Telegram: posted",
+      "node": "Email: posted",
       "type": "main",
       "index": 0
      }
