@@ -33,7 +33,11 @@ function run(cmd, args, { input } = {}) {
 export function completeSpec(spec, now = new Date()) {
   const s = structuredClone(spec);
   const launch = process.env.LAUNCH_DATE || "2026-11-21";
-  if (!s.cta || s.cta === "auto") s.cta = now.toISOString().slice(0, 10) >= launch ? "play" : "soon";
+  const today = now.toISOString().slice(0, 10);
+  if (!s.cta || s.cta === "auto") s.cta = today >= launch ? "play" : "soon";
+  // App Store: set IOS_DATE (YYYY-MM-DD) once the iPhone app is approved; until then it shows as "coming soon".
+  const ios = process.env.IOS_DATE;
+  if (s.ios === undefined) s.ios = !!ios && today >= ios && s.cta !== "soon";
   s.format = s.format === "quick" ? "quick" : "main";
   s.scenes = (s.scenes || []).filter((sc) => !["app", "outro", "endcard"].includes(sc.type));
   const seed = Number(s.seed ?? Math.floor(Math.random() * 1e6));
@@ -42,8 +46,10 @@ export function completeSpec(spec, now = new Date()) {
     const [say, caption] = APP_LINES[seed % APP_LINES.length];
     s.scenes.push({ type: "app", say, caption });
     s.scenes.push(s.cta === "soon"
-      ? { type: "outro", say: "Coming soon to Google Play. Use it free now, at travel safety watch dot com.", caption: "Coming soon to Google Play. Use it free now at travelsafetywatch.com", extra: 1.4 }
-      : { type: "outro", say: "Get it free on Google Play. Link in bio.", caption: "Get it free on Google Play. Link in bio.", extra: 1.4 });
+      ? { type: "outro", say: "Coming soon to Google Play and the App Store. Use it free now, at travel safety watch dot com.", caption: "Coming soon to Google Play and the App Store. Use it free now at travelsafetywatch.com", extra: 1.4 }
+      : s.ios
+        ? { type: "outro", say: "Get it free on Google Play and the App Store. Link in bio.", caption: "Get it free on Google Play and the App Store. Link in bio.", extra: 1.4 }
+        : { type: "outro", say: "Get it free on Google Play. App Store coming soon. Link in bio.", caption: "Get it free on Google Play. App Store coming soon. Link in bio.", extra: 1.4 });
   } else {
     s.scenes.push({ type: "endcard", say: "", hold: s.cta === "soon" ? 2.6 : 2.2 });
   }

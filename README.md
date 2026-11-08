@@ -96,3 +96,8 @@ Nothing, unless you want to look. Each video arrives by email first:
 - timely videos (Before You Fly, Travel Alert, The Week Ahead) post 2 hours later
 
 Click **Stop** if anything looks wrong. If a script fails the automatic checks (no source, fear words, wrong length), nothing is posted and you get an email saying why.
+
+## App Store
+End screens show Google Play and App Store side by side. Before LAUNCH_DATE both say "coming soon".
+After it, Google Play shows as live and the App Store as "coming soon" until you add
+`-e IOS_DATE=YYYY-MM-DD` (the day the iPhone app is approved) to the `docker run` command.

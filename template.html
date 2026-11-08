@@ -89,6 +89,14 @@ function pills(sc,list,top){let h='',y=top;(list||[]).forEach((p,i)=>{const at=w
   if(p.style==='note'){h+=`<div class="abs note" data-in="${at}" data-fx="up" style="left:60px;width:960px;top:${y}px">${esc(p.text)}</div>`;y+=90;}
   else{const cls=p.style==='teal'?'p-teal':p.style==='coral'?'p-coral':'p-light';const ic=p.icon?icon(p.icon,40,cls==='p-teal'?'#F6EFE3':cls==='p-coral'?'#0F2A3D':'#1F7A8C',2.2):'';
    h+=`<div class="abs" style="left:0;width:1080px;top:${y}px;display:flex;justify-content:center"><div class="pill ${cls}" data-in="${at}" data-fx="pop">${ic}<span class="fit">${esc(p.text)}</span></div></div>`;y+=120;}});return h;}
+// Store row: Google Play + App Store. SPEC.cta: soon = neither live, play = Google Play live; SPEC.ios = App Store live too.
+const PLAY_SVG='<svg width="40" height="40" viewBox="0 0 24 24"><path d="M5 3.5v17l14-8.5z" fill="#1F7A8C"/></svg>';
+const STORE_SVG='<svg width="40" height="40" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="#1F7A8C"/><path d="M9.6 6.5 15.8 17M14.4 6.5 8.2 17M6.5 14h11" stroke="#fff" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>';
+function stores(at,top){const soon=SPEC.cta==='soon',ios=!!SPEC.ios;
+ const label=soon?'Coming soon to':(ios?'Free on':'Free on Google Play · App Store coming soon');
+ const pill=(svg,t,dim)=>`<div class="pill p-light" data-in="${at}" data-fx="pop" style="font-size:40px${dim?';opacity:.7':''}">${svg}${t}</div>`;
+ return `<div class="abs" data-in="${at}" data-fx="up" style="left:0;width:1080px;top:${top}px;text-align:center;color:#CFE6E9;font:600 38px Inter">${label}</div>
+  <div class="abs" style="left:0;width:1080px;top:${top+64}px;display:flex;justify-content:center;gap:28px">${pill(PLAY_SVG,'Google Play')}${pill(STORE_SVG,'App Store',!soon&&!ios)}</div>`;}
 const B={
  hook(sc){let h='';
   if(sc.big) h+=`<div class="abs serif" data-in="0" data-fx="pop" style="left:80px;top:420px;color:#E2765A;font:700 400px/1 Fraunces">${esc(sc.big)}</div>`;
@@ -120,15 +128,15 @@ const B={
   <div class="abs pill p-coral" data-in="${wt(sc,'local',2.8)}" data-fx="pop" style="left:628px;top:500px;font-size:32px">Local news</div>
   <div class="abs" data-in=".1" data-fx="rise" style="left:250px;top:600px;width:580px;height:660px;border:6px solid #CFE6E9;border-radius:56px;overflow:hidden;background:#fff;box-shadow:0 30px 70px rgba(0,0,0,.35)">
    <img class="abs" src="assets/app1.png" style="left:0;top:0;width:568px"><img class="abs" data-in="${wt(sc,'advice',1.6)}" data-fx="fade" src="assets/app2.png" style="left:0;top:0;width:568px"></div>`;},
- outro(sc){const soon=SPEC.cta==='soon';return `<img class="abs" data-in="0" data-fx="pop" src="assets/icon.png" style="left:420px;top:470px;width:240px;height:240px;border-radius:54px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
-  <div class="abs" data-in=".15" data-fx="up" style="left:0;width:1080px;top:760px;text-align:center;color:#F6EFE3;font:600 76px Fraunces">Travel Safety Watch</div>
-  <div class="abs" style="left:0;width:1080px;top:880px;display:flex;justify-content:center"><div class="pill p-light" data-in="${wt(sc,'google',.6)}" data-fx="pop" style="font-size:40px"><svg width="40" height="40" viewBox="0 0 24 24"><path d="M5 3.5v17l14-8.5z" fill="#1F7A8C"/></svg>${soon?'Coming soon to Google Play':'Free on Google Play'}</div></div>
-  <div class="abs" data-in="${soon?wt(sc,'free',1.4):wt(sc,'link',1.4)}" data-fx="up" style="left:0;width:1080px;top:1000px;text-align:center;color:${soon?'#F6EFE3':'#CFE6E9'};font:${soon?'600 44px':'500 36px'} Inter">${soon?'Use it free now: travelsafetywatch.com':'also on the web: travelsafetywatch.com'}</div>
-  <div class="abs serif" data-in="${sc.dur-1.6}" data-fx="up" style="left:0;width:1080px;top:1120px;text-align:center;color:#E2765A;font:600 64px Fraunces">Travel informed</div>`;},
- endcard(sc){const soon=SPEC.cta==='soon';return `<img class="abs" data-in="0" data-fx="pop" src="assets/icon.png" style="left:420px;top:560px;width:240px;height:240px;border-radius:54px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
-  <div class="abs" data-in=".15" data-fx="up" style="left:0;width:1080px;top:850px;text-align:center;color:#F6EFE3;font:600 76px Fraunces">Travel Safety Watch</div>
-  <div class="abs" style="left:0;width:1080px;top:975px;display:flex;justify-content:center"><div class="pill p-light" data-in=".35" data-fx="pop" style="font-size:40px"><svg width="40" height="40" viewBox="0 0 24 24"><path d="M5 3.5v17l14-8.5z" fill="#1F7A8C"/></svg>${soon?'Coming soon to Google Play':'Free on Google Play'}</div></div>
-  ${soon?'<div class="abs" data-in=".6" data-fx="up" style="left:0;width:1080px;top:1100px;text-align:center;color:#CFE6E9;font:500 38px Inter">Use it free now: travelsafetywatch.com</div>':''}`;},
+ outro(sc){const soon=SPEC.cta==='soon';return `<img class="abs" data-in="0" data-fx="pop" src="assets/icon.png" style="left:420px;top:450px;width:240px;height:240px;border-radius:54px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
+  <div class="abs" data-in=".15" data-fx="up" style="left:0;width:1080px;top:730px;text-align:center;color:#F6EFE3;font:600 76px Fraunces">Travel Safety Watch</div>
+  ${stores(wt(sc,'google',.6),850)}
+  <div class="abs" data-in="${soon?wt(sc,'free',1.4):wt(sc,'link',1.4)}" data-fx="up" style="left:0;width:1080px;top:1060px;text-align:center;color:${soon?'#F6EFE3':'#CFE6E9'};font:${soon?'600 44px':'500 36px'} Inter">${soon?'Use it free now: travelsafetywatch.com':'also on the web: travelsafetywatch.com'}</div>
+  <div class="abs serif" data-in="${sc.dur-1.6}" data-fx="up" style="left:0;width:1080px;top:1160px;text-align:center;color:#E2765A;font:600 64px Fraunces">Travel informed</div>`;},
+ endcard(sc){const soon=SPEC.cta==='soon';return `<img class="abs" data-in="0" data-fx="pop" src="assets/icon.png" style="left:420px;top:520px;width:240px;height:240px;border-radius:54px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
+  <div class="abs" data-in=".15" data-fx="up" style="left:0;width:1080px;top:800px;text-align:center;color:#F6EFE3;font:600 76px Fraunces">Travel Safety Watch</div>
+  ${stores('.35',920)}
+  ${soon?'<div class="abs" data-in=".6" data-fx="up" style="left:0;width:1080px;top:1130px;text-align:center;color:#CFE6E9;font:500 38px Inter">Use it free now: travelsafetywatch.com</div>':''}`;},
 };
 
 function fitAll(root){root.querySelectorAll('.fith').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);const mh=parseFloat(el.style.maxHeight)||9999;while(el.scrollHeight>mh&&fs>34){fs-=4;el.style.fontSize=fs+'px';}});
