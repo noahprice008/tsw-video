@@ -12,7 +12,7 @@
      ]
     }
    },
-   "id": "8c0ee9ff-5faf-4906-bb58-049be62ca060",
+   "id": "679942a5-8034-43c9-b0d8-d8781bf93643",
    "name": "Main video 22:00",
    "type": "n8n-nodes-base.scheduleTrigger",
    "typeVersion": 1.2,
@@ -32,7 +32,7 @@
      ]
     }
    },
-   "id": "a72f2d0b-9362-4b4f-89bb-b8942fb2a7bf",
+   "id": "91bb5006-1985-4170-a375-f0b1c6f20cee",
    "name": "Quick video 02:00",
    "type": "n8n-nodes-base.scheduleTrigger",
    "typeVersion": 1.2,
@@ -46,7 +46,7 @@
     "assignments": {
      "assignments": [
       {
-       "id": "116e2760-efed-40f3-95ae-ee91954c6ec8",
+       "id": "f5ebc6ac-31fa-43d7-85db-2ec308064a35",
        "name": "format",
        "value": "main",
        "type": "string"
@@ -55,7 +55,7 @@
     },
     "options": {}
    },
-   "id": "f263f2fe-c160-44f0-917a-e6c1bd3d8a7d",
+   "id": "37871868-f9ba-46de-91f0-5c00b2b5e1db",
    "name": "Main",
    "type": "n8n-nodes-base.set",
    "typeVersion": 3.4,
@@ -69,7 +69,7 @@
     "assignments": {
      "assignments": [
       {
-       "id": "d32c625e-1213-4d63-b3ed-5f059dfb7175",
+       "id": "c5e3d9b7-df6c-42cd-80dd-ee725709d961",
        "name": "format",
        "value": "quick",
        "type": "string"
@@ -78,7 +78,7 @@
     },
     "options": {}
    },
-   "id": "23e547ee-42ee-466e-a0d4-25eb688d389e",
+   "id": "ae41b4ab-da45-4926-a044-981d86ee79dc",
    "name": "Quick",
    "type": "n8n-nodes-base.set",
    "typeVersion": 3.4,
@@ -91,7 +91,7 @@
    "parameters": {
     "jsCode": "\n// ===== SETTINGS: edit these =====\nconst S = {\n  notifyEmail: 'noah@elevex.digital',\n  renderUrl: 'http://tsw-video:8090',\n  uploadUser: 'default',\n  timelyWaitMinutes: 120,     // Before You Fly, alerts, Week Ahead: time to tap Stop\n  evergreenWaitMinutes: 10,   // tips, Did You Know?, stories\n  timeZone: 'Asia/Jerusalem',          // times shown in your emails\n  mainAudienceZone: 'Europe/London',     // main video (22:00 Israel = 20:00 UK): its day follows UK time\n  quickAudienceZone: 'America/New_York', // quick video (02:00 Israel = 19:00 New York): its day follows US time\n};\n// =================================\nconst format = $json.format;\nconst zone = format === 'main' ? S.mainAudienceZone : S.quickAudienceZone;\nconst day = new Date().toLocaleDateString('en-GB', { weekday: 'short', timeZone: zone });\nconst MAIN = { Mon: 'BEFORE YOU FLY', Tue: 'TRAVEL SMART', Wed: 'GLAD WE CHECKED', Thu: 'BEFORE YOU FLY', Fri: 'TRAVEL SMART', Sat: 'GLAD WE CHECKED', Sun: 'THE WEEK AHEAD' };\nconst QUICK = { Mon: 'DID YOU KNOW?', Tue: 'TRAVEL ALERT', Wed: 'TRAVEL SMART', Thu: 'DID YOU KNOW?', Fri: 'TRAVEL ALERT', Sat: 'DID YOU KNOW?', Sun: 'TRAVEL SMART' };\nconst series = (format === 'main' ? MAIN : QUICK)[day];\nconst kind = ['BEFORE YOU FLY', 'THE WEEK AHEAD', 'TRAVEL ALERT'].includes(series) ? 'timely' : series === 'GLAD WE CHECKED' ? 'story' : 'evergreen';\nreturn [{ json: { ...S, format, series, kind, day, date: new Date().toLocaleDateString('en-CA', { timeZone: zone }) } }];\n"
    },
-   "id": "9c6b172f-d3a5-4747-a480-7aef0f07d884",
+   "id": "c20c3086-2231-4075-88b6-d5a6647341c8",
    "name": "Plan today",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -139,7 +139,7 @@
     },
     "options": {}
    },
-   "id": "218eb7fb-0752-4694-b8d9-5870a964f4cd",
+   "id": "f4245c64-6a91-455b-973f-90d1be515851",
    "name": "TSW alerts (72h)",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -153,7 +153,7 @@
    "parameters": {
     "jsCode": "\nconst plan = $('Plan today').first().json;\nconst alerts = $input.all().map(i => i.json).filter(a => a && a.title).slice(0, 30).map(a => ({\n  place: a.regions?.name || '', category: a.category, severity: a.severity, title: a.title, summary: (a.summary || '').slice(0, 400),\n  authority: a.issuing_authority || '', url: a.primary_source_url || '', published: (a.published_at || '').slice(0, 10) }));\nconst recent = ($getWorkflowStaticData('global').recent || []).slice(-30);\n\nconst rules = `You write short vertical videos for Travel Safety Watch (TSW), a free app with official travel advice, weather and local news translated into plain English.\nAUDIENCE: independent travellers aged 18-35 from the UK, US, Canada and Australia, many of them women travelling solo or as couples. Speak to one person, like a calm, well-travelled friend.\nTODAY: ${plan.date}. FORMAT: ${plan.format} (${plan.format === 'main' ? '25-35 seconds' : '12-15 seconds'}). SERIES: ${plan.series}.\n\nSERIES GUIDE\n- BEFORE YOU FLY (main): one destination with something real happening in the alerts below (strike, storm, heat, protest, rule change). Hook \"Going to X this week?\". Say what is happening, where, when, and one practical thing to do. Name the source authority.\n- THE WEEK AHEAD (main): three places from the alerts below to keep an eye on this week, one list scene plus a closing practical tip.\n- TRAVEL ALERT (quick): one alert from the list below in one or two sentences, with the source.\n- TRAVEL SMART (main or quick): a practical, evergreen habit, scam to know, or solo-safety tip. Useful anywhere, widely known to be true.\n- DID YOU KNOW? (quick): a surprising, well-documented custom, rule or law travellers should know. Must be true today.\n- GLAD WE CHECKED (main): a short fictional mini-story told with stock footage. A traveller, couple or family hits a moment where locals know something they don't (language barrier), and the TSW app explains it in plain English. Never use a real current event or a real named place with an invented event; keep places generic (\"the station\", \"the old town\"). If danger is involved, the people move to safety first and read the app on the way; the narration says \"follow local authorities first\".\n\nFACTS (most important)\n- For BEFORE YOU FLY, THE WEEK AHEAD and TRAVEL ALERT use ONLY the alerts provided. Never invent places, dates, numbers or events. Put the URL(s) you used in \"sources\" (copied exactly from the list).\n- If no alert below is suitable for a calm, useful video, write a TRAVEL SMART video instead and set \"series\" to \"TRAVEL SMART\".\n- For evergreen series use only well-established facts. No statistics unless they are widely documented. When unsure, give advice instead of facts.\n- Never mention deaths, victims or attacks as the hook. Never use fear: no \"don't go\", \"deadly\", \"nightmare\", \"shocking\". No politics. No \"download now\".\n- Do not write the app scene or the ending: they are added automatically.\n\nOUTPUT: JSON only, with this shape:\n{\n \"series\": \"...\", \"format\": \"${plan.format}\",\n \"topic\": \"short-slug-of-the-topic\",\n \"title\": \"searchable YouTube title, max 80 characters, no emoji\",\n \"caption\": \"social caption, max 150 characters, then 3-5 hashtags\",\n \"sources\": [\"https://...\"],\n \"scenes\": [ ...${plan.format === 'main' ? '3 to 4' : '2'} scenes... ]\n}\nTotal spoken words across scenes: ${plan.format === 'main' ? '55-80' : '22-38'}.\n\nSCENE TYPES (every scene has \"type\" and \"say\"; optional \"caption\")\n- hook: {\"type\":\"hook\",\"headline\":\"max 40 chars\",\"big\":\"optional short number or word shown huge, e.g. 3\",\"icon\":\"optional icon\",\"pill\":{\"text\":\"max 28 chars\",\"icon\":\"...\",\"at\":\"word\"}}  Always the first scene.\n- point: {\"type\":\"point\",\"n\":\"optional 1/2/3 for numbered tips\",\"headline\":\"max 32 chars\",\"icon\":\"optional\",\"pills\":[{\"text\":\"max 30 chars\",\"icon\":\"optional\",\"style\":\"light|teal|coral|note\",\"at\":\"word\"}]}  max 2 pills.\n- number: {\"type\":\"number\",\"label\":\"max 28 chars, capitals\",\"value\":\"max 6 chars, e.g. 1992 or 112\",\"at\":\"word\",\"pills\":[...]}\n- place: {\"type\":\"place\",\"name\":\"place name\",\"country\":\"country\",\"level\":\"optional: avoid|reconsider|take_care|be_aware|clear (only if the alert says so)\",\"level_at\":\"word\",\"source\":\"Source: <authority> · as of <date>\",\"pills\":[...]}\n- list: {\"type\":\"list\",\"headline\":\"max 32 chars\",\"items\":[{\"name\":\"place\",\"tag\":\"max 26 chars\",\"level\":\"optional\",\"at\":\"word\"}]}  exactly 3 items.\n- stock (GLAD WE CHECKED only): {\"type\":\"stock\",\"stock_query\":\"2-4 English words for a stock video search, e.g. train station crowd\",\"headline\":\"optional max 40 chars\",\"phone\":{\"title\":\"max 32 chars, what the app shows\",\"text\":\"max 70 chars\",\"at\":\"word\"},\"pills\":[...]}\nICONS (use only these names): taxi, plane, hotel, phone, passport, shield, map, pin, check, clock, calendar, search, train, storm, sun, wave, fire, alert, money, bag, nowifi, pharmacy, globe, people, lock, camera, card, food, water, health, info, bus, compass\n- \"say\" is what the narrator speaks: write numbers as words when they could be misread (\"nine one one\", \"nineteen ninety two\"), and say web addresses as words.\n- \"caption\" is the on-screen text of the same words in British spelling with digits (\"911\", \"1992\"). Leave it out when identical to \"say\".\n- Every \"at\" must be ONE word that appears in that scene's caption (or say). It times the animation.\n- Keep each scene to 1-3 short sentences.\n\nAVOID REPEATING THESE RECENT TOPICS: ${recent.join(', ') || 'none yet'}\n\nALERTS FROM TSW (last 72 hours):\n${alerts.length ? JSON.stringify(alerts) : 'none'}`;\n\nreturn [{ json: { body: { contents: [{ role: 'user', parts: [{ text: rules }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.8 } }, alertUrls: alerts.map(a => a.url).filter(Boolean) } }];\n"
    },
-   "id": "4734fca5-2a33-492a-9cb9-20341965910c",
+   "id": "3966324a-29a0-48c0-a474-0da8db43f504",
    "name": "Write prompt",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -175,7 +175,7 @@
      "timeout": 90000
     }
    },
-   "id": "7a9e2fa6-b0e9-496b-88ec-095ffae0a1c5",
+   "id": "5ba3cab8-e81f-4275-8049-c9161f99659e",
    "name": "Gemini: write script",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -201,7 +201,7 @@
      "timeout": 90000
     }
    },
-   "id": "65626395-7af3-4cc6-8ffd-f3d5c8999884",
+   "id": "17363fbe-09e8-4f72-b274-3e3221289342",
    "name": "Gemini: backup model",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -218,7 +218,7 @@
    "parameters": {
     "jsCode": "\nconst plan = $('Plan today').first().json;\nconst alertUrls = $('Write prompt').first().json.alertUrls || [];\nconst ICONS = new Set(`taxi, plane, hotel, phone, passport, shield, map, pin, check, clock, calendar, search, train, storm, sun, wave, fire, alert, money, bag, nowifi, pharmacy, globe, people, lock, camera, card, food, water, health, info, bus, compass`.split(',').map(s => s.trim()));\nconst TYPES = new Set(['hook', 'point', 'number', 'place', 'list', 'stock']);\nconst problems = [];\nlet spec;\ntry {\n  const txt = $json.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';\n  spec = JSON.parse(txt.replace(/^```json\\s*|\\s*```$/g, ''));\n} catch (e) { return [{ json: { ok: false, problems: ['Gemini did not return valid JSON'], plan } }]; }\n\nspec.format = plan.format;\nconst timely = ['BEFORE YOU FLY', 'THE WEEK AHEAD', 'TRAVEL ALERT'].includes(spec.series);\nconst story = spec.series === 'GLAD WE CHECKED';\nif (!Array.isArray(spec.scenes) || spec.scenes.length < 2 || spec.scenes.length > 5) problems.push('wrong number of scenes');\nconst words = [];\nfor (const sc of spec.scenes || []) {\n  if (!TYPES.has(sc.type)) problems.push(`unknown scene type ${sc.type}`);\n  if (!sc.say || !String(sc.say).trim()) problems.push(`a ${sc.type} scene has nothing to say`);\n  if (sc.type === 'stock' && !story) sc.type = 'point';\n  if (sc.type === 'stock' && !sc.stock_query) problems.push('stock scene without stock_query');\n  if (sc.icon && !ICONS.has(sc.icon)) delete sc.icon;\n  if (sc.pill?.icon && !ICONS.has(sc.pill.icon)) delete sc.pill.icon;\n  if (Array.isArray(sc.pills)) { sc.pills = sc.pills.slice(0, 2); sc.pills.forEach(p => { if (p.icon && !ICONS.has(p.icon)) delete p.icon; }); }\n  const capWords = String(sc.caption || sc.say || '').toLowerCase().replace(/[^\\w'\\s]/g, ' ').split(/\\s+/);\n  const fixAt = o => { if (o && o.at && !capWords.includes(String(o.at).toLowerCase().replace(/[^\\w']/g, ''))) delete o.at; };\n  fixAt(sc); fixAt(sc.pill); fixAt(sc.phone); (sc.pills || []).forEach(fixAt); (sc.items || []).forEach(fixAt);\n  if (sc.level && !['avoid', 'reconsider', 'take_care', 'be_aware', 'clear'].includes(sc.level)) delete sc.level;\n  words.push(...String(sc.say || '').split(/\\s+/).filter(Boolean));\n}\nconst [lo, hi] = plan.format === 'main' ? [40, 95] : [16, 45];\nif (words.length < lo || words.length > hi) problems.push(`spoken length ${words.length} words (want ${lo}-${hi})`);\nconst all = JSON.stringify(spec).toLowerCase();\nconst banned = [\"don't go\", 'deadly', 'terrifying', 'horrifying', 'nightmare', 'shocking', 'download now', 'massacre', 'killed', 'slaughter'];\nfor (const b of banned) if (all.includes(b)) problems.push(`uses the word \"${b}\"`);\nif (timely) {\n  const srcs = (spec.sources || []).filter(u => alertUrls.includes(u));\n  if (!srcs.length) problems.push('timely video without a source from the TSW alerts');\n}\nif (!spec.title || spec.title.length > 100) problems.push('missing or long title');\nspec.title = String(spec.title || '').slice(0, 100);\nspec.caption = String(spec.caption || '').slice(0, 300);\nreturn [{ json: { ok: problems.length === 0, problems, plan, timely, story, spec: { format: spec.format, series: spec.series, cta: 'auto', scenes: spec.scenes }, meta: { title: spec.title, caption: spec.caption, sources: spec.sources || [], topic: spec.topic || spec.title } } }];\n"
    },
-   "id": "8c3d2f14-86e5-436b-815a-61f68df02d55",
+   "id": "091f818d-1235-4fde-8a82-ab69f39c41dc",
    "name": "Check script",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -237,7 +237,7 @@
      },
      "conditions": [
       {
-       "id": "b98d9425-45fd-4546-a25f-e4a3108a2602",
+       "id": "4a283949-a896-4175-bc04-b94b5f84d5eb",
        "leftValue": "={{ $json.ok }}",
        "rightValue": "",
        "operator": {
@@ -251,7 +251,7 @@
     },
     "options": {}
    },
-   "id": "623c4970-ca59-4b80-8189-58d86c0e6042",
+   "id": "2e212772-4edf-4586-88e5-3f913d764437",
    "name": "Script OK?",
    "type": "n8n-nodes-base.if",
    "typeVersion": 2.2,
@@ -270,7 +270,7 @@
      "appendAttribution": false
     }
    },
-   "id": "c2ca2484-c899-4f97-affa-92ef0da6d138",
+   "id": "b482d3b7-a15f-445e-8629-83c84b2cfee0",
    "name": "Email: needs you",
    "type": "n8n-nodes-base.gmail",
    "typeVersion": 2.1,
@@ -289,7 +289,7 @@
      },
      "conditions": [
       {
-       "id": "2145cc01-0af6-411c-b180-0fc2289bfb7d",
+       "id": "6be61dc4-61a9-4756-80be-3dfe19464234",
        "leftValue": "={{ $json.story && $json.spec.scenes.some(s => s.type === 'stock') }}",
        "rightValue": "",
        "operator": {
@@ -303,7 +303,7 @@
     },
     "options": {}
    },
-   "id": "2d7884a3-6bf3-4e99-a0e7-9edf87f275c1",
+   "id": "fac2f8be-86f1-42ac-b294-e35c5bb2aa3e",
    "name": "Story with clips?",
    "type": "n8n-nodes-base.if",
    "typeVersion": 2.2,
@@ -316,7 +316,7 @@
    "parameters": {
     "jsCode": "\nconst d = $('Check script').first().json;\nreturn d.spec.scenes.map((sc, i) => ({ i, sc })).filter(x => x.sc.type === 'stock').map(x => ({ json: { i: x.i, q: x.sc.stock_query } }));\n"
    },
-   "id": "ce32a684-d824-4552-923c-c8ebd9030169",
+   "id": "daf5dde7-f117-446d-a86b-ca855c52b89f",
    "name": "Stock queries",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -357,7 +357,7 @@
     },
     "options": {}
    },
-   "id": "66353190-3423-4abc-90af-8c4d7401c60b",
+   "id": "2d1fad7f-664f-4dd0-b3a9-f511386f3995",
    "name": "Pixabay search",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -371,7 +371,7 @@
    "parameters": {
     "jsCode": "\nconst d = JSON.parse(JSON.stringify($('Check script').first().json));\nconst qs = $('Stock queries').all().map(x => x.json);\n$input.all().forEach((res, k) => {\n  const hits = res.json.hits || [];\n  const pick = hits.find(h => h.videos?.medium?.url) || hits[0];\n  const url = pick?.videos?.medium?.url || pick?.videos?.small?.url;\n  const target = qs[k];\n  if (target && url) d.spec.scenes[target.i].clip_url = url;\n});\nreturn [{ json: d }];\n"
    },
-   "id": "f1880a50-00e3-4e83-ace7-ebcd51e7dbaf",
+   "id": "cc94bf9c-6c11-4a30-818a-1aa759178653",
    "name": "Attach clips",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -393,7 +393,7 @@
      "timeout": 900000
     }
    },
-   "id": "fcdd5c05-6f83-4a0e-8fc6-6beecdff0aa4",
+   "id": "97c15d00-ea77-4fb4-9960-f7ebdb909454",
    "name": "Render video",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -417,7 +417,7 @@
      }
     }
    },
-   "id": "837377e9-ce2c-4fba-a8d6-5651f80d07c5",
+   "id": "c5157b8c-5066-4fe1-9f60-b035cd5e0479",
    "name": "Download video",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -443,7 +443,7 @@
      }
     }
    },
-   "id": "1f3b7bed-c702-4af9-bbdf-5d2ddfef5906",
+   "id": "1ec69ee3-2062-4248-9b55-109a925dc89d",
    "name": "Email: preview",
    "type": "n8n-nodes-base.gmail",
    "typeVersion": 2.1,
@@ -462,7 +462,7 @@
     "resumeUnit": "minutes",
     "options": {}
    },
-   "id": "feaf5ce4-7be4-43a6-89ac-ff39511bc098",
+   "id": "9a750df6-d5a1-46e1-8f12-14c6bd021fd3",
    "name": "Window to stop",
    "type": "n8n-nodes-base.wait",
    "typeVersion": 1.1,
@@ -470,7 +470,7 @@
     3300,
     0
    ],
-   "webhookId": "855559e7-80aa-4ce7-a1e5-4bff8bfce6b5"
+   "webhookId": "3c4bacbd-fa91-4320-9f0a-57e9599dc12c"
   },
   {
    "parameters": {
@@ -482,7 +482,7 @@
      },
      "conditions": [
       {
-       "id": "32982224-81ef-4e07-a281-f901a90f53db",
+       "id": "4c0a63f8-695b-4e34-84af-992880d5aeaa",
        "leftValue": "={{ $json.query?.action === 'stop' }}",
        "rightValue": "",
        "operator": {
@@ -496,7 +496,7 @@
     },
     "options": {}
    },
-   "id": "55c58358-8f66-4a12-a520-01bdfa2ff42d",
+   "id": "e007425c-6933-4fb5-8d33-6112c3019049",
    "name": "Stopped?",
    "type": "n8n-nodes-base.if",
    "typeVersion": 2.2,
@@ -515,7 +515,7 @@
      "appendAttribution": false
     }
    },
-   "id": "c534edb0-d01f-43cb-b05e-9768f5087726",
+   "id": "9f8d57b4-fbb4-4b14-bda2-8289774dfc08",
    "name": "Email: cancelled",
    "type": "n8n-nodes-base.gmail",
    "typeVersion": 2.1,
@@ -538,7 +538,7 @@
      }
     }
    },
-   "id": "cad94548-7e03-4238-b845-c702fbf36982",
+   "id": "551dc22f-5a21-4a54-918a-dd32b40a869e",
    "name": "Download cover",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -551,7 +551,7 @@
    "parameters": {
     "jsCode": "\nconst v = $('Download video').first();\nconst c = $('Check script').first().json;\nreturn [{ json: c, binary: { ...v.binary, ...$input.first().binary } }];  // video in \"data\", cover in \"cover\"\n"
    },
-   "id": "ac9bd024-4b56-478f-9c8b-712432b9166a",
+   "id": "3e694c94-3187-407f-9cc3-25820f0f3805",
    "name": "Restore video",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -612,6 +612,11 @@
       },
       {
        "parameterType": "formData",
+       "name": "publicStatsViewable",
+       "value": "false"
+      },
+      {
+       "parameterType": "formData",
        "name": "instagram_title",
        "value": "={{ $json.meta.caption }}"
       },
@@ -651,7 +656,7 @@
      "timeout": 600000
     }
    },
-   "id": "1231cda0-d4d4-4066-a050-74ce824e5c48",
+   "id": "1a353bcf-3afd-4de2-a76b-ba837a030428",
    "name": "Post to socials",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
@@ -665,7 +670,7 @@
    "parameters": {
     "jsCode": "\nconst s = $getWorkflowStaticData('global');\nconst c = $('Check script').first().json;\ns.recent = [...(s.recent || []), c.meta.topic].slice(-60);\nreturn [{ json: { posted: true, topic: c.meta.topic, result: $json } }];\n"
    },
-   "id": "724436f6-b579-4799-8cea-026de60d0b94",
+   "id": "05c2b0b4-f49e-410a-b9e9-6a1fc71ee15e",
    "name": "Remember topic",
    "type": "n8n-nodes-base.code",
    "typeVersion": 2,
@@ -684,7 +689,7 @@
      "appendAttribution": false
     }
    },
-   "id": "7fcdcce7-2a3c-4f32-ba2d-853b4a459cb9",
+   "id": "dfce26dd-4b25-41e2-a35f-ef1c7737d539",
    "name": "Email: posted",
    "type": "n8n-nodes-base.gmail",
    "typeVersion": 2.1,
@@ -703,7 +708,7 @@
      "appendAttribution": false
     }
    },
-   "id": "57b2f3fe-64f6-47d6-87b8-eabc343d6cb2",
+   "id": "e5e4f223-a00a-47e6-b784-9ccfdd2b01b5",
    "name": "Email: problem",
    "type": "n8n-nodes-base.gmail",
    "typeVersion": 2.1,
