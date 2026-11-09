@@ -34,6 +34,7 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
  <div id="tag" class="abs"></div><div id="tagline" class="abs"></div>
  <div id="scenes"></div>
  <div id="cap" class="abs"></div>
+ <div id="cover" class="abs" style="left:0;top:0;width:1080px;height:1920px;display:none"></div>
 </div>
 <script>
 // ---------- icons (24x24 line icons) ----------
@@ -145,16 +146,36 @@ function fitAll(root){root.querySelectorAll('.fith').forEach(el=>{let fs=parseFl
 window.setSpec=async spec=>{SPEC=spec;const root=document.getElementById('scenes');
  document.getElementById('tag').textContent=spec.series||'';
  root.innerHTML=spec.scenes.map((sc,i)=>`<div class="scene" id="sc${i}">${(B[sc.type]||B.point)(sc)}</div>`).join('');
- await document.fonts.ready;spec.scenes.forEach((sc,i)=>{const el=document.getElementById('sc'+i);el.style.display='block';fitAll(el);el.style.display='none';});
+ const cv=document.getElementById('cover');cv.innerHTML=coverHTML(spec);
+ await document.fonts.ready;cv.style.display='block';fitAll(cv);cv.style.display='none';spec.scenes.forEach((sc,i)=>{const el=document.getElementById('sc'+i);el.style.display='block';fitAll(el);el.style.display='none';});
  await Promise.all([...document.images].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));};
 
+
+// Cover: a still title card used as the thumbnail (YouTube, Instagram) and as the first frames (Facebook, TikTok).
+// Key content sits between y=400 and y=1500 so it survives the 4:5 grid crop and the platforms' bottom overlays.
+function coverHTML(spec){const first=spec.scenes[0]||{};const c=spec.cover||{};
+ const title=c.title||spec.cover_title||first.headline||first.name||spec.title||'Travel informed';
+ const big=c.big!==undefined?c.big:(first.type==='hook'?first.big:'');const ic=c.icon||(first.type==='hook'||first.type==='point'?first.icon:'')||'compass';
+ let h=`<div class="abs" style="left:0;width:1080px;top:420px;text-align:center;font:600 34px Inter;letter-spacing:10px;color:#E2765A">${esc(spec.series||'')}</div>
+  <div class="abs" style="left:495px;top:478px;width:90px;height:4px;background:#E2765A;border-radius:2px"></div>`;
+ h+=big?`<div class="abs serif" style="left:0;width:1080px;top:540px;text-align:center;color:#E2765A;font:700 300px/1 Fraunces">${esc(big)}</div>`
+   :`<div class="abs" style="left:0;width:1080px;top:560px;display:flex;justify-content:center">${icon(ic,240,'#F6EFE3',1.6)}</div>`;
+ h+=`<div class="abs serif fith" style="left:80px;width:920px;top:${big?880:840}px;text-align:center;color:#F6EFE3;font:600 108px/1.04 Fraunces;max-height:390px">${esc(title)}</div>
+  <div class="abs" style="left:0;width:1080px;top:1410px;display:flex;justify-content:center;align-items:center;gap:22px">
+   <img src="assets/icon.png" style="width:96px;height:96px;border-radius:24px;box-shadow:0 12px 30px rgba(0,0,0,.35)">
+   <div><div style="color:#F6EFE3;font:600 46px Fraunces">Travel Safety Watch</div><div style="color:#E2765A;font:600 28px Inter;letter-spacing:4px;margin-top:4px">TRAVEL INFORMED</div></div></div>`;
+ return h;}
+window.renderCover=()=>{document.querySelectorAll('.scene').forEach(e=>e.style.display='none');
+ document.getElementById('stage').className='solid';document.getElementById('rings').style.display='block';rings(2.5);
+ ['tag','tagline','cap'].forEach(id=>document.getElementById(id).style.opacity=0);document.getElementById('cap').innerHTML='';
+ const cv=document.getElementById('cover');cv.style.display='block';};
 function rings(T){let h='';for(let i=0;i<9;i++){const r=140+i*120+((T*18)%120);const o=.28*(1-(r-140)/1100);h+=`<circle cx="900" cy="1560" r="${r}" fill="none" stroke="#1F7A8C" stroke-width="2" opacity="${Math.max(0,o).toFixed(3)}"/>`;}document.getElementById('rings').innerHTML=h;}
 function captions(sc,t){const cap=document.getElementById('cap');const ws=sc.words||[];if(!ws.length||sc.type==='endcard'){cap.innerHTML='';return;}
  const chunks=[];let cur=[];ws.forEach((w,i)=>{cur.push(i);if(cur.length>=5||/[.?!:]$/.test(w[0])){chunks.push(cur);cur=[];}});if(cur.length)chunks.push(cur);
  let a=-1;ws.forEach((w,i)=>{if(t>=w[1])a=i;});if(a<0){cap.innerHTML='';return;}
  const ch=chunks.find(c=>c.includes(a));cap.innerHTML=ch.map(i=>`<span class="${i===a?'on':(i<a?'':'off')}">${esc(ws[i][0])}</span>`).join(' ');}
 
-window.render=(idx,t,T)=>{const sc=SPEC.scenes[idx];document.querySelectorAll('.scene').forEach(e=>e.style.display='none');
+window.render=(idx,t,T)=>{const sc=SPEC.scenes[idx];document.querySelectorAll('.scene').forEach(e=>e.style.display='none');document.getElementById('cover').style.display='none';
  const el=document.getElementById('sc'+idx);el.style.display='block';
  const stock=sc.type==='stock';document.getElementById('stage').className=stock?'overlay':'solid';
  document.getElementById('rings').style.display=stock?'none':'block';if(!stock)rings(T);

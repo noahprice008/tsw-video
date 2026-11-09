@@ -101,3 +101,8 @@ Click **Stop** if anything looks wrong. If a script fails the automatic checks (
 End screens show Google Play and App Store side by side. Before LAUNCH_DATE both say "coming soon".
 After it, Google Play shows as live and the App Store as "coming soon" until you add
 `-e IOS_DATE=YYYY-MM-DD` (the day the iPhone app is approved) to the `docker run` command.
+
+## Covers
+Every render also writes a cover image (`/files/<id>-cover.jpg`): series label, big number or icon, the hook headline and the TSW logo.
+The workflow sends it as the YouTube thumbnail and the Instagram cover. The same card is the first 0.1 s of the video,
+because Facebook (and TikTok, with `cover_timestamp=0`) use the first frame as the cover.

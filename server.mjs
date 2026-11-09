@@ -1,6 +1,7 @@
 // Small private web service used by n8n.
 //   POST /render   body: video spec JSON      -> { id, duration, cta, file: "/files/<id>.mp4" }
 //   GET  /files/<id>.mp4                        -> the video
+//   GET  /files/<id>-cover.jpg                  -> its cover image (thumbnail)
 //   GET  /health                                -> ok
 // Every request needs the header  X-Render-Key: <RENDER_KEY>  (except /health).
 import http from "node:http";
@@ -43,8 +44,9 @@ http.createServer(async (req, res) => {
     if (req.method === "GET" && req.url.startsWith("/files/")) {
       const name = path.basename(req.url.split("?")[0]);
       const file = path.join(OUT, name);
-      if (!/^[\w-]+\.mp4$/.test(name) || !fs.existsSync(file)) return send(res, 404, { error: "not found" });
-      res.writeHead(200, { "Content-Type": "video/mp4", "Content-Length": fs.statSync(file).size });
+      const m = /^[\w-]+\.(mp4|jpg)$/.exec(name);
+      if (!m || !fs.existsSync(file)) return send(res, 404, { error: "not found" });
+      res.writeHead(200, { "Content-Type": m[1] === "mp4" ? "video/mp4" : "image/jpeg", "Content-Length": fs.statSync(file).size });
       return fs.createReadStream(file).pipe(res);
     }
 
@@ -65,7 +67,7 @@ http.createServer(async (req, res) => {
       busy = job.catch(() => {});
       const r = await job;
       cleanup().catch(() => {});
-      return send(res, 200, { id, duration: r.duration, cta: r.cta, scenes: r.scenes, file: `/files/${id}.mp4` });
+      return send(res, 200, { id, duration: r.duration, cta: r.cta, scenes: r.scenes, file: `/files/${id}.mp4`, cover: `/files/${id}-cover.jpg` });
     }
     send(res, 404, { error: "not found" });
   } catch (e) {

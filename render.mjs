@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FPS = 30;
+const COVER_FRAMES = 3; // 0.1 s of the cover card at the very start (Facebook/TikTok use frame 0 as the cover)
 const PY = process.env.PYTHON || "python3";
 
 const APP_LINES = [
@@ -93,6 +94,11 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
     await page.goto("file://" + path.join(HERE, "template.html"));
     await page.evaluate((s) => window.setSpec(s), spec);
+    // cover image (thumbnail) + the same card as the first frames, so platforms that use frame 0 show it
+    await page.evaluate(() => window.renderCover());
+    const coverJpg = await page.screenshot({ type: "jpeg", quality: 90 });
+    const coverPng = await page.screenshot({ type: "png" }); // opaque, for a first scene drawn over a stock clip
+    await fs.writeFile(outFile.replace(/\.mp4$/, "-cover.jpg"), coverJpg);
     let T0 = 0;
     for (let i = 0; i < spec.scenes.length; i++) {
       const sc = spec.scenes[i];
@@ -110,8 +116,12 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
       const done = new Promise((r) => ff.on("close", r));
       for (let f = 0; f < n; f++) {
         const t = f / FPS;
-        await page.evaluate(([i, t, T]) => window.render(i, t, T), [i, t, T0 + t]);
-        const buf = stock ? await page.screenshot({ type: "png", omitBackground: true }) : await page.screenshot({ type: "jpeg", quality: 92 });
+        let buf;
+        if (i === 0 && f < COVER_FRAMES) buf = stock ? coverPng : coverJpg;
+        else {
+          await page.evaluate(([i, t, T]) => window.render(i, t, T), [i, t, T0 + t]);
+          buf = stock ? await page.screenshot({ type: "png", omitBackground: true }) : await page.screenshot({ type: "jpeg", quality: 92 });
+        }
         if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once("drain", r));
       }
       ff.stdin.end();
@@ -134,5 +144,5 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
     "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", "-f", "mp4", tmpOut]);
   await fs.rename(tmpOut, outFile);
   const duration = spec.scenes.reduce((a, s) => a + s.dur, 0);
-  return { file: outFile, duration: Math.round(duration * 10) / 10, cta: spec.cta, scenes: spec.scenes.length };
+  return { file: outFile, cover: outFile.replace(/\.mp4$/, "-cover.jpg"), duration: Math.round(duration * 10) / 10, cta: spec.cta, scenes: spec.scenes.length };
 }
