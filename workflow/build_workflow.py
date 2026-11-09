@@ -166,7 +166,7 @@ PREVIEW_HTML = r"""={{ (() => { const d = $('Render video').item.json; const c =
 RESTORE = r"""
 const v = $('Download video').first();
 const c = $('Check script').first().json;
-return [{ json: c, binary: v.binary }];
+return [{ json: c, binary: { ...v.binary, ...$input.first().binary } }];  // video in "data", cover in "cover"
 """
 
 REMEMBER = r"""
@@ -241,9 +241,16 @@ node("Window to stop", "n8n-nodes-base.wait", {
     "resumeUnit": "minutes", "options": {}}, [3300, 0], 1.1, webhookId=str(uuid.uuid4()))
 ifnode("Stopped?", "={{ $json.query?.action === 'stop' }}", [3520, 0])
 mail("Email: cancelled", "TSW video stopped", "<p>Stopped. That video was not posted.</p>", [3740, -120])
-node("Restore video", "n8n-nodes-base.code", {"jsCode": RESTORE}, [3740, 100], 2)
+node("Download cover", "n8n-nodes-base.httpRequest", {
+    "url": "={{ $('Plan today').first().json.renderUrl + $('Render video').first().json.cover }}",
+    "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
+    "options": {"response": {"response": {"responseFormat": "file", "outputPropertyName": "cover"}}}}, [3740, 100], 4.2)
+node("Restore video", "n8n-nodes-base.code", {"jsCode": RESTORE}, [3960, 100], 2)
 upload_params = [{"parameterType": "formData", "name": "user", "value": "={{ $json.plan.uploadUser }}"},
     {"parameterType": "formBinaryData", "name": "video", "inputDataFieldName": "data"},
+    {"parameterType": "formBinaryData", "name": "thumbnail", "inputDataFieldName": "cover"},     # YouTube
+    {"parameterType": "formBinaryData", "name": "cover_image", "inputDataFieldName": "cover"},   # Instagram
+    {"parameterType": "formData", "name": "cover_timestamp", "value": "0"},                      # TikTok: first frame is the cover
     {"parameterType": "formData", "name": "title", "value": "={{ $json.meta.title }}"},
     {"parameterType": "formData", "name": "youtube_title", "value": "={{ $json.meta.title }}"},
     {"parameterType": "formData", "name": "youtube_description", "value": "={{ $json.meta.caption + '\\n\\nFree travel safety alerts: https://travelsafetywatch.com' + (($json.meta.sources||[]).length ? '\\nSource: ' + $json.meta.sources.join(' ') : '') }}"},
@@ -257,9 +264,9 @@ node("Post to socials", "n8n-nodes-base.httpRequest", {
     "method": "POST", "url": "https://api.upload-post.com/api/upload",
     "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
     "sendBody": True, "contentType": "multipart-form-data", "bodyParameters": {"parameters": upload_params},
-    "options": {"timeout": 600000}}, [3960, 100], 4.2, onError="continueErrorOutput")
-node("Remember topic", "n8n-nodes-base.code", {"jsCode": REMEMBER}, [4180, 0], 2)
-mail("Email: posted", "={{ 'TSW video posted: ' + $('Check script').first().json.meta.title }}", "={{ '<p>Posted to ' + $('Plan today').first().json.uploadUser + ' accounts: ' + $('Check script').first().json.meta.title + '</p>' }}", [4400, 0])
+    "options": {"timeout": 600000}}, [4180, 100], 4.2, onError="continueErrorOutput")
+node("Remember topic", "n8n-nodes-base.code", {"jsCode": REMEMBER}, [4400, 0], 2)
+mail("Email: posted", "={{ 'TSW video posted: ' + $('Check script').first().json.meta.title }}", "={{ '<p>Posted to ' + $('Plan today').first().json.uploadUser + ' accounts: ' + $('Check script').first().json.meta.title + '</p>' }}", [4620, 0])
 mail("Email: problem", "TSW video problem: nothing posted", "={{ '<p>Something went wrong, nothing was posted.</p><pre>' + JSON.stringify($json.error || $json).slice(0, 800) + '</pre>' }}", [3080, 320])
 
 link("Main video 22:00", "Main"); link("Quick video 02:00", "Quick")
@@ -273,7 +280,7 @@ link("Story with clips?", "Stock queries", 0); link("Story with clips?", "Render
 link("Stock queries", "Pixabay search"); link("Pixabay search", "Attach clips"); link("Attach clips", "Render video")
 link("Render video", "Download video", 0); link("Render video", "Email: problem", 1)
 link("Download video", "Email: preview"); link("Email: preview", "Window to stop"); link("Window to stop", "Stopped?")
-link("Stopped?", "Email: cancelled", 0); link("Stopped?", "Restore video", 1)
+link("Stopped?", "Email: cancelled", 0); link("Stopped?", "Download cover", 1); link("Download cover", "Restore video")
 link("Restore video", "Post to socials"); link("Post to socials", "Remember topic", 0); link("Post to socials", "Email: problem", 1)
 link("Remember topic", "Email: posted")
 
