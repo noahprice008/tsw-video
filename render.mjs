@@ -8,6 +8,11 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FPS = 30;
+// Sharpness: draw each frame at SCALE x resolution, then shrink it to 1080x1920 (supersampling = crisper text and edges).
+// SCALE=1 gives the old fast behaviour; set env RENDER_SCALE=1 on the server if rendering ever gets too slow.
+const SCALE = Number(process.env.RENDER_SCALE || 2);
+const CRF = process.env.RENDER_CRF || "17";
+const PRESET = process.env.RENDER_PRESET || "medium";
 const COVER_FRAMES = 3; // 0.1 s of the cover card at the very start (Facebook/TikTok use frame 0 as the cover)
 const PY = process.env.PYTHON || "python3";
 
@@ -91,14 +96,15 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
   // 3. frames -> one encoded file per scene
   const browser = await chromium.launch();
   try {
-    const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
+    const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: SCALE });
     await page.goto("file://" + path.join(HERE, "template.html"));
     await page.evaluate((s) => window.setSpec(s), spec);
     // cover image (thumbnail) + the same card as the first frames, so platforms that use frame 0 show it
     await page.evaluate(() => window.renderCover());
-    const coverJpg = await page.screenshot({ type: "jpeg", quality: 90 });
+    const coverJpg = await page.screenshot({ type: "jpeg", quality: 95 });
     const coverPng = await page.screenshot({ type: "png" }); // opaque, for a first scene drawn over a stock clip
-    await fs.writeFile(outFile.replace(/\.mp4$/, "-cover.jpg"), coverJpg);
+    // the thumbnail file stays 1080x1920 (small upload); the frames above are at SCALE x for the video
+    await fs.writeFile(outFile.replace(/\.mp4$/, "-cover.jpg"), await page.screenshot({ type: "jpeg", quality: 92, scale: "css" }));
     let T0 = 0;
     for (let i = 0; i < spec.scenes.length; i++) {
       const sc = spec.scenes[i];
@@ -107,10 +113,10 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
       const stock = sc.type === "stock";
       const args = stock
         ? ["-loglevel", "error", "-y", "-stream_loop", "-1", "-i", sc._clip, "-f", "image2pipe", "-framerate", String(FPS), "-c:v", "png", "-i", "-",
-           "-filter_complex", `[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=${FPS},trim=duration=${(n / FPS).toFixed(3)},setpts=PTS-STARTPTS[bg];[bg][1:v]overlay=shortest=1,format=yuv420p[v]`,
-           "-map", "[v]", "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p", "-r", String(FPS), "-f", "mp4", tmp]
+           "-filter_complex", `[0:v]scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,fps=${FPS},trim=duration=${(n / FPS).toFixed(3)},setpts=PTS-STARTPTS[bg];[1:v]scale=1080:1920:flags=lanczos[fg];[bg][fg]overlay=shortest=1,format=yuv420p[v]`,
+           "-map", "[v]", "-an", "-c:v", "libx264", "-preset", PRESET, "-crf", CRF, "-pix_fmt", "yuv420p", "-r", String(FPS), "-f", "mp4", tmp]
         : ["-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", String(FPS), "-c:v", "mjpeg", "-i", "-",
-           "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p", "-r", String(FPS), "-f", "mp4", tmp];
+           "-vf", "scale=1080:1920:flags=lanczos", "-c:v", "libx264", "-preset", PRESET, "-crf", CRF, "-tune", "animation", "-pix_fmt", "yuv420p", "-r", String(FPS), "-f", "mp4", tmp];
       const ff = spawn("ffmpeg", args, { stdio: ["pipe", "ignore", "pipe"] });
       let ferr = ""; ff.stderr.on("data", (d) => (ferr += d));
       const done = new Promise((r) => ff.on("close", r));
@@ -120,7 +126,7 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
         if (i === 0 && f < COVER_FRAMES) buf = stock ? coverPng : coverJpg;
         else {
           await page.evaluate(([i, t, T]) => window.render(i, t, T), [i, t, T0 + t]);
-          buf = stock ? await page.screenshot({ type: "png", omitBackground: true }) : await page.screenshot({ type: "jpeg", quality: 92 });
+          buf = stock ? await page.screenshot({ type: "png", omitBackground: true }) : await page.screenshot({ type: "jpeg", quality: 95 });
         }
         if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once("drain", r));
       }
@@ -141,7 +147,7 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "mix.wav"), "-af", "loudnorm=I=-14:TP=-1.5:LRA=7", "-ar", "48000", path.join(workDir, "mix14.wav")]);
   const tmpOut = outFile.replace(/\.mp4$/, ".tmp.mp4");
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "video_only.mp4"), "-i", path.join(workDir, "mix14.wav"),
-    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", "-f", "mp4", tmpOut]);
+    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", "-f", "mp4", tmpOut]);
   await fs.rename(tmpOut, outFile);
   const duration = spec.scenes.reduce((a, s) => a + s.dur, 0);
   return { file: outFile, cover: outFile.replace(/\.mp4$/, "-cover.jpg"), duration: Math.round(duration * 10) / 10, cta: spec.cta, scenes: spec.scenes.length };
