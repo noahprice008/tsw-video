@@ -18,7 +18,7 @@ const CRF = process.env.RENDER_CRF || "17";
 const PRESET = process.env.RENDER_PRESET || "medium";
 const PY = process.env.PYTHON || "python3";
 const END_SECONDS = 2.6;
-const SCREEN = { x: 240, y: 350, w: 600, h: 1300 }; // the phone screen hole in freeapps.html
+const SCREEN = { x: 200, y: 330, w: 680, h: 1470 }; // the phone screen hole in freeapps.html
 
 function run(cmd, args) {
   return new Promise((resolve, reject) => {
@@ -65,7 +65,7 @@ async function runStep(page, st, warnings, idx) {
 
 // Records one scene of a live app as a CFR mp4 at 2x size. Returns { file, icon }.
 async function captureScene(browser, sc, dir, i, warnings, log) {
-  const [vw, vh] = sc.viewport || [430, 932];
+  const [vw, vh] = sc.viewport || [360, 778];
   const DSF = 2;
   const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, deviceScaleFactor: DSF, isMobile: true, hasTouch: true, colorScheme: sc.colorScheme || "light" });
   if (sc.localStorage) await ctx.addInitScript((kv) => { for (const k in kv) try { localStorage.setItem(k, kv[k]); } catch {} }, sc.localStorage);
