@@ -10,6 +10,7 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 import { render } from "./render.mjs";
+import { renderFreeApps } from "./freeapps.mjs";
 
 const PORT = Number(process.env.PORT || 8090);
 const KEY = process.env.RENDER_KEY || "";
@@ -59,7 +60,7 @@ http.createServer(async (req, res) => {
       const job = busy.then(async () => {
         const workDir = path.join(WORK, id);
         const started = Date.now();
-        const r = await render(spec, { workDir, outFile: path.join(OUT, `${id}.mp4`), log: (m) => console.log(id, m) });
+        const r = await (spec.format === "freeapps" ? renderFreeApps : render)(spec, { workDir, outFile: path.join(OUT, `${id}.mp4`), log: (m) => console.log(id, m) });
         await fsp.rm(workDir, { recursive: true, force: true });
         console.log(id, `done in ${Math.round((Date.now() - started) / 1000)}s`);
         return r;
@@ -67,7 +68,7 @@ http.createServer(async (req, res) => {
       busy = job.catch(() => {});
       const r = await job;
       cleanup().catch(() => {});
-      return send(res, 200, { id, duration: r.duration, cta: r.cta, scenes: r.scenes, file: `/files/${id}.mp4`, cover: `/files/${id}-cover.jpg` });
+      return send(res, 200, { id, duration: r.duration, cta: r.cta, scenes: r.scenes, warnings: r.warnings, file: `/files/${id}.mp4`, cover: `/files/${id}-cover.jpg` });
     }
     send(res, 404, { error: "not found" });
   } catch (e) {

@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/600.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/700.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/800.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/900.css">
+<style>
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transparent}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Inter,sans-serif}
+.abs{position:absolute}
+#bg{inset:0}
+.head{left:70px;width:940px;top:64px;text-align:center;color:#fff;font:800 86px/1.04 Inter;letter-spacing:-2px;text-shadow:0 6px 28px rgba(0,0,0,.45)}
+.head em{font-style:normal;color:var(--accent)}
+.pillTop{left:0;width:1080px;top:272px;display:flex;justify-content:center}
+.pillTop span{font:700 30px Inter;color:#fff;border:3px solid rgba(255,255,255,.85);border-radius:40px;padding:6px 26px;background:rgba(0,0,0,.28)}
+/* phone: screen hole is exactly 600x1300 at (240,350) */
+.bezel{left:222px;top:332px;width:636px;height:1336px;box-sizing:border-box;border:18px solid #0a0a0f;border-radius:82px;box-shadow:0 0 0 3px rgba(255,255,255,.14),0 40px 90px rgba(0,0,0,.55)}
+.notch{left:420px;top:362px;width:240px;height:34px;border-radius:20px;background:#0a0a0f}
+.sticker{left:64px;top:1500px;transform:rotate(-6deg);text-align:center}
+.sticker .a{background:#ff3b6b;color:#fff;font:900 96px/1 Inter;padding:18px 54px 40px;border-radius:30px;box-shadow:0 14px 30px rgba(0,0,0,.4);letter-spacing:2px}
+.sticker .b{background:#fff;color:#111;font:800 44px/1 Inter;padding:16px 40px;border-radius:30px;margin:-34px 18px 0;position:relative;box-shadow:0 8px 18px rgba(0,0,0,.3)}
+/* end card */
+.icon{left:420px;top:380px;width:240px;height:240px;border-radius:56px;box-shadow:0 20px 50px rgba(0,0,0,.45);object-fit:cover}
+.iconfb{left:420px;top:380px;width:240px;height:240px;border-radius:56px;background:var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.ename{left:0;width:1080px;top:660px;text-align:center;color:#fff;font:800 92px/1 Inter;letter-spacing:-2px}
+.eline{left:0;width:1080px;top:786px;text-align:center;color:var(--accent);font:800 64px/1 Inter}
+.eurl{left:0;width:1080px;top:900px;display:flex;justify-content:center}
+.eurl span{background:#fff;color:#0b0b12;font:800 56px/1 Inter;padding:26px 52px;border-radius:70px}
+.efree{left:0;width:1080px;top:1048px;text-align:center;color:#fff;font:700 50px/1 Inter}
+.badges{left:0;width:1080px;top:1150px;display:flex;justify-content:center;gap:28px}
+.badge{border:3px solid rgba(255,255,255,.7);border-radius:22px;background:#000;color:#fff;padding:18px 38px;text-align:center;font:800 44px/1.05 Inter}
+.badge small{display:block;font:700 26px Inter;color:#f5b041;letter-spacing:1px;margin-top:4px}
+.enote{left:0;width:1080px;top:1340px;text-align:center;color:rgba(255,255,255,.9);font:600 40px/1 Inter}
+</style></head><body>
+<div id="stage"><div id="root"></div></div>
+<script>
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const hl=s=>esc(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
+// layer: 'bg' | 'front' | 'end-bg' | 'end'
+window.draw=(layer,d)=>{
+  const st=document.getElementById('stage'), root=document.getElementById('root');
+  st.style.setProperty('--accent',d.accent||'#F5A623');
+  const base=d.bg||'#0b1424', acc=d.accent||'#F5A623';
+  document.body.style.background='transparent';
+  if(layer==='bg'||layer==='end-bg'){
+    const cy=layer==='bg'?'58%':'44%';
+    root.innerHTML=`<div id="bg" class="abs" style="background:radial-gradient(900px 900px at 50% ${cy},${acc}33 0%,transparent 70%),radial-gradient(1400px 1400px at 50% 40%,${base} 0%,#05070d 100%)"></div>`;
+    document.body.style.background=base;
+  } else if(layer==='front'){
+    root.innerHTML=`<div class="abs head">${hl(d.headline)}</div>`+
+      (d.pill?`<div class="abs pillTop"><span>${esc(d.pill)}</span></div>`:'')+
+      `<div class="abs bezel"></div>`+
+      (d.sticker?`<div class="abs sticker"><div class="a">FREE</div><div class="b">NO SIGN-UP</div></div>`:'');
+  } else if(layer==='end'){
+    const e=d.end||{};
+    const soon=e.badges!=='live';
+    root.innerHTML=
+      (e.icon?`<img class="abs icon" src="${e.icon}">`:`<div class="abs iconfb"></div>`)+
+      `<div class="abs ename">${esc(e.name)}</div><div class="abs eline">${esc(e.line||'Play free now')}</div>`+
+      `<div class="abs eurl"><span>${esc(e.url)}</span></div><div class="abs efree">Free · No sign-up</div>`+
+      `<div class="abs badges"><div class="badge">Google Play<small>${soon?'COMING SOON':'GET IT NOW'}</small></div><div class="badge">App Store<small>${soon?'COMING SOON':'GET IT NOW'}</small></div></div>`+
+      `<div class="abs enote">${esc(e.note||'Use it free on the web today')}</div>`;
+  }
+};
+</script></body></html>
