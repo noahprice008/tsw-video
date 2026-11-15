@@ -99,6 +99,9 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: SCALE });
     await page.goto("file://" + path.join(HERE, "template.html"));
     await page.evaluate((s) => window.setSpec(s), spec);
+    // Never render (or post) a video with text running off the frame: fail loudly so n8n emails the problem instead.
+    const layout = await page.evaluate(() => window.__layoutProblems || []);
+    if (layout.length) throw new Error("layout check failed: " + layout.join("; "));
     // cover image (thumbnail) + the same card as the first frames, so platforms that use frame 0 show it
     await page.evaluate(() => window.renderCover());
     const coverJpg = await page.screenshot({ type: "jpeg", quality: 95 });

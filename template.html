@@ -16,6 +16,8 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 #tagline{left:80px;top:300px;width:90px;height:4px;background:#E2765A;border-radius:2px}
 .scene{position:absolute;inset:0;display:none}
 .serif{font-family:Fraunces,serif}
+.fitw{white-space:nowrap}
+.row>div:first-child{flex:1;min-width:0}
 .badge{left:80px;top:380px;width:120px;height:120px;border-radius:60px;background:#E2765A;color:#0F2A3D;font:700 68px Fraunces;display:flex;align-items:center;justify-content:center}
 .head{left:80px;width:860px;color:#F6EFE3;font:600 84px/1.06 Fraunces}
 .pill{border-radius:40px;padding:18px 34px;font:600 36px Inter;display:inline-flex;align-items:center;gap:14px;box-sizing:border-box;max-width:920px}
@@ -100,7 +102,7 @@ function stores(at,top){const soon=SPEC.cta==='soon',ios=!!SPEC.ios;
   <div class="abs" style="left:0;width:1080px;top:${top+64}px;display:flex;justify-content:center;gap:28px">${pill(PLAY_SVG,'Google Play')}${pill(STORE_SVG,'App Store',!soon&&!ios)}</div>`;}
 const B={
  hook(sc){let h='';
-  if(sc.big) h+=`<div class="abs serif" data-in="0" data-fx="pop" style="left:80px;top:420px;color:#E2765A;font:700 400px/1 Fraunces">${esc(sc.big)}</div>`;
+  if(sc.big) h+=`<div class="abs serif fitw" data-in="0" data-fx="pop" style="left:80px;width:860px;top:420px;color:#E2765A;font:700 400px/1 Fraunces" data-min="90">${esc(sc.big)}</div>`;
   else if(sc.icon) h+=`<div class="abs" data-in="0" data-fx="pop" style="left:80px;top:470px">${icon(sc.icon,320,'#F6EFE3',1.6)}</div>`;
   h+=`<div class="abs head fith" data-in=".25" data-fx="up" style="top:860px;font-size:96px;max-height:250px">${esc(sc.headline)}</div>`;
   if(sc.pill) h+=`<div class="abs pill p-teal" data-in="${wt(sc,sc.pill.at,1.6)}" data-fx="up" style="left:80px;top:1140px">${sc.pill.icon?icon(sc.pill.icon,40,'#F6EFE3',2.2):''}${esc(sc.pill.text)}</div>`;
@@ -110,14 +112,14 @@ const B={
   h+=`<div class="abs head fith" data-in="0" data-fx="up" style="top:395px;${hasN?'left:230px;width:720px;':''}font-size:64px;max-height:150px">${esc(sc.headline)}</div>`;
   if(sc.icon) h+=`<div class="abs" data-in=".15" data-fx="pop" style="left:390px;top:590px">${icon(sc.icon,300,'#CFE6E9',1.5)}</div>`;
   return h+pills(sc,sc.pills,sc.icon?950:620);},
- number(sc){return `<div class="abs" data-in="0" data-fx="up" style="left:0;width:1080px;top:470px;text-align:center;color:#CFE6E9;font:600 40px Inter;letter-spacing:5px">${esc(sc.label||'')}</div>
-  <div class="abs serif" data-in="${wt(sc,sc.at,.2)}" data-fx="pop" style="left:0;width:1080px;top:540px;text-align:center;color:#E2765A;font:700 260px/1 Fraunces">${esc(sc.value)}</div>`+pills(sc,sc.pills,880);},
- place(sc){return `<div class="abs serif fith" data-in="0" data-fx="up" style="left:80px;width:920px;top:470px;color:#F6EFE3;font:600 120px/1.05 Fraunces;max-height:260px">${esc(sc.name)}</div>
+ number(sc){return `<div class="abs fitw" data-min="24" data-in="0" data-fx="up" style="left:80px;width:860px;top:470px;text-align:center;color:#CFE6E9;font:600 40px Inter;letter-spacing:5px">${esc(sc.label||'')}</div>
+  <div class="abs serif fitw" data-min="90" data-in="${wt(sc,sc.at,.2)}" data-fx="pop" style="left:80px;width:860px;top:540px;text-align:center;color:#E2765A;font:700 260px/1 Fraunces">${esc(sc.value)}</div>`+pills(sc,sc.pills,880);},
+ place(sc){return `<div class="abs serif fith" data-in="0" data-fx="up" style="left:80px;width:860px;top:470px;color:#F6EFE3;font:600 120px/1.05 Fraunces;max-height:260px">${esc(sc.name)}</div>
   <div class="abs" data-in=".2" data-fx="up" style="left:84px;top:${sc.country?650:600}px;color:#CFE6E9;font:500 40px Inter">${esc(sc.country||'')}</div>
   ${sc.level?`<div class="abs" data-in="${wt(sc,sc.level_at,.6)}" data-fx="pop" style="left:80px;top:730px">${lvlChip(sc.level)}</div>`:''}
   <div class="abs" data-in="${wt(sc,sc.level_at,.6)+.3}" data-fx="up" style="left:84px;top:820px;color:#9FC3CA;font:500 30px Inter">${esc(sc.source||'')}</div>`+pills(sc,sc.pills,920);},
  list(sc){let h=`<div class="abs head fith" data-in="0" data-fx="up" style="top:395px;font-size:64px;max-height:150px">${esc(sc.headline)}</div>`;
-  (sc.items||[]).slice(0,3).forEach((it,i)=>{h+=`<div class="abs row" data-in="${wt(sc,it.at,.8+i*1.4)}" data-fx="up" style="top:${580+i*190}px"><div><div class="n">${esc(it.name)}</div><div class="t">${esc(it.tag||'')}</div></div>${it.level?lvlChip(it.level):''}</div>`;});return h;},
+  (sc.items||[]).slice(0,3).forEach((it,i)=>{h+=`<div class="abs row" data-in="${wt(sc,it.at,.8+i*1.4)}" data-fx="up" style="top:${580+i*190}px"><div><div class="n fitw" data-min="30">${esc(it.name)}</div><div class="t fitw" data-min="20">${esc(it.tag||'')}</div></div>${it.level?lvlChip(it.level):''}</div>`;});return h;},
  stock(sc){let h='';if(sc.headline) h+=`<div class="abs head fith" data-in=".2" data-fx="up" style="top:395px;font-size:72px;max-height:250px;text-shadow:0 6px 24px rgba(0,0,0,.5)">${esc(sc.headline)}</div>`;
   if(sc.phone) h+=`<div class="abs" data-in="${wt(sc,sc.phone.at,1)}" data-fx="pop" style="left:290px;top:560px;width:500px;border-radius:40px;background:#F6EFE3;padding:30px 34px;box-sizing:border-box;box-shadow:0 30px 70px rgba(0,0,0,.5)">
    <div style="display:flex;align-items:center;gap:14px;font:700 30px Inter;color:#0F2A3D"><img src="assets/icon.png" style="width:56px;height:56px;border-radius:14px">Travel Safety Watch</div>
@@ -140,15 +142,35 @@ const B={
   ${soon?'<div class="abs" data-in=".6" data-fx="up" style="left:0;width:1080px;top:1130px;text-align:center;color:#CFE6E9;font:500 38px Inter">Use it free now: travelsafetywatch.com</div>':''}`;},
 };
 
-function fitAll(root){root.querySelectorAll('.fith').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);const mh=parseFloat(el.style.maxHeight)||9999;while(el.scrollHeight>mh&&fs>34){fs-=4;el.style.fontSize=fs+'px';}});
+// Fit text to its box in BOTH directions (a long single word used to run off the side because only height was checked).
+function fitAll(root){
+ root.querySelectorAll('.fith').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);const mh=parseFloat(el.style.maxHeight)||9999;
+  const over=()=>el.scrollHeight>mh||el.scrollWidth>el.clientWidth+1;while(over()&&fs>30){fs-=2;el.style.fontSize=fs+'px';}});
+ root.querySelectorAll('.fitw').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);const min=parseFloat(el.dataset.min)||24;
+  while(el.scrollWidth>el.clientWidth+1&&fs>min){fs-=2;el.style.fontSize=fs+'px';}});
  root.querySelectorAll('.pill').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(el.scrollWidth>el.clientWidth+1&&fs>24){fs-=2;el.style.fontSize=fs+'px';}});}
+
+// Safety net: after fitting, list any text that still runs outside the 1080x1920 frame (or is clipped inside its box).
+// render.mjs refuses to render a video if this list is not empty, so a cut-off headline can never be posted.
+function layoutProblems(root,label){const bad=[];const FR={l:40,r:1040,t:0,b:1920};
+ root.querySelectorAll('[data-in]').forEach(n=>{n.style.transform='none';n.style.opacity=1;});
+ root.querySelectorAll('*').forEach(el=>{
+  if(!([...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())))return;
+  const r=document.createRange();r.selectNodeContents(el);const b=r.getBoundingClientRect();if(!b.width)return;
+  const txt=el.textContent.trim().slice(0,40);
+  if(b.left<FR.l-1||b.right>FR.r+1||b.top<FR.t||b.bottom>FR.b)bad.push(`${label}: "${txt}" runs off the frame`);
+  else if(el.scrollWidth>el.clientWidth+1&&getComputedStyle(el).display!=='inline')bad.push(`${label}: "${txt}" is wider than its box`);});
+ return bad;}
 
 window.setSpec=async spec=>{SPEC=spec;const root=document.getElementById('scenes');
  document.getElementById('tag').textContent=spec.series||'';
  root.innerHTML=spec.scenes.map((sc,i)=>`<div class="scene" id="sc${i}">${(B[sc.type]||B.point)(sc)}</div>`).join('');
  const cv=document.getElementById('cover');cv.innerHTML=coverHTML(spec);
- await document.fonts.ready;cv.style.display='block';fitAll(cv);cv.style.display='none';spec.scenes.forEach((sc,i)=>{const el=document.getElementById('sc'+i);el.style.display='block';fitAll(el);el.style.display='none';});
- await Promise.all([...document.images].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));};
+ await Promise.all(['600 100px Fraunces','700 100px Fraunces','500 30px Inter','600 30px Inter','700 30px Inter'].map(f=>document.fonts.load(f,'Aa0')));await document.fonts.ready; // fonts load lazily: without this, text was measured in a narrower fallback font
+ await Promise.all([...document.images].map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;})));
+ window.__layoutProblems=[];
+ cv.style.display='block';fitAll(cv);window.__layoutProblems.push(...layoutProblems(cv,'cover'));cv.style.display='none';
+ spec.scenes.forEach((sc,i)=>{const el=document.getElementById('sc'+i);el.style.display='block';fitAll(el);window.__layoutProblems.push(...layoutProblems(el,`scene ${i+1} (${sc.type})`));el.style.display='none';});};
 
 
 // Cover: a still title card used as the thumbnail (YouTube, Instagram) and as the first frames (Facebook, TikTok).
@@ -158,9 +180,9 @@ function coverHTML(spec){const first=spec.scenes[0]||{};const c=spec.cover||{};
  const big=c.big!==undefined?c.big:(first.type==='hook'?first.big:'');const ic=c.icon||(first.type==='hook'||first.type==='point'?first.icon:'')||'compass';
  let h=`<div class="abs" style="left:0;width:1080px;top:420px;text-align:center;font:600 34px Inter;letter-spacing:10px;color:#E2765A">${esc(spec.series||'')}</div>
   <div class="abs" style="left:495px;top:478px;width:90px;height:4px;background:#E2765A;border-radius:2px"></div>`;
- h+=big?`<div class="abs serif" style="left:0;width:1080px;top:540px;text-align:center;color:#E2765A;font:700 300px/1 Fraunces">${esc(big)}</div>`
+ h+=big?`<div class="abs serif fitw" data-min="90" style="left:80px;width:860px;top:540px;text-align:center;color:#E2765A;font:700 300px/1 Fraunces">${esc(big)}</div>`
    :`<div class="abs" style="left:0;width:1080px;top:560px;display:flex;justify-content:center">${icon(ic,240,'#F6EFE3',1.6)}</div>`;
- h+=`<div class="abs serif fith" style="left:80px;width:920px;top:${big?880:840}px;text-align:center;color:#F6EFE3;font:600 108px/1.04 Fraunces;max-height:390px">${esc(title)}</div>
+ h+=`<div class="abs serif fith" style="left:80px;width:860px;top:${big?880:840}px;text-align:center;color:#F6EFE3;font:600 108px/1.04 Fraunces;max-height:390px">${esc(title)}</div>
   <div class="abs" style="left:0;width:1080px;top:1410px;display:flex;justify-content:center;align-items:center;gap:22px">
    <img src="assets/icon.png" style="width:96px;height:96px;border-radius:24px;box-shadow:0 12px 30px rgba(0,0,0,.35)">
    <div><div style="color:#F6EFE3;font:600 46px Fraunces">Travel Safety Watch</div><div style="color:#E2765A;font:600 28px Inter;letter-spacing:4px;margin-top:4px">TRAVEL INFORMED</div></div></div>`;
