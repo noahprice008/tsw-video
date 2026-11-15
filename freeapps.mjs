@@ -145,8 +145,13 @@ export async function renderFreeApps(spec, { workDir, outFile, log = () => {} })
     // 2. static layers (background, phone frame + text, end card) from the design page
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 2 });
     await page.goto("file://" + path.join(HERE, "freeapps.html"));
+    // fonts load lazily: load them before measuring, or text is fitted using a narrower fallback font
+    await page.evaluate(() => Promise.all(["400 30px Inter", "600 30px Inter", "700 30px Inter", "800 90px Inter", "900 96px Inter"].map((f) => document.fonts.load(f, "Aa0"))));
     const shot = async (layer, data, file, alpha) => {
       await page.evaluate(([l, d]) => window.draw(l, d), [layer, data]);
+      // never render (or post) a card with text running off the frame: fail loudly so n8n emails the problem instead
+      const bad = await page.evaluate(() => window.__problems || []);
+      if (bad.length) throw new Error(`layout check failed (${layer}): ` + bad.join("; "));
       await page.waitForTimeout(150);
       await page.screenshot({ path: file, type: "png", omitBackground: !!alpha, scale: "device" });
     };
