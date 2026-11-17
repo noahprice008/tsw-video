@@ -21,6 +21,15 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .sticker{left:24px;top:1650px;transform:rotate(-6deg) scale(.62);transform-origin:left top;text-align:center}
 .sticker .a{background:#ff3b6b;color:#fff;font:900 96px/1 Inter;padding:18px 54px 40px;border-radius:30px;box-shadow:0 14px 30px rgba(0,0,0,.4);letter-spacing:2px}
 .sticker .b{background:#fff;color:#111;font:800 44px/1 Inter;padding:16px 40px;border-radius:30px;margin:-34px 18px 0;position:relative;box-shadow:0 8px 18px rgba(0,0,0,.3)}
+.hkbg{inset:0}
+.hkwrap{left:60px;width:960px;top:300px;height:1000px;display:flex;align-items:center;justify-content:center}
+.hkhead{width:960px;text-align:center;color:#fff;font:900 148px/1.0 Inter;letter-spacing:-5px;text-shadow:0 10px 0 rgba(0,0,0,.28),0 14px 40px rgba(0,0,0,.45)}
+.hkhead em{font-style:normal;color:#FFE14D}
+.hkbadge{left:0;width:1080px;top:1380px;display:flex;justify-content:center;gap:22px}
+.hkbadge span{background:#fff;color:#111;font:900 50px/1 Inter;padding:24px 44px;border-radius:60px;box-shadow:0 12px 0 rgba(0,0,0,.25)}
+.hkbadge span.b{background:#111;color:#fff}
+.hkapp{left:0;width:1080px;top:1560px;display:flex;justify-content:center;align-items:center;gap:22px;color:#fff;font:800 56px Inter;text-shadow:0 4px 20px rgba(0,0,0,.5)}
+.hkapp img{width:120px;height:120px;border-radius:30px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 /* end card */
 .icon{left:420px;top:380px;width:240px;height:240px;border-radius:56px;box-shadow:0 20px 50px rgba(0,0,0,.45);object-fit:cover}
 .iconfb{left:420px;top:380px;width:240px;height:240px;border-radius:56px;background:var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.45)}
@@ -53,6 +62,12 @@ window.draw=(layer,d)=>{
       (d.pill?`<div class="abs pillTop"><span>${esc(d.pill)}</span></div>`:'')+
       `<div class="abs bezel"></div>`+
       (d.sticker?`<div class="abs sticker"><div class="a">FREE</div><div class="b">NO SIGN-UP</div></div>`:'');
+  } else if(layer==='hook'){
+    const bgimg=d.bg?`linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.05) 40%,rgba(0,0,0,.55)),url('${d.bg}') center/cover`:'';
+    const g=bgimg||`radial-gradient(900px 900px at 80% 15%,#ff3b8d 0%,transparent 60%),radial-gradient(1000px 1000px at 10% 90%,${acc} 0%,transparent 65%),linear-gradient(160deg,#6a2cff,#ff3b8d)`;
+    root.innerHTML=`<div class="abs hkbg" style="background:${g}"></div><div class="abs hkwrap"><div class="hkhead" id="hkhead">${hl(d.headline)}</div></div>`+
+      `<div class="abs hkbadge"><span>FREE</span><span class="b">NO SIGN-UP</span></div>`+
+      (d.app?`<div class="abs hkapp">${d.icon?`<img src="${d.icon}">`:''}<span>${esc(d.app)}</span></div>`:'');
   } else if(layer==='end'){
     const e=d.end||{};
     const soon=e.badges!=='live';
@@ -70,6 +85,8 @@ window.draw=(layer,d)=>{
 function fit(root){
   const head=root.querySelector('#fhead');
   if(head){let fs=parseFloat(getComputedStyle(head).fontSize);const over=()=>head.scrollHeight>184||head.scrollWidth>head.clientWidth+1;while(over()&&fs>40){fs-=2;head.style.fontSize=fs+'px';}}
+  const hk=root.querySelector('#hkhead');
+  if(hk){let fs=parseFloat(getComputedStyle(hk).fontSize);const over=()=>hk.scrollHeight>940||hk.scrollWidth>hk.clientWidth+1;while(over()&&fs>56){fs-=4;hk.style.fontSize=fs+'px';}}
   const tw=el=>{const r=document.createRange();r.selectNodeContents(el);return r.getBoundingClientRect().width;};
   root.querySelectorAll('.fa').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(tw(el)>940&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});
   root.querySelectorAll('.fa2').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(el.getBoundingClientRect().width>940&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});

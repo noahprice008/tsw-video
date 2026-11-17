@@ -28,14 +28,18 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .lvl i{width:16px;height:16px;border-radius:8px;background:currentColor;display:inline-block}
 .row{left:90px;width:900px;height:160px;border-radius:28px;background:rgba(246,239,227,.08);border:2px solid rgba(207,230,233,.25);box-sizing:border-box;padding:0 34px;display:flex;align-items:center;justify-content:space-between}
 .row .n{color:#F6EFE3;font:600 54px Fraunces}.row .t{color:#CFE6E9;font:500 30px Inter;margin-top:6px}
-#cap{left:80px;top:1290px;width:860px;text-align:center;font:700 60px/1.22 Inter;color:#F6EFE3;text-shadow:0 4px 18px rgba(0,0,0,.45)}
-#cap .on{color:#E2765A}#cap .off{opacity:.55}
+#cap{left:70px;top:1305px;width:880px;text-align:center;font:800 68px/1.18 Inter;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.35),0 8px 26px rgba(0,0,0,.6);-webkit-text-stroke:2px rgba(8,20,30,.55);paint-order:stroke fill}
+#cap span{display:inline-block;margin:0 13px}
+#cap .on{color:#FFD166;-webkit-text-stroke:2px rgba(60,30,0,.6)}#cap .off{opacity:.5}
+#flash{left:0;top:0;width:1080px;height:1920px;background:#fff;opacity:0;pointer-events:none}
+#prog{left:0;top:0;height:10px;background:linear-gradient(90deg,#E2765A,#FFD166);width:0}
 </style></head><body>
 <div id="stage" class="solid">
  <svg id="rings" class="abs" width="1080" height="1920" style="left:0;top:0"></svg>
  <div id="tag" class="abs"></div><div id="tagline" class="abs"></div>
  <div id="scenes"></div>
  <div id="cap" class="abs"></div>
+ <div id="flash" class="abs"></div><div id="prog" class="abs"></div>
  <div id="cover" class="abs" style="left:0;top:0;width:1080px;height:1920px;display:none"></div>
 </div>
 <script>
@@ -104,8 +108,10 @@ const B={
  hook(sc){let h='';
   if(sc.big) h+=`<div class="abs serif fitw" data-in="0" data-fx="pop" style="left:80px;width:860px;top:420px;color:#E2765A;font:700 400px/1 Fraunces" data-min="90">${esc(sc.big)}</div>`;
   else if(sc.icon) h+=`<div class="abs" data-in="0" data-fx="pop" style="left:80px;top:470px">${icon(sc.icon,320,'#F6EFE3',1.6)}</div>`;
-  h+=`<div class="abs head fith" data-in=".25" data-fx="up" style="top:860px;font-size:96px;max-height:250px">${esc(sc.headline)}</div>`;
-  if(sc.pill) h+=`<div class="abs pill p-teal" data-in="${wt(sc,sc.pill.at,1.6)}" data-fx="up" style="left:80px;top:1140px">${sc.pill.icon?icon(sc.pill.icon,40,'#F6EFE3',2.2):''}${esc(sc.pill.text)}</div>`;
+  const V=(SPEC&&SPEC.variant)||0, hy=V===1?420:V===2?700:860; // layout variants so the profile grid never looks identical
+  if(V===1&&(sc.big||sc.icon)) h=h.replace(/top:(420|470)px/,'top:900px');
+  h+=`<div class="abs head fith" data-in=".25" data-fx="up" style="top:${hy}px;font-size:${V?108:96}px;max-height:${V?330:250}px;${sc._clip?'text-shadow:0 8px 30px rgba(0,0,0,.7);':''}${V===2?'text-align:center;left:60px;width:960px;':''}">${esc(sc.headline)}</div>`;
+  if(sc.pill) h+=`<div class="abs pill p-coral" data-in="${wt(sc,sc.pill.at,1.0)}" data-fx="up" style="left:${V===2?190:80}px;top:${V===1?hy+360:V===2?1060:1140}px">${sc.pill.icon?icon(sc.pill.icon,40,'#0F2A3D',2.2):''}${esc(sc.pill.text)}</div>`;
   return h;},
  point(sc){let h='';const hasN=sc.n!=null&&sc.n!=='';
   if(hasN) h+=`<div class="abs badge" data-in="0" data-fx="pop">${esc(sc.n)}</div>`;
@@ -162,7 +168,7 @@ function layoutProblems(root,label){const bad=[];const FR={l:40,r:1040,t:0,b:192
   else if(el.scrollWidth>el.clientWidth+1&&getComputedStyle(el).display!=='inline')bad.push(`${label}: "${txt}" is wider than its box`);});
  return bad;}
 
-window.setSpec=async spec=>{SPEC=spec;const root=document.getElementById('scenes');
+window.setSpec=async spec=>{SPEC=spec;SPEC.total=spec.scenes.reduce((a,sc)=>a+(sc.dur||0),0);SPEC.variant=Number.isFinite(+spec.variant)?+spec.variant%3:(Number(spec.seed)||0)%3;const root=document.getElementById('scenes');
  document.getElementById('tag').textContent=spec.series||'';
  root.innerHTML=spec.scenes.map((sc,i)=>`<div class="scene" id="sc${i}">${(B[sc.type]||B.point)(sc)}</div>`).join('');
  const cv=document.getElementById('cover');cv.innerHTML=coverHTML(spec);
@@ -176,10 +182,12 @@ window.setSpec=async spec=>{SPEC=spec;const root=document.getElementById('scenes
 // Cover: a still title card used as the thumbnail (YouTube, Instagram) and as the first frames (Facebook, TikTok).
 // Key content sits between y=400 and y=1500 so it survives the 4:5 grid crop and the platforms' bottom overlays.
 function coverHTML(spec){const first=spec.scenes[0]||{};const c=spec.cover||{};
+ const photo=c.bg?`<div class="abs" style="inset:0;background:linear-gradient(180deg,rgba(8,22,34,.55) 0%,rgba(8,22,34,.15) 35%,rgba(8,22,34,.35) 62%,rgba(8,22,34,.88) 100%),url('${c.bg}') center/cover"></div>`:'';
  const title=c.title||spec.cover_title||first.headline||first.name||spec.title||'Travel informed';
  const big=c.big!==undefined?c.big:(first.type==='hook'?first.big:'');const ic=c.icon||(first.type==='hook'||first.type==='point'?first.icon:'')||'compass';
  let h=`<div class="abs" style="left:0;width:1080px;top:420px;text-align:center;font:600 34px Inter;letter-spacing:10px;color:#E2765A">${esc(spec.series||'')}</div>
   <div class="abs" style="left:495px;top:478px;width:90px;height:4px;background:#E2765A;border-radius:2px"></div>`;
+ if(photo)h=photo+h;
  h+=big?`<div class="abs serif fitw" data-min="90" style="left:80px;width:860px;top:540px;text-align:center;color:#E2765A;font:700 300px/1 Fraunces">${esc(big)}</div>`
    :`<div class="abs" style="left:0;width:1080px;top:560px;display:flex;justify-content:center">${icon(ic,240,'#F6EFE3',1.6)}</div>`;
  h+=`<div class="abs serif fith" style="left:80px;width:860px;top:${big?880:840}px;text-align:center;color:#F6EFE3;font:600 108px/1.04 Fraunces;max-height:390px">${esc(title)}</div>
@@ -195,11 +203,16 @@ function rings(T){let h='';for(let i=0;i<9;i++){const r=140+i*120+((T*18)%120);c
 function captions(sc,t){const cap=document.getElementById('cap');const ws=sc.words||[];if(!ws.length||sc.type==='endcard'){cap.innerHTML='';return;}
  const chunks=[];let cur=[];ws.forEach((w,i)=>{cur.push(i);if(cur.length>=5||/[.?!:]$/.test(w[0])){chunks.push(cur);cur=[];}});if(cur.length)chunks.push(cur);
  let a=-1;ws.forEach((w,i)=>{if(t>=w[1])a=i;});if(a<0){cap.innerHTML='';return;}
- const ch=chunks.find(c=>c.includes(a));cap.innerHTML=ch.map(i=>`<span class="${i===a?'on':(i<a?'':'off')}">${esc(ws[i][0])}</span>`).join(' ');}
+ const ch=chunks.find(c=>c.includes(a));const age=t-ws[a][1],k=clamp(age/.14);const pop=1+.28*Math.pow(1-k,2); // active word pops in
+ cap.innerHTML=ch.map(i=>`<span class="${i===a?'on':(i<a?'':'off')}"${i===a?` style="transform:scale(${pop.toFixed(3)})"`:''}>${esc(ws[i][0])}</span>`).join(' ');}
 
 window.render=(idx,t,T)=>{const sc=SPEC.scenes[idx];document.querySelectorAll('.scene').forEach(e=>e.style.display='none');document.getElementById('cover').style.display='none';
  const el=document.getElementById('sc'+idx);el.style.display='block';
- const stock=sc.type==='stock';document.getElementById('stage').className=stock?'overlay':'solid';
+ const stock=sc.type==='stock'||!!sc._clip;document.getElementById('stage').className=stock?'overlay':'solid';
+ const zk=ease(t/.4);document.getElementById('scenes').style.transform=`scale(${(1.07-.07*zk).toFixed(4)})`;document.getElementById('scenes').style.transformOrigin='540px 900px'; // punch-in on every cut
+ document.getElementById('cap').style.opacity=1; // renderCover() hides the captions for the cover card; they must come back for every scene
+ document.getElementById('flash').style.opacity=idx>0?Math.max(0,.55*(1-t/.14)):0;
+ document.getElementById('prog').style.width=(SPEC.total?Math.min(1,T/SPEC.total)*1080:0)+'px';
  document.getElementById('rings').style.display=stock?'none':'block';if(!stock)rings(T);
  const tagVis=!['app','outro','endcard'].includes(sc.type);const tg=tagVis?1:Math.max(0,1-t/.4);document.getElementById('tag').style.opacity=tg;document.getElementById('tagline').style.opacity=tg;
  el.querySelectorAll('[data-in]').forEach(n=>{const p=ease((t-parseFloat(n.dataset.in))/(n.dataset.fx==='fade'?.6:.45));const fx=n.dataset.fx;n.style.opacity=p;

@@ -62,6 +62,17 @@ export function completeSpec(spec, now = new Date()) {
   return s;
 }
 
+// Photo -> 9:16 clip with a slow zoom (alternating in / out and drifting direction) so stills feel alive.
+async function kenBurns(img, out, dur, k) {
+  const n = Math.max(2, Math.round(dur * FPS)), zin = k % 2 === 0;
+  const z = zin ? `min(1+0.0012*on,1.22)` : `max(1.22-0.0012*on,1.0)`;
+  const x = ["iw/2-(iw/zoom/2)", "(iw-iw/zoom)*on/" + n, "(iw-iw/zoom)*(1-on/" + n + ")"][k % 3];
+  await run("ffmpeg", ["-loglevel", "error", "-y", "-i", img, "-vf",
+    `scale=1800:3200:force_original_aspect_ratio=increase:flags=lanczos,crop=1800:3200,zoompan=z='${z}':x='${x}':y='ih/2-(ih/zoom/2)':d=${n}:s=1080x1920:fps=${FPS},format=yuv420p`,
+    "-frames:v", String(n), "-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-an", out]);
+  return out;
+}
+
 async function download(url, file) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`clip download failed ${r.status}`);
@@ -81,16 +92,31 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
   spec.scenes.forEach((sc, i) => { sc.dur = timed.scenes[i].dur; sc.words = timed.scenes[i].words; });
   log(`narration ${timed.scenes.reduce((a, s) => a + s.dur, 0).toFixed(1)}s`);
 
-  // 2. stock clips (story scenes); without a clip the scene falls back to the plain background
+  // 2. backgrounds: any scene can sit on a real video clip or a photo (spec.bg applies to the first scene and the cover).
+  //    bg = { url | file, kind?: "video" | "photo" }; photos get a slow Ken Burns zoom. Legacy stock scenes (clip_url / clip_file) still work.
+  const isVideo = (b) => b.kind ? b.kind === "video" : /\.(mp4|mov|webm|m4v)(\?|$)/i.test(b.url || b.file || "");
   for (let i = 0; i < spec.scenes.length; i++) {
     const sc = spec.scenes[i];
-    if (sc.type !== "stock") continue;
-    if (sc.clip_url) {
-      try { sc._clip = path.join(workDir, `clip_${i}.mp4`); await download(sc.clip_url, sc._clip); }
-      catch (e) { log(`clip ${i}: ${e.message}`); sc._clip = null; }
-    }
-    if (!sc._clip && sc.clip_file) sc._clip = sc.clip_file;
-    if (!sc._clip) sc.type = "point";
+    if (["app", "outro", "endcard"].includes(sc.type)) continue;
+    const bg = sc.bg || (i === 0 ? spec.bg : null) || (sc.clip_url || sc.clip_file ? { url: sc.clip_url, file: sc.clip_file, kind: "video" } : null);
+    if (!bg) { if (sc.type === "stock") sc.type = "point"; continue; }
+    try {
+      let src = bg.file;
+      if (!src && bg.url) { src = path.join(workDir, `bg_${i}${path.extname(new URL(bg.url).pathname) || (isVideo(bg) ? ".mp4" : ".jpg")}`); await download(bg.url, src); }
+      if (!src) throw new Error("no file");
+      if (isVideo(bg)) sc._clip = src;
+      else sc._clip = await kenBurns(src, path.join(workDir, `kb_${i}.mp4`), sc.dur, i + (spec.seed || 0));
+    } catch (e) { log(`background ${i}: ${e.message}`); sc._clip = null; if (sc.type === "stock") sc.type = "point"; }
+  }
+  // cover background (photo or a frame of the video)
+  if (spec.bg || spec.cover?.bg_url || spec.cover?.bg_file) {
+    try {
+      const cb = spec.cover?.bg_url || spec.cover?.bg_file ? { url: spec.cover.bg_url, file: spec.cover.bg_file } : spec.bg;
+      let img = cb.file;
+      if (!img && cb.url) { img = path.join(workDir, "cover_src" + (isVideo(cb) ? ".mp4" : ".jpg")); await download(cb.url, img); }
+      if (img && isVideo({ file: img })) { const f = path.join(workDir, "cover_bg.jpg"); await run("ffmpeg", ["-loglevel", "error", "-y", "-ss", "1", "-i", img, "-frames:v", "1", "-q:v", "2", f]); img = f; }
+      if (img) spec.cover = { ...(spec.cover || {}), bg: "file://" + img };
+    } catch (e) { log(`cover background: ${e.message}`); }
   }
 
   // 3. frames -> one encoded file per scene
@@ -113,7 +139,7 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
       const sc = spec.scenes[i];
       const n = Math.round(sc.dur * FPS);
       const tmp = path.join(workDir, `part_${i}.tmp.mp4`);
-      const stock = sc.type === "stock";
+      const stock = sc.type === "stock" || !!sc._clip;
       const args = stock
         ? ["-loglevel", "error", "-y", "-stream_loop", "-1", "-i", sc._clip, "-f", "image2pipe", "-framerate", String(FPS), "-c:v", "png", "-i", "-",
            "-filter_complex", `[0:v]scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,fps=${FPS},trim=duration=${(n / FPS).toFixed(3)},setpts=PTS-STARTPTS[bg];[1:v]scale=1080:1920:flags=lanczos[fg];[bg][fg]overlay=shortest=1,format=yuv420p[v]`,
@@ -146,7 +172,7 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
   const list = spec.scenes.map((_, i) => `file '${path.join(workDir, `part_${i}.mp4`)}'`).join("\n");
   await fs.writeFile(path.join(workDir, "list.txt"), list);
   await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(workDir, "list.txt"), "-c", "copy", path.join(workDir, "video_only.mp4")]);
-  await run(PY, [path.join(HERE, "audio.py"), workDir, String(spec.seed)]);
+  await run(PY, [path.join(HERE, "audio.py"), workDir, String(spec.seed), spec.music === "upbeat" ? "upbeat" : "calm"]);
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "mix.wav"), "-af", "loudnorm=I=-14:TP=-1.5:LRA=7", "-ar", "48000", path.join(workDir, "mix14.wav")]);
   const tmpOut = outFile.replace(/\.mp4$/, ".tmp.mp4");
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "video_only.mp4"), "-i", path.join(workDir, "mix14.wav"),

@@ -106,3 +106,15 @@ After it, Google Play shows as live and the App Store as "coming soon" until you
 Every render also writes a cover image (`/files/<id>-cover.jpg`): series label, big number or icon, the hook headline and the TSW logo.
 The workflow sends it as the YouTube thumbnail and the Instagram cover. The same card is the first 0.1 s of the video,
 because Facebook (and TikTok, with `cover_timestamp=0`) use the first frame as the cover.
+
+---
+
+## TikTok-style upgrade (Nov 2026)
+
+New optional spec fields (all old specs still render as before):
+- `bg: { url | file, kind?: "photo"|"video" }` - real footage or a photo behind the first scene **and** the cover. Photos get a slow Ken Burns zoom. Any scene can also carry its own `bg`.
+- `variant: 0|1|2` - hook layout (defaults to `seed % 3`) so the profile grid doesn't look identical.
+- `music: "upbeat"` - original dance-pop bed (about 124 BPM, no licences). Default stays `"calm"`.
+- FreeApps: `hook: { headline, app?, bg_url?|bg_file?, dur? }` - huge-text opening card on a vivid gradient or photo; also becomes the cover. `music` defaults to upbeat.
+- Every cut now has a punch-in zoom and a short flash, a progress bar runs along the top, and captions pop word by word.
+- Fixed: captions were hidden in all videos because the cover step switched them off and nothing switched them back on.
