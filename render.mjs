@@ -119,6 +119,12 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
     try { const c = await coverrFind(spec.bg_query, spec.seed || 0); if (c) { spec.bg = { url: c.url, kind: "video" }; credits.push(c.credit); } else log("no Coverr clip for: " + spec.bg_query); }
     catch (e) { log("Coverr: " + e.message); }
   }
+  if (spec.founder_bg && !spec.bg) {
+    // Opening + cover on a real founder photo (spec.founder_bg: true). Photo library lives in ASSET_DIR/founder/; no library = unchanged video.
+    const flib = (await fs.readdir(path.join(ASSET_DIR, "founder")).catch(() => [])).filter((f) => /\.(jpe?g|png)$/i.test(f)).sort();
+    if (flib.length) spec.bg = { file: path.join(ASSET_DIR, "founder", flib[(spec.seed || 0) % flib.length]), kind: "photo" };
+    else log("founder_bg: no photos in " + path.join(ASSET_DIR, "founder"));
+  }
   if (spec.scenes.some((sc) => sc.type === "founder")) {
     // Founder photo library: ready-made 1080x1920 images in ASSET_DIR/founder/ (private, never in the repo). One is picked by seed.
     const lib = (await fs.readdir(path.join(ASSET_DIR, "founder")).catch(() => [])).filter((f) => /\.(jpe?g|png)$/i.test(f)).sort();
