@@ -9,6 +9,7 @@ import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import { spawn } from "node:child_process";
 import { render, coverrFind } from "./render.mjs";
 import { renderFreeApps } from "./freeapps.mjs";
 
@@ -55,6 +56,20 @@ http.createServer(async (req, res) => {
       if (!m || !fs.existsSync(file)) return send(res, 404, { error: "not found" });
       res.writeHead(200, { "Content-Type": m[1] === "mp4" ? "video/mp4" : "image/jpeg", "Content-Length": fs.statSync(file).size });
       return fs.createReadStream(file).pipe(res);
+    }
+
+    // one-off upload of private assets (founder photo library) as a raw .zip body: PUT /assets
+    if (req.method === "PUT" && req.url === "/assets") {
+      const chunks = []; let size = 0;
+      for await (const c of req) { size += c.length; if (size > 80e6) return send(res, 413, { error: "too big" }); chunks.push(c); }
+      const dir = process.env.ASSET_DIR || "/data/assets";
+      const zip = path.join(WORK, "assets-upload.zip");
+      await fsp.mkdir(dir, { recursive: true });
+      await fsp.writeFile(zip, Buffer.concat(chunks));
+      await new Promise((ok, bad) => { const p = spawn("python3", ["-m", "zipfile", "-e", zip, dir]); p.on("exit", (c) => (c === 0 ? ok() : bad(new Error("unzip failed")))); });
+      await fsp.rm(zip, { force: true });
+      const lib = await fsp.readdir(path.join(dir, "founder")).catch(() => []);
+      return send(res, 200, { ok: true, founder_files: lib.length });
     }
 
     if (req.method === "POST" && req.url === "/render") {
