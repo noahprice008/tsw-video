@@ -9,21 +9,10 @@ k = Kokoro(f"{MODEL_DIR}/kokoro-v1.0.onnx", f"{MODEL_DIR}/voices-v1.0.bin")
 LEAD, TAIL = 0.25, 0.45
 
 # Pronunciation fixes for the voice only (on-screen captions keep the normal spelling).
-# "live" as in alive/online (go live, is live): the engine reads it as "lives" without help, so respell it "lyve".
-# Kept as "live" (lives) when it is clearly the verb: after I/you/we/they/who/people..., or before in/with/on/near/here...
-_VERB_BEFORE = r"(?:i|you|we|they|who|people|folks|those|travell?ers|tourists|expats|families|locals)"
-_VERB_AFTER = r"(?:in|with|on|near|at|by|here|there|abroad|alone|without|for|a|an|the|my|your|our|their|like|through|off)"
-_ADJ_BEFORE = r"(?:go|goes|going|went|gone|is|are|was|were|be|been|being|it's|its|that's|now|stay|stays|staying|went|get|gets|getting|made|make|makes|site|app|sites|apps)"
+# Every "live" in our scripts means live/online (go live, a live broadcast), never the verb, so respell it "lyve".
 def speak(t):
     t = re.sub(r"\bELEVEX\b", "Ellevex", t, flags=re.I)  # "ELL-eh-vex", said quickly, not "eleven"
-    def fix(m):
-        before = t[:m.start()].rstrip().split()[-1:] or [""]
-        after = t[m.end():].lstrip().split()[:1] or [""]
-        b = re.sub(r"[^a-z]", "", before[0].lower()); a = re.sub(r"[^a-z]", "", after[0].lower())
-        if re.fullmatch(_ADJ_BEFORE, b): return "lyve" if m.group(0).islower() or m.group(0).istitle() else "LYVE"
-        if re.fullmatch(_VERB_BEFORE, b) or re.fullmatch(_VERB_AFTER, a): return m.group(0)
-        return "lyve" if m.group(0).islower() or m.group(0).istitle() else "LYVE"
-    return re.sub(r"\blive\b", fix, t, flags=re.I)
+    return re.sub(r"\blive\b", lambda m: "LYVE" if m.group(0).isupper() else "lyve", t, flags=re.I)
 out = []; sr = 24000
 for i, sc in enumerate(job["scenes"]):
     say = (sc.get("say") or "").strip()
