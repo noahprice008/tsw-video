@@ -118,3 +118,7 @@ New optional spec fields (all old specs still render as before):
 - FreeApps: `hook: { headline, app?, bg_url?|bg_file?, dur? }` - huge-text opening card on a vivid gradient or photo; also becomes the cover. `music` defaults to upbeat.
 - Every cut now has a punch-in zoom and a short flash, a progress bar runs along the top, and captions pop word by word.
 - Fixed: captions were hidden in all videos because the cover step switched them off and nothing switched them back on.
+
+### Coverr backgrounds and the founder scene (Nov 2026)
+- `bg_query: "laptop desk"` - the server looks up a clip on Coverr (free API) and uses it as `bg`. Needs env `COVERR_API_KEY` on the server (add `-e COVERR_API_KEY=...` to the `docker run` line); the key is never stored in n8n or this repo. `GET /coverr-test?q=laptop+desk` (with the X-Render-Key header) checks that the key works. The response of `/render` has `credits: ["Footage: Coverr"]` - add it to the post description.
+- Scene `{ "type": "founder", "mode": "desk"|"call"|"studio", "headline": "...", "say": "..." }` - the founder cut-out in front of footage, in a video-call tile, or on a branded studio background. The photo lives **outside the repo** (this repo is public): `/data/assets/founder.png` on the server volume (override with `ASSET_DIR`). Without it the scene falls back to a plain point scene.

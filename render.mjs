@@ -15,6 +15,27 @@ const CRF = process.env.RENDER_CRF || "17";
 const PRESET = process.env.RENDER_PRESET || "medium";
 const COVER_FRAMES = 3; // 0.1 s of the cover card at the very start (Facebook/TikTok use frame 0 as the cover)
 const PY = process.env.PYTHON || "python3";
+const ASSET_DIR = process.env.ASSET_DIR || "/data/assets"; // private files (founder cut-out) live here, never in the public repo
+
+// Coverr free stock-video API (key in env COVERR_API_KEY on the server; never in n8n or the repo).
+// Used for spec.bg_query. Returns { url, credit } or null. Prefers vertical clips; picks by seed so videos differ.
+export async function coverrFind(query, seed = 0) {
+  const key = process.env.COVERR_API_KEY;
+  if (!key || !query) return null;
+  const get = async (auth) => {
+    const u = new URL("https://api.coverr.co/videos"); u.searchParams.set("query", query); u.searchParams.set("page_size", "30"); u.searchParams.set("urls", "true");
+    if (auth === "query") u.searchParams.set("api_key", key);
+    return fetch(u, { headers: auth === "bearer" ? { Authorization: `Bearer ${key}` } : {} });
+  };
+  let r = await get("bearer");
+  if (r.status === 401 || r.status === 403) r = await get("query");
+  if (!r.ok) throw new Error(`Coverr search ${r.status}`);
+  const hits = ((await r.json()).hits || []).filter((v) => v.urls?.mp4);
+  const pool = hits.filter((v) => v.is_vertical).length >= 3 ? hits.filter((v) => v.is_vertical) : hits;
+  if (!pool.length) return null;
+  const v = pool[Math.abs(seed) % pool.length];
+  return { url: v.urls.mp4, credit: "Footage: Coverr" };
+}
 
 const APP_LINES = [
   ["I use the free Travel Safety Watch app. Official advice, weather, and local news, for wherever you're going.",
@@ -92,6 +113,16 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
   spec.scenes.forEach((sc, i) => { sc.dur = timed.scenes[i].dur; sc.words = timed.scenes[i].words; });
   log(`narration ${timed.scenes.reduce((a, s) => a + s.dur, 0).toFixed(1)}s`);
 
+  const credits = [];
+  if (!spec.bg && spec.bg_query) {
+    try { const c = await coverrFind(spec.bg_query, spec.seed || 0); if (c) { spec.bg = { url: c.url, kind: "video" }; credits.push(c.credit); } else log("no Coverr clip for: " + spec.bg_query); }
+    catch (e) { log("Coverr: " + e.message); }
+  }
+  if (spec.scenes.some((sc) => sc.type === "founder")) {
+    const fp = path.join(ASSET_DIR, "founder.png");
+    if (await fs.access(fp).then(() => true, () => false)) spec.founder_url = "file://" + fp;
+    else { log("founder.png missing in " + ASSET_DIR); spec.scenes.forEach((sc) => { if (sc.type === "founder") sc.type = "point"; }); }
+  }
   // 2. backgrounds: any scene can sit on a real video clip or a photo (spec.bg applies to the first scene and the cover).
   //    bg = { url | file, kind?: "video" | "photo" }; photos get a slow Ken Burns zoom. Legacy stock scenes (clip_url / clip_file) still work.
   const isVideo = (b) => b.kind ? b.kind === "video" : /\.(mp4|mov|webm|m4v)(\?|$)/i.test(b.url || b.file || "");
@@ -179,5 +210,5 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
     "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", "-f", "mp4", tmpOut]);
   await fs.rename(tmpOut, outFile);
   const duration = spec.scenes.reduce((a, s) => a + s.dur, 0);
-  return { file: outFile, cover: outFile.replace(/\.mp4$/, "-cover.jpg"), duration: Math.round(duration * 10) / 10, cta: spec.cta, scenes: spec.scenes.length };
+  return { file: outFile, cover: outFile.replace(/\.mp4$/, "-cover.jpg"), duration: Math.round(duration * 10) / 10, cta: spec.cta, scenes: spec.scenes.length, credits };
 }

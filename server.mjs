@@ -9,7 +9,7 @@ import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
-import { render } from "./render.mjs";
+import { render, coverrFind } from "./render.mjs";
 import { renderFreeApps } from "./freeapps.mjs";
 
 const PORT = Number(process.env.PORT || 8090);
@@ -42,6 +42,12 @@ http.createServer(async (req, res) => {
     if (req.url === "/health") return send(res, 200, { ok: true });
     if (!KEY || req.headers["x-render-key"] !== KEY) return send(res, 401, { error: "unauthorised" });
 
+    // quick check that the Coverr key works from this server: GET /coverr-test?q=laptop+desk
+    if (req.method === "GET" && req.url.startsWith("/coverr-test")) {
+      try { const q = new URL(req.url, "http://x").searchParams.get("q") || "laptop desk"; const c = await coverrFind(q, 0); return send(res, 200, { key_set: !!process.env.COVERR_API_KEY, found: !!c, sample: c ? c.url.slice(0, 80) + "..." : null }); }
+      catch (e) { return send(res, 200, { key_set: !!process.env.COVERR_API_KEY, error: String(e.message || e) }); }
+    }
+
     if (req.method === "GET" && req.url.startsWith("/files/")) {
       const name = path.basename(req.url.split("?")[0]);
       const file = path.join(OUT, name);
@@ -68,7 +74,7 @@ http.createServer(async (req, res) => {
       busy = job.catch(() => {});
       const r = await job;
       cleanup().catch(() => {});
-      return send(res, 200, { id, duration: r.duration, cta: r.cta, scenes: r.scenes, warnings: r.warnings, file: `/files/${id}.mp4`, cover: `/files/${id}-cover.jpg` });
+      return send(res, 200, { id, duration: r.duration, cta: r.cta, scenes: r.scenes, warnings: r.warnings, credits: r.credits || [], file: `/files/${id}.mp4`, cover: `/files/${id}-cover.jpg` });
     }
     send(res, 404, { error: "not found" });
   } catch (e) {
