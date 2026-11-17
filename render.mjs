@@ -69,6 +69,7 @@ export function completeSpec(spec, now = new Date()) {
   s.scenes = (s.scenes || []).filter((sc) => !["app", "outro", "endcard"].includes(sc.type));
   const seed = Number(s.seed ?? Math.floor(Math.random() * 1e6));
   s.seed = seed;
+  if (s.cta === "none") return s; // other brands (founder series): no Travel Safety Watch app scene or end card
   if (s.format === "main") {
     const [say, caption] = APP_LINES[seed % APP_LINES.length];
     s.scenes.push({ type: "app", say, caption });
@@ -119,9 +120,22 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
     catch (e) { log("Coverr: " + e.message); }
   }
   if (spec.scenes.some((sc) => sc.type === "founder")) {
+    // Founder photo library: ready-made 1080x1920 images in ASSET_DIR/founder/ (private, never in the repo). One is picked by seed.
+    const lib = (await fs.readdir(path.join(ASSET_DIR, "founder")).catch(() => [])).filter((f) => /\.(jpe?g|png)$/i.test(f)).sort();
     const fp = path.join(ASSET_DIR, "founder.png");
-    if (await fs.access(fp).then(() => true, () => false)) spec.founder_url = "file://" + fp;
-    else { log("founder.png missing in " + ASSET_DIR); spec.scenes.forEach((sc) => { if (sc.type === "founder") sc.type = "point"; }); }
+    const hasCut = await fs.access(fp).then(() => true, () => false);
+    if (hasCut) spec.founder_url = "file://" + fp;
+    let pick = 0;
+    for (const sc of spec.scenes) {
+      if (sc.type !== "founder") continue;
+      if (!sc.mode && lib.length) sc.mode = "photo";
+      if (sc.mode === "photo") {
+        if (!lib.length) { log("founder library empty in " + ASSET_DIR); sc.type = "point"; continue; }
+        const file = path.join(ASSET_DIR, "founder", lib[((spec.seed || 0) + pick++ * 3) % lib.length]);
+        sc.bg = { file, kind: "photo" };
+        if (!spec.bg) spec.bg = sc.bg;
+      } else if (!hasCut) { log("founder.png missing in " + ASSET_DIR); sc.type = "point"; }
+    }
   }
   // 2. backgrounds: any scene can sit on a real video clip or a photo (spec.bg applies to the first scene and the cover).
   //    bg = { url | file, kind?: "video" | "photo" }; photos get a slow Ken Burns zoom. Legacy stock scenes (clip_url / clip_file) still work.
