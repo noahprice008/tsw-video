@@ -30,6 +30,23 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .hkbadge span.b{background:#111;color:#fff}
 .hkapp{left:0;width:1080px;top:1560px;display:flex;justify-content:center;align-items:center;gap:22px;color:#fff;font:800 56px Inter;text-shadow:0 4px 20px rgba(0,0,0,.5)}
 .hkapp img{width:120px;height:120px;border-radius:30px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+/* cover / styled hook card (spec.cover, spec.hook.style): key text stays inside the 3:4 grid crop (y 240-1680) */
+.cvbg{inset:0;overflow:hidden}
+.cvbg img{position:absolute;inset:-60px;width:1200px;height:2040px;object-fit:cover}
+.cvk{left:0;width:1080px;display:flex;justify-content:center}
+.cvk span{font:900 52px/1 Inter;letter-spacing:1px;padding:18px 36px;border-radius:18px;background:#111;color:#fff;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.cvbox{left:50px;width:980px;top:300px;height:1150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.cvbox .ln{display:inline-block;max-width:940px;box-sizing:border-box;text-align:center;background:#fff;color:#111;font:900 112px/1.02 Inter;letter-spacing:-3px;padding:14px 30px 20px;border-radius:22px;box-shadow:0 14px 0 rgba(0,0,0,.28)}
+.cvbox .ln:nth-child(odd){transform:rotate(-2.2deg)} .cvbox .ln:nth-child(even){transform:rotate(1.6deg)}
+.cvbox em,.cvph em,.cvst em{font-style:normal;background:#FFE14D;color:#111;border-radius:12px;padding:0 12px}
+.cvchip{left:0;width:1080px;top:1500px;display:flex;justify-content:center;align-items:center;gap:20px;color:#fff;font:800 50px Inter;text-shadow:0 4px 18px rgba(0,0,0,.6)}
+.cvchip img{width:100px;height:100px;border-radius:26px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.cvchip b{background:#ff3b6b;color:#fff;font:900 38px/1 Inter;padding:14px 22px;border-radius:16px;text-shadow:none}
+.cvph{left:70px;width:940px;top:330px;height:520px;display:flex;flex-direction:column;justify-content:center;color:#fff;font:900 128px/1.0 Inter;letter-spacing:-4px;text-shadow:0 8px 30px rgba(0,0,0,.35)}
+.cvphone{left:250px;top:1030px;width:600px;height:1300px;border:16px solid #0a0a0f;border-radius:80px;overflow:hidden;transform:rotate(-7deg);box-shadow:0 40px 90px rgba(0,0,0,.55)}
+.cvphone img{width:100%;height:100%;object-fit:cover;object-position:top}
+.cvst{left:60px;width:960px;top:420px;height:900px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font:900 156px/0.98 Inter;letter-spacing:-6px;text-shadow:0 10px 0 rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.5)}
+.cvstamp{left:560px;top:300px;transform:rotate(9deg);font:900 58px/1 Inter;color:#fff;background:var(--accent);border:6px solid #fff;border-radius:20px;padding:18px 30px;box-shadow:0 12px 30px rgba(0,0,0,.4);white-space:nowrap}
 /* end card */
 .icon{left:420px;top:380px;width:240px;height:240px;border-radius:56px;box-shadow:0 20px 50px rgba(0,0,0,.45);object-fit:cover}
 .iconfb{left:420px;top:380px;width:240px;height:240px;border-radius:56px;background:var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.45)}
@@ -68,6 +85,25 @@ window.draw=(layer,d)=>{
     root.innerHTML=`<div class="abs hkbg" style="background:${g}"></div><div class="abs hkwrap"><div class="hkhead" id="hkhead">${hl(d.headline)}</div></div>`+
       `<div class="abs hkbadge"><span>FREE</span><span class="b">NO SIGN-UP</span></div>`+
       (d.app?`<div class="abs hkapp">${d.icon?`<img src="${d.icon}">`:''}<span>${esc(d.app)}</span></div>`:'');
+  } else if(layer==='cover'){
+    const sty=d.style||'boxes', shot=d.shot?`<img src="${d.shot}" style="${sty==='boxes'?'filter:blur(14px) brightness(.5) saturate(1.3)':'filter:blur(22px) brightness(.35) saturate(1.4)'}">`:'';
+    const chip=`<div class="abs cvchip">${d.icon?`<img src="${d.icon}">`:''}<span>${esc(d.app||'')}</span><b>FREE</b></div>`;
+    if(sty==='phone'){
+      root.innerHTML=`<div class="abs cvbg" style="background:linear-gradient(155deg,${acc} 0%,${base} 78%)"></div>`+
+        (d.kicker?`<div class="abs cvk" style="top:250px"><span>${esc(d.kicker)}</span></div>`:'')+
+        `<div class="abs cvph" id="cvhead">${hl(d.headline).split('|').join('<br>')}</div>`+
+        (d.shot?`<div class="abs cvphone"><img src="${d.shot}"></div>`:'')+
+        `<div class="abs cvchip" style="top:880px">${d.icon?`<img src="${d.icon}">`:''}<span>${esc(d.app||'')}</span><b>FREE</b></div>`;
+    } else if(sty==='stamp'){
+      root.innerHTML=`<div class="abs cvbg" style="background:radial-gradient(900px 900px at 50% 45%,${acc}66 0%,transparent 70%),${base}">${shot}</div>`+
+        `<div class="abs cvbg" style="background:radial-gradient(800px 800px at 50% 42%,${acc}88 0%,transparent 70%),linear-gradient(180deg,${base}99,${base}ee)"></div>`+
+        `<div class="abs cvst" id="cvhead"><div>${hl(d.headline).split('|').join('<br>')}</div></div>`+
+        (d.kicker?`<div class="abs cvstamp">${esc(d.kicker)}</div>`:'')+chip;
+    } else {
+      root.innerHTML=`<div class="abs cvbg" style="background:${base}">${shot}</div><div class="abs cvbg" style="background:linear-gradient(165deg,${acc}cc 0%,${base}99 50%,#ff3b8dbb 100%)"></div>`+
+        (d.kicker?`<div class="abs cvk" style="top:300px"><span>${esc(d.kicker)}</span></div>`:'')+
+        `<div class="abs cvbox" id="cvhead" style="top:${d.kicker?400:300}px;height:${d.kicker?1060:1150}px">${d.headline.split('|').map(l=>`<div class="ln">${hl(l.trim())}</div>`).join('')}</div>`+chip;
+    }
   } else if(layer==='end'){
     const e=d.end||{};
     const soon=e.badges!=='live';
@@ -87,6 +123,10 @@ function fit(root){
   if(head){let fs=parseFloat(getComputedStyle(head).fontSize);const over=()=>head.scrollHeight>184||head.scrollWidth>head.clientWidth+1;while(over()&&fs>40){fs-=2;head.style.fontSize=fs+'px';}}
   const hk=root.querySelector('#hkhead');
   if(hk){let fs=parseFloat(getComputedStyle(hk).fontSize);const over=()=>hk.scrollHeight>940||hk.scrollWidth>hk.clientWidth+1;while(over()&&fs>56){fs-=4;hk.style.fontSize=fs+'px';}}
+  const cv=root.querySelector('#cvhead');
+  if(cv){const lim=cv.clientHeight-10;const lns=[...cv.querySelectorAll('.ln')];const els=lns.length?lns:[cv];let fs=parseFloat(getComputedStyle(els[0]).fontSize);
+    const over=()=>cv.scrollHeight>lim+12||els.some(e=>e.scrollWidth>e.clientWidth+1)||[...cv.querySelectorAll('*')].concat([cv]).some(e=>{const r=e.getBoundingClientRect();return r.width&&(r.left<45||r.right>1035);});
+    while(over()&&fs>48){fs-=4;els.forEach(e=>e.style.fontSize=fs+'px');}}
   const tw=el=>{const r=document.createRange();r.selectNodeContents(el);return r.getBoundingClientRect().width;};
   root.querySelectorAll('.fa').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(tw(el)>940&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});
   root.querySelectorAll('.fa2').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(el.getBoundingClientRect().width>940&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});
@@ -95,7 +135,7 @@ function fit(root){
     if(![...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))return;
     const r=document.createRange();r.selectNodeContents(el);const b=r.getBoundingClientRect();if(!b.width)return;
     const t=el.textContent.trim().slice(0,40);
-    if(el.closest('.sticker'))return; // fixed words, rotated on purpose
+    if(el.closest('.sticker')||el.closest('.cvstamp')||el.closest('.cvbox'))return; // fixed words, rotated on purpose
     if(b.left<39||b.right>1041||b.top<0||b.bottom>1920)bad.push(`"${t}" runs off the frame`);
     else if(el.id==='fhead'&&el.scrollHeight>186)bad.push(`headline "${t}" is too tall`);
     else if(!el.classList.contains('fa')&&el.scrollWidth>el.clientWidth+1&&getComputedStyle(el).display!=='inline')bad.push(`"${t}" is wider than its box`);});

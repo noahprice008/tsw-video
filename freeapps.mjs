@@ -4,7 +4,10 @@
 //   scenes:[ { headline:"Stuck at the *gate*?", pill:"Example map", sticker:false, url:"https://...", viewport:[430,932],
 //              settle:1.5, dur:3.6, localStorage:{k:"v"},
 //              steps:[ {wait:1}, {click:"text=Play"}, {type:"input", text:"hello"}, {scroll:600, over:1.5}, {eval:"js"} ] } ],
-//   end:{ name:"TravelPlay", line:"Play free now", url:"travelplay.fun", badges:"soon"|"live", note:"..." } }
+//   end:{ name:"TravelPlay", line:"Play free now", url:"travelplay.fun", badges:"soon"|"live", note:"..." },
+//   hook:{ headline, app, dur, style?:"boxes"|"phone"|"stamp", kicker? },   // with style: hook card uses the cover design
+//   cover:{ headline:"No wifi.|9 hours.|*Zero* boredom", kicker:"POV:", style:"boxes"|"phone"|"stamp", shot_scene:0, shot_at:2.5 },
+//   music:"upbeat"|"calm"|"none", crf:21 }   // music "none" = silent track (sound added in TikTok); crf overrides RENDER_CRF
 // Quality: captured at 2x with Chrome's screencast, composed with ffmpeg, encoded with the same settings as render.mjs.
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
@@ -14,7 +17,7 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FPS = 30;
-const CRF = process.env.RENDER_CRF || "17";
+let CRF = process.env.RENDER_CRF || "17";
 const PRESET = process.env.RENDER_PRESET || "medium";
 const PY = process.env.PYTHON || "python3";
 const END_SECONDS = 2.6;
@@ -129,7 +132,9 @@ async function fetchIcon(browser, url) {
 
 export async function renderFreeApps(spec, { workDir, outFile, log = () => {} }) {
   await fs.mkdir(workDir, { recursive: true });
+  CRF = spec.crf ? String(spec.crf) : (process.env.RENDER_CRF || "17");
   const warnings = [];
+  let coverJpg = null;
   const seed = Number(spec.seed ?? Math.floor(Math.random() * 1e6));
   const scenes = (spec.scenes || []).map((s) => ({ ...s, dur: Number(s.dur) || 3.4 }));
   const browser = await launch();
@@ -158,6 +163,22 @@ export async function renderFreeApps(spec, { workDir, outFile, log = () => {} })
     };
     const common = { accent: spec.accent, bg: spec.bg };
     await shot("bg", common, path.join(workDir, "bg.png"), false);
+    // a still of the real app, used behind styled hooks and covers
+    let still = null;
+    const wantStill = spec.cover?.headline || spec.hook?.style;
+    if (wantStill) {
+      const si = Number(spec.cover?.shot_scene ?? 0);
+      const k = caps[si] ? si : caps.findIndex((c) => c);
+      if (k >= 0) {
+        const at = Math.min(Number(spec.cover?.shot_at ?? scenes[k].dur * 0.6), scenes[k].dur - 0.2);
+        try { const f = path.join(workDir, "still.png"); await run("ffmpeg", ["-loglevel", "error", "-y", "-ss", String(Math.max(0, at)), "-i", caps[k], "-frames:v", "1", f]); still = "file://" + f; }
+        catch (e) { warnings.push("still frame skipped: " + e.message); }
+      }
+    }
+    if (spec.cover?.headline) {
+      await shot("cover", { ...common, ...spec.cover, shot: still, icon, app: spec.cover.app || spec.end?.name }, path.join(workDir, "cover.png"), false);
+      coverJpg = path.join(workDir, "cover.png");
+    }
     // 2b. TikTok hook card: huge text on a vivid background (or a photo) for the first moment; doubles as the colourful cover
     let hasHook = false;
     if (spec.hook?.headline) {
@@ -167,7 +188,8 @@ export async function renderFreeApps(spec, { workDir, outFile, log = () => {} })
         if (spec.hook.bg_file) bg = "file://" + spec.hook.bg_file;
         else if (spec.hook.bg_url) { const f = path.join(workDir, "hook_bg.jpg"); const r = await fetch(spec.hook.bg_url); if (!r.ok) throw new Error("hook background download " + r.status); await fs.writeFile(f, Buffer.from(await r.arrayBuffer())); bg = "file://" + f; }
       } catch (e) { warnings.push("hook background skipped: " + e.message); }
-      await shot("hook", { ...common, headline: spec.hook.headline, bg, icon, app: spec.hook.app }, path.join(workDir, "hook.png"), false);
+      if (spec.hook.style) await shot("cover", { ...common, headline: spec.hook.headline, kicker: spec.hook.kicker, style: spec.hook.style, shot: still, icon, app: spec.hook.app || spec.end?.name }, path.join(workDir, "hook.png"), false);
+      else await shot("hook", { ...common, headline: spec.hook.headline, bg, icon, app: spec.hook.app }, path.join(workDir, "hook.png"), false);
       const dur = Number(spec.hook.dur) || HOOK_SECONDS, nfr = Math.round(dur * FPS);
       await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "hook.png"), "-vf",
         `scale=2160:3840:flags=lanczos,zoompan=z='1.14-0.14*min(1,on/9)+0.0004*on':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=${nfr}:s=1080x1920:fps=${FPS},format=yuv420p`,
@@ -208,13 +230,19 @@ export async function renderFreeApps(spec, { workDir, outFile, log = () => {} })
   await fs.writeFile(path.join(workDir, "list.txt"), parts.map((p) => `file '${p.file}'`).join("\n"));
   await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(workDir, "list.txt"), "-c", "copy", path.join(workDir, "video_only.mp4")]);
   await fs.writeFile(path.join(workDir, "timed.json"), JSON.stringify({ sr: 24000, lead: 0, scenes: parts.map((p) => ({ dur: p.dur, wav: null })) }));
-  await run(PY, [path.join(HERE, "audio.py"), workDir, String(seed), spec.music === "calm" ? "calm" : "upbeat"]);
-  await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "mix.wav"), "-af", "loudnorm=I=-14:TP=-1.5:LRA=7", "-ar", "48000", path.join(workDir, "mix14.wav")]);
+  if (spec.music === "none") {
+    // silent track: the sound is added in TikTok
+    await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", String(total), path.join(workDir, "mix14.wav")]);
+  } else {
+    await run(PY, [path.join(HERE, "audio.py"), workDir, String(seed), spec.music === "calm" ? "calm" : "upbeat"]);
+    await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "mix.wav"), "-af", "loudnorm=I=-14:TP=-1.5:LRA=7", "-ar", "48000", path.join(workDir, "mix14.wav")]);
+  }
   const tmpOut = outFile.replace(/\.mp4$/, ".tmp.mp4");
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "video_only.mp4"), "-i", path.join(workDir, "mix14.wav"),
     "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", "-f", "mp4", tmpOut]);
   await fs.rename(tmpOut, outFile);
   const cover = outFile.replace(/\.mp4$/, "-cover.jpg");
-  await run("ffmpeg", ["-loglevel", "error", "-y", "-ss", spec.hook?.headline ? "0.5" : "0.9", "-i", outFile, "-frames:v", "1", "-q:v", "2", cover]);
+  if (coverJpg) await run("ffmpeg", ["-loglevel", "error", "-y", "-i", coverJpg, "-q:v", "2", cover]);
+  else await run("ffmpeg", ["-loglevel", "error", "-y", "-ss", spec.hook?.headline ? "0.5" : "0.9", "-i", outFile, "-frames:v", "1", "-q:v", "2", cover]);
   return { file: outFile, cover, duration: Math.round(total * 10) / 10, scenes: parts.length, warnings };
 }
