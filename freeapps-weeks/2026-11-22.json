@@ -1,0 +1,755 @@
+{
+ "week": "22-28 Nov 2026",
+ "videos": [
+  {
+   "n": 1,
+   "app": "TravelPlay",
+   "when": "Sunday 22 Nov, 16:00",
+   "subject": "FreeApps 1/7 · post Sunday 22 Nov, 16:00 · TravelPlay",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 1 of 7: TravelPlay</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Sunday 22 Nov, 16:00 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">POV: 9 hours, no wifi, and you forgot to download a film ✈️ A fresh Sudoku every day, Easy to Expert. Free, no sign-up, no ads. Play now at travelplay.fun (link in bio). Google Play and App Store coming soon. #travelhacks #longflight #sudoku #freeapp</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> No wifi. 9 hours. Zero boredom</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> Long flight? Play this (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Upbeat, feel-good travel or airport sound</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#F5A623",
+    "bg": "#0b1424",
+    "icon_from": "https://travelplay.fun/",
+    "scenes": [
+     {
+      "localStorage": {
+       "app.v1.introSeen": "true"
+      },
+      "settle": 1.5,
+      "headline": "Sudoku at *35,000 feet*",
+      "url": "https://travelplay.fun/play/daily-grid",
+      "dur": 6,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "click": "button[aria-label='Hint']"
+       },
+       {
+        "wait": 0.7
+       },
+       {
+        "click": "button[aria-label='Hint']"
+       },
+       {
+        "wait": 0.7
+       },
+       {
+        "click": "button[aria-label='Hint']"
+       },
+       {
+        "wait": 1
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "app.v1.introSeen": "true"
+      },
+      "settle": 1.5,
+      "headline": "Easy to *Expert*",
+      "url": "https://travelplay.fun/play/daily-grid",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "click": "button:text-is('Hard')"
+       },
+       {
+        "wait": 1
+       },
+       {
+        "click": "button:text-is('Expert')"
+       },
+       {
+        "wait": 1.2
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "app.v1.introSeen": "true"
+      },
+      "settle": 1.5,
+      "headline": "A fresh puzzle *every day*",
+      "url": "https://travelplay.fun/",
+      "dur": 5,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 700,
+        "over": 3
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "TravelPlay",
+     "line": "Play free now",
+     "url": "travelplay.fun",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "No wifi.|9 hours.|*Zero* boredom",
+     "kicker": "POV:",
+     "style": "boxes",
+     "app": "TravelPlay",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "Long flight?|*Play this*",
+     "kicker": "FREE",
+     "style": "phone"
+    }
+   }
+  },
+  {
+   "n": 2,
+   "app": "Travel Safety Watch",
+   "when": "Monday 23 Nov, 20:30",
+   "subject": "FreeApps 2/7 · post Monday 23 Nov, 20:30 · Travel Safety Watch",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 2 of 7: Travel Safety Watch</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Monday 23 Nov, 20:30 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">Booked a trip? Check this first. Travel alerts, weather and local news for where you're going, in plain English. Free, no account, no ads. travelsafetywatch.com (link in bio). Independent, not a government service. #traveltips #solotravel #travelsafety #freeapp</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> Check this before you book</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> Booked a trip? Check this first (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Calm, chill travel sound (lo-fi or acoustic)</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#2EC4B6",
+    "bg": "#0a1a1f",
+    "icon_from": "https://travelsafetywatch.com/",
+    "scenes": [
+     {
+      "hide": "[aria-label='Cookie consent'], .alerts-mobile-banner",
+      "settle": 1.8,
+      "headline": "Alerts for *where you're going*",
+      "url": "https://travelsafetywatch.com/alerts",
+      "dur": 6,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 600,
+        "over": 3.5
+       },
+       {
+        "wait": 0.8
+       }
+      ]
+     },
+     {
+      "hide": "[aria-label='Cookie consent'], .alerts-mobile-banner",
+      "settle": 1.8,
+      "headline": "Local news in *plain English*",
+      "url": "https://travelsafetywatch.com/news",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.6
+       },
+       {
+        "scroll": 700,
+        "over": 3.2
+       },
+       {
+        "wait": 0.6
+       }
+      ]
+     },
+     {
+      "hide": "[aria-label='Cookie consent'], .alerts-mobile-banner",
+      "settle": 1.8,
+      "headline": "Is it getting *busier*?",
+      "url": "https://travelsafetywatch.com/",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.6
+       },
+       {
+        "scroll": 1100,
+        "over": 3.4
+       },
+       {
+        "wait": 0.6
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "Travel Safety Watch",
+     "line": "Free, no account",
+     "url": "travelsafetywatch.com",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "Check *this*|before you book",
+     "kicker": "TRAVEL TIP",
+     "style": "stamp",
+     "app": "Travel Safety Watch",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "Booked a trip?|Check *this*|first",
+     "kicker": "BEFORE YOU FLY",
+     "style": "boxes"
+    }
+   }
+  },
+  {
+   "n": 3,
+   "app": "Daywall",
+   "when": "Tuesday 24 Nov, 20:30",
+   "subject": "FreeApps 3/7 · post Tuesday 24 Nov, 20:30 · Daywall",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 3 of 7: Daywall</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Tuesday 24 Nov, 20:30 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">Boss says 32 hours. You logged 38. 👀 Track your shifts and earnings in seconds. Private: nothing leaves your phone. Free, no account. daywall.elevex.digital (link in bio). (Demo data) #shiftwork #sidehustle #gigwork #freeapp</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> Boss says 32 hours. You logged 38.</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> Who's counting your hours? (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Dramatic reveal or \"plot twist\" sound</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#7C5CFF",
+    "bg": "#100c24",
+    "icon_from": "https://daywall.elevex.digital/",
+    "scenes": [
+     {
+      "localStorage": {
+       "myplace:welcome-dismissed": "true",
+       "myplace:currency": "\"USD\"",
+       "myplace:workplaces": "[{\"id\":\"wp1demo\",\"name\":\"Harbour Cafe\",\"type\":\"hourly\",\"rate\":18,\"treatments\":[],\"removable\":true,\"billable\":false,\"color\":\"slot-1\"}]",
+       "myplace:shifts": "[{\"id\":\"sh0\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-19\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh1\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-18\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh2\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-17\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh3\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-16\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh5\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-14\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh6\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-13\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh7\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-12\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh8\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-11\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh10\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-09\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh12\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-07\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh13\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-06\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh15\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-04\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh16\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-03\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh17\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-02\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh20\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-30\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh21\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-29\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh22\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-28\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh23\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-27\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"}]"
+      },
+      "settle": 1.5,
+      "headline": "Every shift, *logged*",
+      "url": "https://daywall.elevex.digital/work",
+      "dur": 6,
+      "steps": [
+       {
+        "eval": "document.querySelectorAll('button').forEach(b => /^Dismiss$/.test(b.innerText.trim()) && b.click())"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 500,
+        "over": 3
+       },
+       {
+        "wait": 0.8
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "myplace:welcome-dismissed": "true",
+       "myplace:currency": "\"USD\"",
+       "myplace:workplaces": "[{\"id\":\"wp1demo\",\"name\":\"Harbour Cafe\",\"type\":\"hourly\",\"rate\":18,\"treatments\":[],\"removable\":true,\"billable\":false,\"color\":\"slot-1\"}]",
+       "myplace:shifts": "[{\"id\":\"sh0\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-19\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh1\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-18\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh2\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-17\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh3\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-16\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh5\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-14\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh6\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-13\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh7\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-12\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh8\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-11\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh10\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-09\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh12\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-07\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh13\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-06\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh15\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-04\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh16\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-03\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh17\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-02\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh20\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-30\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh21\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-29\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh22\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-28\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh23\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-27\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"}]"
+      },
+      "settle": 1.5,
+      "headline": "Your earnings *at a glance*",
+      "url": "https://daywall.elevex.digital/work",
+      "dur": 5.5,
+      "steps": [
+       {
+        "eval": "document.querySelectorAll('button').forEach(b => /^Dismiss$/.test(b.innerText.trim()) && b.click())"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 300,
+        "over": 2.2
+       },
+       {
+        "wait": 1.2
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "myplace:welcome-dismissed": "true",
+       "myplace:currency": "\"USD\"",
+       "myplace:workplaces": "[{\"id\":\"wp1demo\",\"name\":\"Harbour Cafe\",\"type\":\"hourly\",\"rate\":18,\"treatments\":[],\"removable\":true,\"billable\":false,\"color\":\"slot-1\"}]",
+       "myplace:shifts": "[{\"id\":\"sh0\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-19\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh1\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-18\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh2\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-17\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh3\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-16\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh5\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-14\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh6\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-13\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh7\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-12\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh8\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-11\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh10\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-09\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh12\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-07\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh13\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-06\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh15\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-04\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh16\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-03\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh17\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-02\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh20\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-30\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh21\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-29\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh22\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-28\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh23\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-27\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"}]"
+      },
+      "settle": 1.5,
+      "headline": "Shifts on *one calendar*",
+      "url": "https://daywall.elevex.digital/calendar",
+      "dur": 5.5,
+      "steps": [
+       {
+        "eval": "document.querySelectorAll('button').forEach(b => /^Dismiss$/.test(b.innerText.trim()) && b.click())"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 350,
+        "over": 2.6
+       },
+       {
+        "wait": 0.8
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "Daywall",
+     "line": "Free, private",
+     "url": "daywall.elevex.digital",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "Boss says 32 hours.|You logged *38.*",
+     "kicker": "POV:",
+     "style": "boxes",
+     "app": "Daywall",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "Who's counting|*your* hours?",
+     "kicker": "PRIVATE",
+     "style": "stamp"
+    }
+   }
+  },
+  {
+   "n": 4,
+   "app": "My Ikigai Map",
+   "when": "Wednesday 25 Nov, 20:30",
+   "subject": "FreeApps 4/7 · post Wednesday 25 Nov, 20:30 · My Ikigai Map",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 4 of 7: My Ikigai Map</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Wednesday 25 Nov, 20:30 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">Answer 4 simple questions and see your life on one map. Bigger circles mean more balance, and the glowing centre is your ikigai. Free, private, no sign-up. ikigai.elevex.digital (link in bio). (Example map) #ikigai #purpose #selfimprovement #mindset</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> Your life on one map</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> What are you actually here for? (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Soft, reflective or motivational sound</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#F25C54",
+    "bg": "#1a0f14",
+    "icon_from": "https://ikigai.elevex.digital/",
+    "scenes": [
+     {
+      "localStorage": {
+       "ikigai-guide-seen": "1",
+       "ikigai-example": "1",
+       "ikigai-map-v1": "{\"dimensions\":{\"love\":{\"items\":[{\"id\":\"love-0\",\"label\":\"Drawing systems on paper\",\"score\":5},{\"id\":\"love-1\",\"label\":\"Teaching one person at a time\",\"score\":4}],\"avg_score\":4.5},\"good_at\":{\"items\":[{\"id\":\"good_at-0\",\"label\":\"Turning mess into structure\",\"score\":4}],\"avg_score\":4},\"needs\":{\"items\":[{\"id\":\"needs-0\",\"label\":\"Tools that slow people down\",\"score\":3}],\"avg_score\":3},\"paid_for\":{\"items\":[{\"id\":\"paid_for-0\",\"label\":\"Consulting on product clarity\",\"score\":4}],\"avg_score\":4}},\"theme\":\"light\",\"history\":[],\"premium\":false,\"prefs\":{\"palette\":\"editorial\",\"audioEnabled\":false,\"paperTexture\":true}}"
+      },
+      "settle": 1.5,
+      "headline": "What makes life *worth living*?",
+      "url": "https://ikigai.elevex.digital/",
+      "dur": 6,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 500,
+        "over": 3.2
+       },
+       {
+        "wait": 0.8
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "ikigai-guide-seen": "1",
+       "ikigai-example": "1",
+       "ikigai-map-v1": "{\"dimensions\":{\"love\":{\"items\":[{\"id\":\"love-0\",\"label\":\"Drawing systems on paper\",\"score\":5},{\"id\":\"love-1\",\"label\":\"Teaching one person at a time\",\"score\":4}],\"avg_score\":4.5},\"good_at\":{\"items\":[{\"id\":\"good_at-0\",\"label\":\"Turning mess into structure\",\"score\":4}],\"avg_score\":4},\"needs\":{\"items\":[{\"id\":\"needs-0\",\"label\":\"Tools that slow people down\",\"score\":3}],\"avg_score\":3},\"paid_for\":{\"items\":[{\"id\":\"paid_for-0\",\"label\":\"Consulting on product clarity\",\"score\":4}],\"avg_score\":4}},\"theme\":\"light\",\"history\":[],\"premium\":false,\"prefs\":{\"palette\":\"editorial\",\"audioEnabled\":false,\"paperTexture\":true}}"
+      },
+      "settle": 1.5,
+      "headline": "Passion. Mission. *Profession.*",
+      "url": "https://ikigai.elevex.digital/",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 450,
+        "over": 2.2
+       },
+       {
+        "click": "button:has-text('Passion')"
+       },
+       {
+        "wait": 1
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "ikigai-guide-seen": "1",
+       "ikigai-example": "1",
+       "ikigai-map-v1": "{\"dimensions\":{\"love\":{\"items\":[{\"id\":\"love-0\",\"label\":\"Drawing systems on paper\",\"score\":5},{\"id\":\"love-1\",\"label\":\"Teaching one person at a time\",\"score\":4}],\"avg_score\":4.5},\"good_at\":{\"items\":[{\"id\":\"good_at-0\",\"label\":\"Turning mess into structure\",\"score\":4}],\"avg_score\":4},\"needs\":{\"items\":[{\"id\":\"needs-0\",\"label\":\"Tools that slow people down\",\"score\":3}],\"avg_score\":3},\"paid_for\":{\"items\":[{\"id\":\"paid_for-0\",\"label\":\"Consulting on product clarity\",\"score\":4}],\"avg_score\":4}},\"theme\":\"light\",\"history\":[],\"premium\":false,\"prefs\":{\"palette\":\"editorial\",\"audioEnabled\":false,\"paperTexture\":true}}"
+      },
+      "settle": 1.5,
+      "headline": "Where your circles *meet*",
+      "url": "https://ikigai.elevex.digital/map",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 1.2
+       },
+       {
+        "scroll": 400,
+        "over": 2.6
+       },
+       {
+        "wait": 0.6
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "My Ikigai Map",
+     "line": "Free and private",
+     "url": "ikigai.elevex.digital",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "Your life|on *one* map",
+     "kicker": "4 QUESTIONS",
+     "style": "stamp",
+     "app": "My Ikigai Map",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "What are you|*actually*|here for?",
+     "kicker": "IKIGAI",
+     "style": "boxes"
+    }
+   }
+  },
+  {
+   "n": 5,
+   "app": "TravelPlay",
+   "when": "Thursday 26 Nov, 20:30",
+   "subject": "FreeApps 5/7 · post Thursday 26 Nov, 20:30 · TravelPlay",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 5 of 7: TravelPlay</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Thursday 26 Nov, 20:30 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">Bored at the gate? Free games for travellers: no sign-up, no ads, play right in your browser. travelplay.fun (link in bio). Google Play and App Store coming soon. #airport #travelhacks #puzzlegames #freeapp</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> Bored at the gate?</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> 0 ads. 0 sign-up. Just play. (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Playful, bouncy game-style sound</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#F5A623",
+    "bg": "#0b1424",
+    "icon_from": "https://travelplay.fun/",
+    "scenes": [
+     {
+      "localStorage": {
+       "app.v1.introSeen": "true"
+      },
+      "settle": 1.5,
+      "headline": "Pick a game. *Play.*",
+      "url": "https://travelplay.fun/",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 600,
+        "over": 3
+       },
+       {
+        "wait": 0.6
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "app.v1.introSeen": "true"
+      },
+      "settle": 1.5,
+      "headline": "Today's *Sudoku*",
+      "url": "https://travelplay.fun/play/daily-grid",
+      "dur": 6,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "click": "button[aria-label='Hint']"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "click": "button[aria-label='Hint']"
+       },
+       {
+        "wait": 1.2
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "app.v1.introSeen": "true"
+      },
+      "settle": 1.5,
+      "headline": "Make it *harder*",
+      "url": "https://travelplay.fun/play/daily-grid",
+      "dur": 5,
+      "steps": [
+       {
+        "wait": 0.8
+       },
+       {
+        "click": "button:text-is('Expert')"
+       },
+       {
+        "wait": 1.5
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "TravelPlay",
+     "line": "Play free now",
+     "url": "travelplay.fun",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "Bored at|the *gate*?",
+     "kicker": "FREE GAMES",
+     "style": "phone",
+     "app": "TravelPlay",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "*0* ads.|0 sign-up.|Just play.",
+     "kicker": "FREE GAMES",
+     "style": "stamp"
+    }
+   }
+  },
+  {
+   "n": 6,
+   "app": "Travel Safety Watch",
+   "when": "Friday 27 Nov, 20:30",
+   "subject": "FreeApps 6/7 · post Friday 27 Nov, 20:30 · Travel Safety Watch",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 6 of 7: Travel Safety Watch</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Friday 27 Nov, 20:30 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">Can't read the local news where you're travelling? This free app puts it into plain English, with the weather and official advice. No account. travelsafetywatch.com (link in bio). Independent, not a government service. #traveltips #travelabroad #expat #freeapp</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> Can't read the local news?</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> Local news, in English (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Trending travel vlog sound</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#2EC4B6",
+    "bg": "#0a1a1f",
+    "icon_from": "https://travelsafetywatch.com/",
+    "scenes": [
+     {
+      "hide": "[aria-label='Cookie consent'], .alerts-mobile-banner",
+      "settle": 1.8,
+      "headline": "Local news, *plain English*",
+      "url": "https://travelsafetywatch.com/news",
+      "dur": 6,
+      "steps": [
+       {
+        "wait": 0.6
+       },
+       {
+        "scroll": 700,
+        "over": 3.5
+       },
+       {
+        "wait": 0.8
+       }
+      ]
+     },
+     {
+      "hide": "[aria-label='Cookie consent'], .alerts-mobile-banner",
+      "settle": 1.8,
+      "headline": "Translated *for you*",
+      "url": "https://travelsafetywatch.com/news",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.6
+       },
+       {
+        "scroll": 1400,
+        "over": 3.4
+       },
+       {
+        "wait": 0.4
+       }
+      ]
+     },
+     {
+      "hide": "[aria-label='Cookie consent'], .alerts-mobile-banner",
+      "settle": 1.8,
+      "headline": "Alerts *near you*",
+      "url": "https://travelsafetywatch.com/",
+      "dur": 5.5,
+      "steps": [
+       {
+        "wait": 0.6
+       },
+       {
+        "scroll": 400,
+        "over": 2.4
+       },
+       {
+        "wait": 0.8
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "Travel Safety Watch",
+     "line": "Free, no account",
+     "url": "travelsafetywatch.com",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "Can't read the|*local news*?",
+     "kicker": "ABROAD?",
+     "style": "boxes",
+     "app": "Travel Safety Watch",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "Local news,|in *English*",
+     "kicker": "TRAVEL HACK",
+     "style": "phone"
+    }
+   }
+  },
+  {
+   "n": 7,
+   "app": "Daywall",
+   "when": "Saturday 28 Nov, 16:00",
+   "subject": "FreeApps 7/7 · post Saturday 28 Nov, 16:00 · Daywall",
+   "html": "<div style=\"font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:560px\">\n<h2 style=\"margin:0 0 6px\">Video 7 of 7: Daywall</h2>\n<p style=\"margin:0 0 14px\"><b>Post on:</b> Saturday 28 Nov, 16:00 (Israel time)</p>\n<p style=\"margin:0 0 4px\"><b>Caption</b> (copy and paste):</p>\n<div style=\"background:#f3f3f3;border-radius:8px;padding:12px;margin:0 0 14px;white-space:pre-wrap\">Bills vs me: who wins this month? 😅 See income, bills and what's left on one screen. Export CSV or PDF. Free, private, no account. daywall.elevex.digital (link in bio). (Demo data) #budgeting #moneytok #personalfinance #freeapp</div>\n<p style=\"margin:0 0 4px\"><b>Opening hook:</b> Bills vs me: who wins?</p>\n<p style=\"margin:0 0 4px\"><b>Cover:</b> Income minus bills = ? (attached)</p>\n<p style=\"margin:0 0 14px\"><b>Sound idea:</b> Funny \"budget\" or money-themed sound</p>\n<p style=\"margin:0 0 4px\"><b>How to post</b></p>\n<ol style=\"margin:0 0 14px;padding-left:20px\">\n<li>Save the attached video and cover to your phone.</li>\n<li>TikTok: + &gt; Upload &gt; pick the video.</li>\n<li>Add sound: tap Add sound and pick one from the list (business accounts get the Commercial Music Library).</li>\n<li>Next &gt; Edit cover: if TikTok offers an upload or gallery option, choose the cover file; otherwise keep the first frame (the hook card).</li>\n<li>Paste the caption and post.</li>\n</ol>\n<p style=\"color:#777;font-size:13px;margin:0\">The video has no sound of its own, so whatever you add is the only audio.</p></div>",
+   "spec": {
+    "format": "freeapps",
+    "music": "none",
+    "crf": 21,
+    "seed": 7,
+    "accent": "#7C5CFF",
+    "bg": "#100c24",
+    "icon_from": "https://daywall.elevex.digital/",
+    "scenes": [
+     {
+      "localStorage": {
+       "myplace:welcome-dismissed": "true",
+       "myplace:currency": "\"USD\"",
+       "myplace:workplaces": "[{\"id\":\"wp1demo\",\"name\":\"Harbour Cafe\",\"type\":\"hourly\",\"rate\":18,\"treatments\":[],\"removable\":true,\"billable\":false,\"color\":\"slot-1\"}]",
+       "myplace:shifts": "[{\"id\":\"sh0\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-19\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh1\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-18\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh2\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-17\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh3\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-16\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh5\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-14\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh6\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-13\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh7\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-12\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh8\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-11\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh10\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-09\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh12\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-07\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh13\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-06\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh15\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-04\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh16\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-03\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh17\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-02\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh20\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-30\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh21\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-29\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh22\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-28\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh23\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-27\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"}]"
+      },
+      "settle": 1.5,
+      "headline": "Income minus bills = *?*",
+      "url": "https://daywall.elevex.digital/cashflow",
+      "dur": 6,
+      "steps": [
+       {
+        "eval": "document.querySelectorAll('button').forEach(b => /^Dismiss$/.test(b.innerText.trim()) && b.click())"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 450,
+        "over": 3.2
+       },
+       {
+        "wait": 0.8
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "myplace:welcome-dismissed": "true",
+       "myplace:currency": "\"USD\"",
+       "myplace:workplaces": "[{\"id\":\"wp1demo\",\"name\":\"Harbour Cafe\",\"type\":\"hourly\",\"rate\":18,\"treatments\":[],\"removable\":true,\"billable\":false,\"color\":\"slot-1\"}]",
+       "myplace:shifts": "[{\"id\":\"sh0\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-19\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh1\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-18\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh2\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-17\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh3\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-16\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh5\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-14\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh6\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-13\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh7\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-12\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh8\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-11\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh10\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-09\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh12\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-07\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh13\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-06\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh15\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-04\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh16\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-03\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh17\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-02\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh20\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-30\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh21\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-29\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh22\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-28\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh23\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-27\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"}]"
+      },
+      "settle": 1.5,
+      "headline": "Monthly cashflow, *one screen*",
+      "url": "https://daywall.elevex.digital/cashflow",
+      "dur": 5.5,
+      "steps": [
+       {
+        "eval": "document.querySelectorAll('button').forEach(b => /^Dismiss$/.test(b.innerText.trim()) && b.click())"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 900,
+        "over": 3
+       },
+       {
+        "wait": 0.4
+       }
+      ]
+     },
+     {
+      "localStorage": {
+       "myplace:welcome-dismissed": "true",
+       "myplace:currency": "\"USD\"",
+       "myplace:workplaces": "[{\"id\":\"wp1demo\",\"name\":\"Harbour Cafe\",\"type\":\"hourly\",\"rate\":18,\"treatments\":[],\"removable\":true,\"billable\":false,\"color\":\"slot-1\"}]",
+       "myplace:shifts": "[{\"id\":\"sh0\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-19\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh1\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-18\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh2\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-17\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh3\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-16\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh5\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-14\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh6\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-13\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh7\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-12\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh8\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-11\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh10\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-09\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh12\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-07\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh13\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-06\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"},{\"id\":\"sh15\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-04\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh16\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-03\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh17\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-11-02\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh20\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-30\",\"hours\":4,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":72,\"note\":\"\"},{\"id\":\"sh21\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-29\",\"hours\":6,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":108,\"note\":\"\"},{\"id\":\"sh22\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-28\",\"hours\":8,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":144,\"note\":\"\"},{\"id\":\"sh23\",\"workplaceId\":\"wp1demo\",\"date\":\"2026-10-27\",\"hours\":5,\"days\":0,\"counts\":{},\"extraMinutes\":0,\"total\":90,\"note\":\"\"}]"
+      },
+      "settle": 1.5,
+      "headline": "Every shift *adds up*",
+      "url": "https://daywall.elevex.digital/work",
+      "dur": 5.5,
+      "steps": [
+       {
+        "eval": "document.querySelectorAll('button').forEach(b => /^Dismiss$/.test(b.innerText.trim()) && b.click())"
+       },
+       {
+        "wait": 0.8
+       },
+       {
+        "scroll": 300,
+        "over": 2.2
+       },
+       {
+        "wait": 1.2
+       }
+      ],
+      "sticker": true
+     }
+    ],
+    "end": {
+     "name": "Daywall",
+     "line": "Free, private",
+     "url": "daywall.elevex.digital",
+     "badges": "soon"
+    },
+    "hook": {
+     "headline": "Bills vs me:|*who wins?*",
+     "kicker": "THIS MONTH",
+     "style": "phone",
+     "app": "Daywall",
+     "dur": 1.7
+    },
+    "cover": {
+     "headline": "Income|minus bills|= *?*",
+     "kicker": "BE HONEST",
+     "style": "boxes"
+    }
+   }
+  }
+ ]
+}
