@@ -91,7 +91,7 @@ window.draw=(layer,d)=>{
     if(sty==='phone'){
       root.innerHTML=`<div class="abs cvbg" style="background:linear-gradient(155deg,${acc} 0%,${base} 78%)"></div>`+
         (d.kicker?`<div class="abs cvk" style="top:250px"><span>${esc(d.kicker)}</span></div>`:'')+
-        `<div class="abs cvph" id="cvhead">${hl(d.headline).split('|').join('<br>')}</div>`+
+        `<div class="abs cvph" id="cvhead"><div>${hl(d.headline).split('|').join('<br>')}</div></div>`+
         (d.shot?`<div class="abs cvphone"><img src="${d.shot}"></div>`:'')+
         `<div class="abs cvchip" style="top:880px">${d.icon?`<img src="${d.icon}">`:''}<span>${esc(d.app||'')}</span><b>FREE</b></div>`;
     } else if(sty==='stamp'){
