@@ -32,12 +32,16 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 #cap span{display:inline-block;margin:0 13px}
 #cap .on{color:#FFD166;-webkit-text-stroke:2px rgba(60,30,0,.6)}#cap .off{opacity:.5}
 #flash{left:0;top:0;width:1080px;height:1920px;background:#fff;opacity:0;pointer-events:none}
+#brand{left:0;top:0;width:1080px;height:300px;display:none;text-align:center;background:linear-gradient(180deg,rgba(11,18,32,.75),rgba(11,18,32,0));pointer-events:none}
+#brand img{width:270px;margin-top:92px;display:block;margin-left:auto;margin-right:auto}
+#brand div{font:600 40px Inter;color:#38BDF8;margin-top:12px;text-shadow:0 3px 8px rgba(0,0,0,.7)}
 #prog{left:0;top:0;height:10px;background:linear-gradient(90deg,#E2765A,#FFD166);width:0}
 </style></head><body>
 <div id="stage" class="solid">
  <svg id="rings" class="abs" width="1080" height="1920" style="left:0;top:0"></svg>
  <div id="tag" class="abs"></div><div id="tagline" class="abs"></div>
  <div id="scenes"></div>
+ <div id="brand" class="abs"></div>
  <div id="cap" class="abs"></div>
  <div id="flash" class="abs"></div><div id="prog" class="abs"></div>
  <div id="cover" class="abs" style="left:0;top:0;width:1080px;height:1920px;display:none"></div>
@@ -190,6 +194,9 @@ function layoutProblems(root,label){const bad=[];const FR={l:40,r:1040,t:0,b:192
 
 window.setSpec=async spec=>{SPEC=spec;SPEC.total=spec.scenes.reduce((a,sc)=>a+(sc.dur||0),0);SPEC.variant=Number.isFinite(+spec.variant)?+spec.variant%3:(Number(spec.seed)||0)%3;const root=document.getElementById('scenes');
  document.getElementById('tag').textContent=spec.series||'';
+ // Brand header (spec.brand: "elevex"): small logo + website on every frame, so viewers always see where to find us.
+ const BR={elevex:{logo:'assets/elevex-wordmark.png',url:'elevex.digital'}}[spec.brand];const bh=document.getElementById('brand');
+ bh.style.display=BR?'block':'none';bh.innerHTML=BR?`<img src="${BR.logo}"><div>${esc(BR.url)}</div>`:'';
  root.innerHTML=spec.scenes.map((sc,i)=>`<div class="scene" id="sc${i}">${(B[sc.type]||B.point)(sc)}</div>`).join('');
  const cv=document.getElementById('cover');cv.innerHTML=coverHTML(spec);
  await Promise.all(['600 100px Fraunces','700 100px Fraunces','500 30px Inter','600 30px Inter','700 30px Inter'].map(f=>document.fonts.load(f,'Aa0')));await document.fonts.ready; // fonts load lazily: without this, text was measured in a narrower fallback font
