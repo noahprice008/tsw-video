@@ -231,7 +231,7 @@ function captions(sc,t){const cap=document.getElementById('cap');const ws=sc.wor
  const chunks=[];let cur=[];ws.forEach((w,i)=>{cur.push(i);if(cur.length>=5||/[.?!:]$/.test(w[0])){chunks.push(cur);cur=[];}});if(cur.length)chunks.push(cur);
  let a=-1;ws.forEach((w,i)=>{if(t>=w[1])a=i;});if(a<0){cap.innerHTML='';return;}
  const ch=chunks.find(c=>c.includes(a));const age=t-ws[a][1],k=clamp(age/.14);const pop=1+.28*Math.pow(1-k,2); // active word pops in
- cap.innerHTML=ch.map(i=>`<span class="${i===a?'on':(i<a?'':'off')}"${i===a?` style="transform:scale(${pop.toFixed(3)})"`:''}>${esc(ws[i][0])}</span>`).join(' ');}
+ cap.innerHTML=ch.map(i=>`<span class="${i===a?'on':(i<a?'':'off')}">${esc(ws[i][0])}</span>`).join(' ');}
 
 window.render=(idx,t,T)=>{const sc=SPEC.scenes[idx];document.querySelectorAll('.scene').forEach(e=>e.style.display='none');document.getElementById('cover').style.display='none';
  const el=document.getElementById('sc'+idx);el.style.display='block';
