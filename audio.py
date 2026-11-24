@@ -21,80 +21,97 @@ PROGS = [
 ]
 
 def upbeat_music(intensity=1.0):
-    """Original modern TikTok-style motivational bed: punchy kick with side-chain pump, snap, bouncy hats, sub bass,
-    warm detuned pad, catchy plucked hook with echo. No samples, no licences. intensity 1 = full, ~0.6 = softer (news)."""
+    """Original cinematic motivational / hustle bed (dark trap-cinematic): half-time drums, heavy gliding 808, hi-hat rolls,
+    slow string pad and a sparse piano motif in a big reverb, impact hits and risers. No samples, no licences.
+    intensity 1 = full, ~0.6 = softer (news)."""
     r = random.Random(seed * 7 + 3); rs = np.random.RandomState(seed + 11)
-    bpm = r.choice([100, 104, 108, 112, 116, 120]); beat = 60.0 / bpm; sp = beat / 4
-    root = r.choice([57, 55, 53, 52, 50, 48])
-    # I - V - vi - IV (uplifting), or vi - IV - I - V (emotional-motivational): (root offset, minor?)
-    prog = r.choice([[(0, 0), (7, 0), (9, 1), (5, 0)], [(9, 1), (5, 0), (0, 0), (7, 0)], [(0, 0), (9, 1), (5, 0), (7, 0)]])
-    out = np.zeros(n); kick_t = []
+    bpm = r.choice([136, 140, 144, 148]); beat = 60.0 / bpm; sp = beat / 4
+    root = r.choice([45, 43, 41, 40, 38, 47])  # A, G, F, E, D, B (low minor keys)
+    # minor-key cinematic progressions: (semitone offset of chord root, is_minor)
+    prog = r.choice([[(0, 1), (-4, 0), (-9, 0), (-2, 0)], [(0, 1), (-2, 0), (-4, 0), (-2, 0)], [(0, 1), (-4, 0), (3, 0), (-2, 0)]])
+    motif = r.choice([[7, 5, 3, 0], [12, 10, 7, 3], [3, 7, 10, 7], [0, 3, 7, 5]])
+    def verb(x, sec=1.9, mix=.35):
+        k = int(sec * SR); t = np.arange(k) / SR; ir = rs.randn(k) * np.exp(-t * 3.0)
+        fr = np.fft.rfftfreq(k, 1 / SR); ir = np.fft.irfft(np.fft.rfft(ir) / (1 + (fr / 3500) ** 2), k)
+        N = 1 << int(np.ceil(np.log2(len(x) + k)))
+        w = np.fft.irfft(np.fft.rfft(x, N) * np.fft.rfft(ir, N), N)[:len(x)]
+        return x + mix * w / (np.max(np.abs(w)) + 1e-9) * (np.max(np.abs(x)) + 1e-9)
     def put(buf, st, sig):
         st = int(st * SR)
         if st >= n or st < 0: return
         m = min(len(sig), n - st); buf[st:st + m] += sig[:m]
     def kick():
-        k = int(.32 * SR); x = np.arange(k) / SR
-        f = 45 + 150 * np.exp(-x * 45); ph = 2 * np.pi * np.cumsum(f) / SR
-        return 1.0 * np.tanh(1.6 * np.sin(ph)) * np.exp(-x * 9) * (1 - np.exp(-x * 1200))
-    def snap():
-        k = int(.25 * SR); x = np.arange(k) / SR; nz = rs.randn(k)
+        k = int(.4 * SR); x = np.arange(k) / SR
+        f = 42 + 140 * np.exp(-x * 40); ph = 2 * np.pi * np.cumsum(f) / SR
+        return np.tanh(1.8 * np.sin(ph)) * np.exp(-x * 7.5) * (1 - np.exp(-x * 1500))
+    def clap():
+        k = int(.45 * SR); x = np.arange(k) / SR; nz = rs.randn(k)
         nz = nz - np.convolve(nz, np.ones(5) / 5, 'same')
-        body = np.sin(2 * np.pi * 190 * x) * np.exp(-x * 30) * .5
-        return .55 * nz * (np.exp(-x * 20) + .5 * np.exp(-((x - .011) * 150) ** 2)) + body
-    def hat(open_=False, v=1.0):
-        k = int((.14 if open_ else .04) * SR); x = np.arange(k) / SR; nz = rs.randn(k)
+        return .6 * nz * (np.exp(-x * 14) + .8 * np.exp(-((x - .01) * 120) ** 2) + .6 * np.exp(-((x - .024) * 120) ** 2))
+    def hat(v=1.0, open_=False):
+        k = int((.16 if open_ else .035) * SR); x = np.arange(k) / SR; nz = rs.randn(k)
         nz = nz - np.convolve(nz, np.ones(3) / 3, 'same')
-        return v * (.2 if open_ else .14) * nz * np.exp(-x * (22 if open_ else 110))
-    def sub(m, d):
-        k = int(d * SR); x = np.arange(k) / SR; f = hz(m)
-        w = np.tanh(1.3 * np.sin(2 * np.pi * f * x)) + .12 * np.sin(4 * np.pi * f * x)
-        return .62 * w * np.clip(x / .006, 0, 1) * np.clip((d - x) / .05, 0, 1) * np.exp(-x * 1.6)
-    def pad(ms, d):
-        k = int(d * SR); x = np.arange(k) / SR; w = np.zeros(k)
+        return v * (.16 if open_ else .12) * nz * np.exp(-x * (20 if open_ else 140))
+    def b808(m, d, glide_to=None):
+        k = int(d * SR); x = np.arange(k) / SR; f0 = hz(m)
+        f = f0 * (1 + .0 * x) if glide_to is None else f0 * (hz(glide_to) / f0) ** np.clip(x / (d * .35), 0, 1)
+        ph = 2 * np.pi * np.cumsum(f) / SR; w = np.tanh(1.9 * np.sin(ph)) + .1 * np.sin(2 * ph)
+        return .75 * w * np.clip(x / .004, 0, 1) * np.clip((d - x) / .06, 0, 1) * np.exp(-x * 1.3)
+    def strings(ms, d):
+        k = int(d * SR); x = np.arange(k) / SR; w = np.zeros(k); cnt = 0
         for m in ms:
             f = hz(m)
-            for dt in (-.006, 0, .006):
-                w += 2 * ((f * (1 + dt) * x) % 1) - 1
-        w /= (3 * len(ms)); sp_ = np.fft.rfft(w); fr = np.fft.rfftfreq(k, 1 / SR)
-        sp_ *= 1 / (1 + (fr / 2200) ** 4); w = np.fft.irfft(sp_, k)
-        return .5 * w * np.clip(x / .12, 0, 1) * np.clip((d - x) / .25, 0, 1)
-    def pluck(m, d=.5):
+            for dt in (-.0075, -.003, 0, .003, .0075):
+                w += 2 * ((f * (1 + dt) * x + rs.rand()) % 1) - 1; cnt += 1
+        w /= cnt; sp_ = np.fft.rfft(w); fr = np.fft.rfftfreq(k, 1 / SR)
+        sp_ *= 1 / (1 + (fr / 1600) ** 4); w = np.fft.irfft(sp_, k)
+        return .9 * w * np.clip(x / .5, 0, 1) * np.clip((d - x) / .6, 0, 1)
+    def piano(m, d=1.6):
         k = int(d * SR); x = np.arange(k) / SR; f = hz(m)
-        w = np.sin(2 * np.pi * f * x) + .45 * np.sin(4 * np.pi * f * x) + .22 * np.sin(6 * np.pi * f * x) + .08 * np.sin(8 * np.pi * f * x)
-        return .17 * w * np.exp(-x * 7.5) * np.clip(x / .003, 0, 1)
-    hook = [[0, None, 4, None, 7, None, 4, 2], [0, None, 4, 7, 12, None, 7, 4], [2, None, 7, None, 9, 7, 4, None], [0, 4, 7, None, 4, None, 2, 0]]
-    hook = hook[r.randrange(len(hook))]
+        w = np.sin(2 * np.pi * f * x) + .28 * np.sin(4 * np.pi * f * x) + .1 * np.sin(6 * np.pi * f * x)
+        return .22 * w * np.exp(-x * 2.6) * np.clip(x / .004, 0, 1)
+    def impact(d=2.6):
+        k = int(d * SR); x = np.arange(k) / SR
+        boom = np.sin(2 * np.pi * (34 + 60 * np.exp(-x * 5)) * x) * np.exp(-x * 1.7)
+        nz = rs.randn(k); fr = np.fft.rfftfreq(k, 1 / SR); nz = np.fft.irfft(np.fft.rfft(nz) / (1 + (fr / 900) ** 2), k)
+        return 1.1 * boom + .5 * nz * np.exp(-x * 2.2) / (np.max(np.abs(nz)) + 1e-9) * 3
+    def riser(d):
+        k = int(d * SR); x = np.arange(k) / SR; nz = rs.randn(k); fr = np.fft.rfftfreq(k, 1 / SR)
+        sp_ = np.fft.rfft(nz) / (1 + (fr / 2500) ** 2); nz = np.fft.irfft(sp_, k)
+        nz = nz - np.convolve(nz, np.ones(int(.004 * SR)) / int(.004 * SR), 'same') * .5
+        return .22 * nz / (np.max(np.abs(nz)) + 1e-9) * (x / d) ** 2.2
     bars = int(total / (4 * beat)) + 2
-    drums = np.zeros(n); bassb = np.zeros(n); padb = np.zeros(n); leadb = np.zeros(n)
+    drums = np.zeros(n); sub = np.zeros(n); pad = np.zeros(n); keys = np.zeros(n); fx = np.zeros(n); kick_t = []
+    put(fx, 0, impact())
     for b in range(bars):
         t0 = b * 4 * beat; off, minor = prog[b % 4]; cr = root + off
         third = cr + (3 if minor else 4); fifth = cr + 7
-        put(padb, t0, pad([cr, third, fifth, cr + 12], 4 * beat + .1))
-        for q in range(4):
-            tb = t0 + q * beat
-            put(drums, tb, kick()); kick_t.append(tb)
-            if q in (1, 3): put(drums, tb, snap())
-            put(drums, tb + 2 * sp, hat(True, .9))
-            for j in range(4): put(drums, tb + j * sp, hat(False, 1.0 if j % 2 == 0 else .55))
-            if b % 2 == 1 and q == 3: put(drums, tb + 3 * sp, hat(False, .9)); put(drums, tb + 2.5 * sp, hat(False, .8))
-        for st, d in ((0, 1.4), (1.5, .45), (2, 1.0), (3.5, .45)):
-            put(bassb, t0 + st * beat, sub(cr - 24, d * beat))
-        for j, o in enumerate(hook):
-            if o is None: continue
-            put(leadb, t0 + j * 2 * sp, pluck(cr + 12 + o + (0 if third - cr == 4 or o not in (4,) else -1)))
-    # echo on the lead (dotted eighth) for width
-    de = int(beat * .75 * SR); echo = np.zeros_like(leadb); echo[de:] = leadb[:-de] * .38; leadb = leadb + echo
-    # side-chain pump: everything except drums ducks on each kick
+        put(pad, t0, strings([cr + 24, third + 24, fifth + 24, cr + 36], 4 * beat + .6))
+        # half-time drums: kick 1 and 2&, clap on 3, rolling hats
+        for st in (0, 1.5, 2.75 if b % 2 else 3.5):
+            put(drums, t0 + st * beat, kick()); kick_t.append(t0 + st * beat)
+        put(drums, t0 + 2 * beat, clap())
+        for j in range(8):
+            put(drums, t0 + j * beat / 2, hat(1.0 if j % 2 == 0 else .6, open_=(j == 7)))
+            if j in (3, 7) and b % 2 == 1:
+                for q in range(4): put(drums, t0 + j * beat / 2 + q * beat / 8, hat(.45 + .15 * q))
+        put(sub, t0, b808(cr - 12, beat * 1.45))
+        put(sub, t0 + 1.5 * beat, b808(cr - 12, beat * 2.2, glide_to=cr - 12 - 5 if b % 4 == 3 else None))
+        if b % 2 == 1: put(sub, t0 + 3.5 * beat, b808(cr - 12 + 7, beat * .5))
+        for j, o in enumerate(motif):
+            if (b % 2 == 0 and j < 3) or b % 2 == 1:
+                put(keys, t0 + (j * 1.0 + (.5 if b % 2 else 0)) * beat, piano(cr + 24 + o + (0 if minor or o not in (3,) else 1)))
+        if b % 8 == 7: put(fx, t0 + 2 * beat, riser(2 * beat))
+        if b % 8 == 0 and b > 0: put(fx, t0, impact(1.8))
+    atmos = verb(pad * .55 + keys * 1.0, 2.0, .45)
     duck = np.ones(n)
     for tk in kick_t:
         i = int(tk * SR)
         if i >= n: continue
-        m = min(int(.35 * SR), n - i); duck[i:i + m] = np.minimum(duck[i:i + m], 1 - .62 * np.exp(-np.arange(m) / SR * 9))
-    body = (bassb * .9 + padb * .55 + leadb * 1.0) * duck
-    out = drums * (.9 * intensity + .1) + body * (.75 + .25 * intensity)
-    x = np.arange(n) / SR; out *= np.minimum(1, x / .12) * np.clip(np.minimum(1, (total - x) / 1.2), 0, 1)
-    out = np.tanh(1.25 * out / (np.max(np.abs(out)) + 1e-9))
+        m = min(int(.4 * SR), n - i); duck[i:i + m] = np.minimum(duck[i:i + m], 1 - .5 * np.exp(-np.arange(m) / SR * 8))
+    out = drums * (.85 * intensity + .15) + sub * .95 + atmos * duck * (1.0 - .25 * intensity) + fx * (.6 + .3 * intensity)
+    x = np.arange(n) / SR; out *= np.clip(np.minimum(1, x / .05), 0, 1) * np.clip(np.minimum(1, (total - x) / 1.5), 0, 1)
+    out = np.tanh(1.15 * out / (np.max(np.abs(out)) + 1e-9))
     return out / (np.max(np.abs(out)) + 1e-9)
 
 chords, arp, bar = PROGS[seed % len(PROGS)]
