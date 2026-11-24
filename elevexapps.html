@@ -1,0 +1,96 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/600.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/700.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/800.css">
+<link rel="stylesheet" href="node_modules/@fontsource/inter/900.css">
+<style>
+/* ELEVEX Apps videos. Safe zones: the platform's top bar covers y<190, so the ELEVEX header sits at y=190;
+   the website link is the footer pill at y=1700. */
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transparent}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Inter,sans-serif}
+.abs{position:absolute}
+.hdr{left:0;width:1080px;top:188px;height:60px;display:flex;justify-content:center;align-items:center;gap:22px;color:rgba(255,255,255,.88)}
+.hdr img{height:46px;width:auto;display:block}
+.hdr i{display:block;width:3px;height:34px;background:rgba(255,255,255,.35);border-radius:2px}
+.hdr span{font:700 32px/1 Inter;letter-spacing:.5px;white-space:nowrap}
+.foot{left:0;width:1080px;top:1700px;display:flex;justify-content:center}
+.foot span{background:#fff;color:#0b0b12;font:800 46px/1 Inter;padding:22px 48px;border-radius:60px;box-shadow:0 12px 34px rgba(0,0,0,.45);white-space:nowrap}
+.head{left:70px;width:940px;top:272px;height:176px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font:800 74px/1.04 Inter;letter-spacing:-2px;text-shadow:0 6px 28px rgba(0,0,0,.5)}
+.head em,.big em{font-style:normal;color:var(--accent)}
+.bezel{left:252px;top:452px;width:576px;height:1206px;box-sizing:border-box;border:18px solid #0a0a0f;border-radius:74px;box-shadow:0 0 0 3px rgba(255,255,255,.16),0 40px 90px rgba(0,0,0,.55)}
+.notch{left:432px;top:478px;width:216px;height:28px;border-radius:18px;background:#0a0a0f}
+/* intro card */
+.kick{left:0;width:1080px;top:330px;display:flex;justify-content:center}
+.kick span{font:800 38px/1 Inter;letter-spacing:2px;color:#0b0b12;background:var(--accent);padding:16px 30px;border-radius:16px;text-transform:uppercase;white-space:nowrap}
+.big{left:60px;width:960px;top:420px;height:800px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font:900 150px/1.0 Inter;letter-spacing:-5px;text-shadow:0 10px 0 rgba(0,0,0,.28),0 14px 40px rgba(0,0,0,.45)}
+.big em{color:#FFE14D}
+.chip{left:0;width:1080px;top:1300px;display:flex;justify-content:center;align-items:center;gap:26px;color:#fff;font:800 60px/1 Inter;text-shadow:0 4px 20px rgba(0,0,0,.5)}
+.chip img{width:130px;height:130px;border-radius:32px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+/* outro card */
+.icon{left:420px;top:380px;width:240px;height:240px;border-radius:56px;box-shadow:0 20px 50px rgba(0,0,0,.45);object-fit:cover}
+.iconfb{left:420px;top:380px;width:240px;height:240px;border-radius:56px;background:var(--accent)}
+.ename{left:0;width:1080px;top:664px;text-align:center;color:#fff;font:800 92px/1 Inter;letter-spacing:-2px}
+.eline{left:0;width:1080px;top:792px;text-align:center;color:var(--accent);font:800 58px/1 Inter}
+.eurl{left:0;width:1080px;top:920px;display:flex;justify-content:center}
+.eurl span{background:#fff;color:#0b0b12;font:800 54px/1 Inter;padding:28px 52px;border-radius:70px;box-shadow:0 14px 40px rgba(0,0,0,.45);white-space:nowrap}
+.enote{left:0;width:1080px;top:1090px;text-align:center;color:rgba(255,255,255,.92);font:600 42px/1 Inter}
+.tester{left:90px;width:900px;top:1210px;box-sizing:border-box;border:4px solid var(--accent);border-radius:36px;background:rgba(0,0,0,.35);padding:34px 30px;text-align:center;color:#fff}
+.tester b{display:block;font:800 52px/1.1 Inter;margin-bottom:14px}
+.tester span{display:block;font:600 40px/1.15 Inter;color:rgba(255,255,255,.92)}
+.fa{white-space:nowrap;box-sizing:border-box;padding:0 70px}
+</style></head><body>
+<div id="stage"><div id="root"></div></div>
+<script>
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const hl=s=>esc(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
+const header=()=>`<div class="abs hdr"><img src="assets/elevex-wordmark.png"><i></i><span>Apps</span></div>`;
+const footer=u=>`<div class="abs foot"><span class="fit">${esc(u)}</span></div>`;
+// layer: 'bg' | 'frame' | 'intro' | 'outro'
+window.draw=(layer,d)=>{
+  const st=document.getElementById('stage'), root=document.getElementById('root');
+  const acc=d.accent||'#F5A623', base=d.bg||'#0b1424', url=d.url||'elevexapps.elevex.digital';
+  st.style.setProperty('--accent',acc);
+  const bgcss=`radial-gradient(900px 900px at 50% 58%,${acc}33 0%,transparent 70%),radial-gradient(1400px 1400px at 50% 40%,${base} 0%,#05070d 100%)`;
+  document.body.style.background='transparent';
+  if(layer==='bg'){
+    root.innerHTML=`<div class="abs" style="inset:0;background:${bgcss}"></div>`;
+    document.body.style.background=base;
+  } else if(layer==='frame'){
+    root.innerHTML=header()+`<div class="abs head" id="fhead"><div>${hl(d.headline)}</div></div><div class="abs bezel"></div><div class="abs notch"></div>`+footer(url);
+  } else if(layer==='intro'){
+    const g=`radial-gradient(900px 900px at 85% 12%,#ff3b8d 0%,transparent 60%),radial-gradient(1000px 1000px at 8% 92%,${acc} 0%,transparent 65%),linear-gradient(160deg,${base},#05070d 120%)`;
+    root.innerHTML=`<div class="abs" style="inset:0;background:${g}"></div>`+header()+
+      (d.kicker?`<div class="abs kick"><span>${esc(d.kicker)}</span></div>`:'')+
+      `<div class="abs big" id="bighead"><div>${hl(d.headline).split('|').join('<br>')}</div></div>`+
+      (d.app?`<div class="abs chip">${d.icon?`<img src="${d.icon}">`:''}<span>${esc(d.app)}</span></div>`:'')+footer(url);
+  } else if(layer==='outro'){
+    const e=d.end||{};
+    root.innerHTML=`<div class="abs" style="inset:0;background:${bgcss.replace('58%','44%')}"></div>`+header()+
+      (e.icon?`<img class="abs icon" src="${e.icon}">`:`<div class="abs iconfb"></div>`)+
+      `<div class="abs ename fa">${esc(e.name)}</div><div class="abs eline fa">${esc(e.line||'Try it and tell us what you think')}</div>`+
+      `<div class="abs eurl"><span class="fit">${esc(e.url||url)}</span></div>`+
+      (e.note?`<div class="abs enote fa">${esc(e.note)}</div>`:'')+
+      (e.tester?`<div class="abs tester"><b>${esc(e.tester.title||'Want to be a tester on Google Play?')}</b><span>${esc(e.tester.text||'Send us your email at the link above')}</span></div>`:'');
+  }
+  fit(root);
+};
+function fit(root){
+  const head=root.querySelector('#fhead');
+  if(head){const inner=head.firstElementChild;let fs=parseFloat(getComputedStyle(head).fontSize);const over=()=>inner.getBoundingClientRect().height>176||inner.scrollWidth>inner.clientWidth+1;while(over()&&fs>40){fs-=2;head.style.fontSize=fs+'px';}}
+  const big=root.querySelector('#bighead');
+  if(big){const inner=big.firstElementChild;let fs=parseFloat(getComputedStyle(big).fontSize);const over=()=>inner.getBoundingClientRect().height>780||inner.scrollWidth>inner.clientWidth+1;while(over()&&fs>60){fs-=4;big.style.fontSize=fs+'px';}}
+  const tw=el=>{const r=document.createRange();r.selectNodeContents(el);return r.getBoundingClientRect().width;};
+  root.querySelectorAll('.fa').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(tw(el)>940&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});
+  root.querySelectorAll('.fit').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(el.getBoundingClientRect().width>960&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});
+  root.querySelectorAll('.tester span, .tester b').forEach(el=>{let fs=parseFloat(getComputedStyle(el).fontSize);while(el.scrollWidth>el.clientWidth+1&&fs>20){fs-=2;el.style.fontSize=fs+'px';}});
+  const bad=[];
+  root.querySelectorAll('*').forEach(el=>{
+    if(![...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))return;
+    const r=document.createRange();r.selectNodeContents(el);const b=r.getBoundingClientRect();if(!b.width)return;
+    const t=el.textContent.trim().slice(0,40);
+    if(b.left<39||b.right>1041||b.top<0||b.bottom>1920)bad.push(`"${t}" runs off the frame`);
+  });
+  window.__problems=bad;
+}
+</script></body></html>
