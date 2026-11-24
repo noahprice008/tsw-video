@@ -2,7 +2,7 @@
 // the ELEVEX header (below the platform's top bar), the website link as a footer, music and slick transitions.
 // Spec (POST /render with "format": "elevexapps"):
 // { format:"elevexapps", seed, accent:"#F5A623", bg:"#0b1424", url:"elevexapps.elevex.digital",
-//   voice:"bm_daniel", speed:1.0, music:"upbeat"|"calm"|"none", crf:19, icon_from:"https://app/" | icon_file:"assets/apps/x.webp",
+//   voice:"bm_daniel", speed:1.0 (stock voice; or give a part "audio":"https://...mp3" to use a recorded voice-over), music:"upbeat"|"calm"|"none", crf:19, icon_from:"https://app/" | icon_file:"assets/apps/x.webp",
 //   intro:{ headline:"Heading *abroad*?|Travel informed.", kicker:"ELEVEX APPS", app:"Travel Safety Watch", say:"..." },
 //   scenes:[ { headline:"Alerts *near you*", url:"https://...", viewport:[360,778], settle:1.5, localStorage:{k:"v"}, hide:"css selector",
 //              steps:[ {wait:1}, {click:"text=Play"}, {type:"input", text:"hi"}, {scroll:600, over:1.5}, {eval:"js"} ], say:"narration" } ],
@@ -40,10 +40,20 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   if (!parts.some((p) => p.kind === "scene")) throw new Error("spec.scenes is required");
 
   // ---- 2. the voice-over decides how long every part is -----------------------------------
-  const job = { voice: spec.voice || "bm_daniel", speed: spec.speed ?? 1.02, lang: spec.lang || "en-us", scenes: parts.map((p) => ({ say: p.say, hold: MIN[p.kind] })) };
+  const job = { voice: spec.voice || "bm_daniel", speed: spec.speed ?? 1.02, lang: spec.lang || "en-us", scenes: parts.map((p) => ({ say: p.spec.audio ? "" : p.say, hold: MIN[p.kind] })) };
   await fs.writeFile(path.join(workDir, "job.json"), JSON.stringify(job));
   await run(PY, [path.join(HERE, "tts.py"), path.join(workDir, "job.json"), workDir]);
   const timed = JSON.parse(await fs.readFile(path.join(workDir, "timed.json"), "utf8"));
+  // pre-recorded voice-over (the same Noah voice as the HeyGen videos): spec.audio = URL of an mp3/wav/m4a for that part
+  for (let i = 0; i < parts.length; i++) {
+    const a = parts[i].spec.audio; if (!a) continue;
+    const src = path.join(workDir, `vo_${i}.src`), wav = path.join(workDir, `scene_${i}.wav`);
+    const r = await fetch(a); if (!r.ok) throw new Error(`voice-over download failed (${r.status}): ${a}`);
+    await fs.writeFile(src, Buffer.from(await r.arrayBuffer()));
+    await run("ffmpeg", ["-loglevel", "error", "-y", "-i", src, "-af", "silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse", "-ac", "1", "-ar", String(timed.sr), wav]);
+    const speech = parseFloat((await run("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", wav])).trim());
+    timed.scenes[i] = { dur: Math.round((0.25 + speech + 0.45) * 100) / 100, speech, words: [], wav };
+  }
   parts.forEach((p, i) => { p.dur = Math.max(timed.scenes[i].dur, MIN[p.kind]); timed.scenes[i].dur = p.dur; });
   await fs.writeFile(path.join(workDir, "timed.json"), JSON.stringify(timed));
   let t = 0; parts.forEach((p) => { p.start = t; t += p.dur; });
