@@ -25,7 +25,7 @@ def upbeat_music(intensity=1.0):
     slow string pad and a sparse piano motif in a big reverb, impact hits and risers. No samples, no licences.
     intensity 1 = full, ~0.6 = softer (news)."""
     r = random.Random(seed * 7 + 3); rs = np.random.RandomState(seed + 11)
-    bpm = r.choice([136, 140, 144, 148]); beat = 60.0 / bpm; sp = beat / 4
+    bpm = r.choice([152, 156, 160, 164]); beat = 60.0 / bpm; sp = beat / 4
     root = r.choice([45, 43, 41, 40, 38, 47])  # A, G, F, E, D, B (low minor keys)
     # minor-key cinematic progressions: (semitone offset of chord root, is_minor)
     prog = r.choice([[(0, 1), (-4, 0), (-9, 0), (-2, 0)], [(0, 1), (-2, 0), (-4, 0), (-2, 0)], [(0, 1), (-4, 0), (3, 0), (-2, 0)]])
@@ -88,16 +88,19 @@ def upbeat_music(intensity=1.0):
         third = cr + (3 if minor else 4); fifth = cr + 7
         put(pad, t0, strings([cr + 24, third + 24, fifth + 24, cr + 36], 4 * beat + .6))
         # half-time drums: kick 1 and 2&, clap on 3, rolling hats
-        for st in (0, 1.5, 2.75 if b % 2 else 3.5):
+        for st in ((0, 0.75, 1.5, 2.75, 3.5) if b % 2 else (0, 1.5, 2.5, 3.25)):
             put(drums, t0 + st * beat, kick()); kick_t.append(t0 + st * beat)
-        put(drums, t0 + 2 * beat, clap())
+        put(drums, t0 + 2 * beat, clap()); put(drums, t0 + 2 * beat, clap() * .5)
+        if b % 4 == 3:
+            for q in range(8): put(drums, t0 + 3 * beat + q * beat / 8, clap() * (.25 + .08 * q))
+        for j in range(16):
+            put(drums, t0 + j * beat / 4, hat((1.0 if j % 4 == 0 else .75 if j % 2 == 0 else .5), open_=(j == 14)))
         for j in range(8):
-            put(drums, t0 + j * beat / 2, hat(1.0 if j % 2 == 0 else .6, open_=(j == 7)))
             if j in (3, 7) and b % 2 == 1:
                 for q in range(4): put(drums, t0 + j * beat / 2 + q * beat / 8, hat(.45 + .15 * q))
         put(sub, t0, b808(cr - 12, beat * 1.45))
         put(sub, t0 + 1.5 * beat, b808(cr - 12, beat * 2.2, glide_to=cr - 12 - 5 if b % 4 == 3 else None))
-        if b % 2 == 1: put(sub, t0 + 3.5 * beat, b808(cr - 12 + 7, beat * .5))
+        if b % 2 == 1: put(sub, t0 + 3.5 * beat, b808(cr - 12 + 7, beat * .5)); put(sub, t0 + 2.5 * beat, b808(cr - 12, beat * .6))
         for j, o in enumerate(motif):
             if (b % 2 == 0 and j < 3) or b % 2 == 1:
                 put(keys, t0 + (j * 1.0 + (.5 if b % 2 else 0)) * beat, piano(cr + 24 + o + (0 if minor or o not in (3,) else 1)))
@@ -109,7 +112,7 @@ def upbeat_music(intensity=1.0):
         i = int(tk * SR)
         if i >= n: continue
         m = min(int(.4 * SR), n - i); duck[i:i + m] = np.minimum(duck[i:i + m], 1 - .5 * np.exp(-np.arange(m) / SR * 8))
-    out = drums * (.85 * intensity + .15) + sub * .95 + atmos * duck * (1.0 - .25 * intensity) + fx * (.6 + .3 * intensity)
+    out = drums * (1.15 * intensity + .2) + sub * 1.45 + atmos * duck * (1.0 - .25 * intensity) + fx * (.6 + .3 * intensity)
     x = np.arange(n) / SR; out *= np.clip(np.minimum(1, x / .05), 0, 1) * np.clip(np.minimum(1, (total - x) / 1.5), 0, 1)
     out = np.tanh(1.15 * out / (np.max(np.abs(out)) + 1e-9))
     return out / (np.max(np.abs(out)) + 1e-9)
