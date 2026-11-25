@@ -30,7 +30,7 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   const warnings = [];
   const seed = Number(spec.seed ?? Math.floor(Math.random() * 1e6));
   const url = spec.url || "elevexapps.elevex.digital";
-  const common = { accent: spec.accent, bg: spec.bg, url };
+  const common = { accent: spec.accent, bg: spec.bg, url, site: spec.site_accent || "#9D7BFF" };
 
   // ---- 1. the parts, in order ------------------------------------------------------------
   const parts = [];
@@ -40,7 +40,7 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   if (!parts.some((p) => p.kind === "scene")) throw new Error("spec.scenes is required");
 
   // ---- 2. the voice-over decides how long every part is -----------------------------------
-  const job = { voice: spec.voice || "bm_daniel", speed: spec.speed ?? 1.02, lang: spec.lang || "en-us", scenes: parts.map((p) => ({ say: p.spec.audio ? "" : p.say, hold: MIN[p.kind] })) };
+  const job = { voice: spec.voice || "bm_daniel", speed: spec.speed ?? 1.02, lang: spec.lang || "en-us", scenes: parts.map((p) => ({ say: p.spec.audio ? "" : p.say, caption: p.spec.caption, hold: MIN[p.kind] })) };
   await fs.writeFile(path.join(workDir, "job.json"), JSON.stringify(job));
   await run(PY, [path.join(HERE, "tts.py"), path.join(workDir, "job.json"), workDir]);
   const timed = JSON.parse(await fs.readFile(path.join(workDir, "timed.json"), "utf8"));
@@ -56,11 +56,18 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   }
   parts.forEach((p, i) => { p.dur = Math.max(timed.scenes[i].dur, MIN[p.kind]); timed.scenes[i].dur = p.dur; });
   await fs.writeFile(path.join(workDir, "timed.json"), JSON.stringify(timed));
+  // closed-caption words per part: the TTS timings, or an even spread over a recorded voice-over
+  parts.forEach((p, i) => {
+    const ts = timed.scenes[i]; let w = ts.words && ts.words.length ? ts.words : null;
+    if (!w) { const txt = (p.spec.caption || p.say || "").split(/\s+/).filter(Boolean); const wt = txt.map((x) => x.length + 2 + (/[.,?!:]$/.test(x) ? 3 : 0)), tot = wt.reduce((a, b) => a + b, 0); let tt = 0.25; w = txt.map((x, k) => { const r = [x, Math.round(tt * 1000) / 1000]; tt += (ts.speech || 0) * wt[k] / (tot || 1); return r; }); }
+    p.words = w; p.speechEnd = 0.25 + (ts.speech || 0);
+  });
   let t = 0; parts.forEach((p) => { p.start = t; t += p.dur; });
   const total = t;
   parts.forEach((p, i) => { p.len = p.dur + (i < parts.length - 1 ? TRANS : 0); }); // overlap for the transition
   log(`voice-over done: ${parts.map((p) => p.dur.toFixed(1)).join(" + ")} = ${total.toFixed(1)}s`);
 
+  const capEvents = [];
   const browser = await launch();
   let coverJpg = null;
   try {
@@ -98,6 +105,26 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
       await page.screenshot({ path: file, type: "png", omitBackground: !!alpha, scale: "device" });
     };
     await shot("bg", common, path.join(workDir, "bg.png"), false);
+
+    // closed captions: one transparent strip per spoken word (3-word chunks, the spoken word in the site colour)
+    const CAPY = 1450, CAPH = 260;
+    for (const p of parts) {
+      const ws = p.words || []; const chunks = []; let cur = [];
+      ws.forEach((w, i) => { cur.push(i); const nx = ws[i + 1]; if (cur.length >= 3 || /[.?!:,]$/.test(w[0]) || (nx && cur.reduce((q, j) => q + ws[j][0].length, 0) + nx[0].length > 14)) { chunks.push(cur); cur = []; } });
+      if (cur.length) chunks.push(cur);
+      for (const ch of chunks) for (const i of ch) {
+        const a = p.start + ws[i][1];
+        let e = i + 1 < ws.length ? p.start + ws[i + 1][1] : p.start + Math.min(p.dur, p.speechEnd + 0.2);
+        if (i === ch[ch.length - 1]) e = Math.min(e, p.start + Math.min(p.dur, p.speechEnd + 0.2));
+        if (e - a < 0.05) continue;
+        capEvents.push({ a, e, words: ch.map((j) => ws[j][0].replace(/[.,?!:;]+$/, "")), active: ch.indexOf(i) });
+      }
+    }
+    for (let k = 0; k < capEvents.length; k++) {
+      const f = path.join(workDir, `cap_${k}.png`); capEvents[k].file = f;
+      await page.evaluate(([l, d]) => window.draw(l, d), ["cap", { ...common, words: capEvents[k].words, active: capEvents[k].active }]);
+      await page.screenshot({ path: f, type: "png", omitBackground: true, scale: "device", clip: { x: 0, y: CAPY, width: 1080, height: CAPH } });
+    }
 
     // ---- 6. compose every part ------------------------------------------------------------------
     for (let i = 0; i < parts.length; i++) {
@@ -141,8 +168,14 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
     filter += `${prev}[${k}:v]xfade=transition=${tr}:duration=${TRANS}:offset=${live[k].start.toFixed(3)}[x${k}];`;
     prev = `[x${k}]`;
   }
-  filter = filter.replace(/;$/, "").replace(/\[x(\d+)\]$/, "[vout]");
-  if (live.length === 1) filter = "[0:v]null[vout]";
+  filter = filter.replace(/;$/, "").replace(/\[x(\d+)\]$/, "[vc]");
+  if (live.length === 1) filter = "[0:v]null[vc]";
+  let last = "[vc]";
+  capEvents.forEach((c, k) => {
+    inputs.push("-i", c.file);
+    filter += `;[${live.length + k}:v]scale=1080:260,format=rgba[cp${k}];${last}[cp${k}]overlay=0:1450:enable='gte(t,${c.a.toFixed(2)})*lt(t,${c.e.toFixed(2)})':eof_action=repeat[o${k}]`; last = `[o${k}]`;
+  });
+  filter += `;${last}null[vout]`;
   await run("ffmpeg", ["-loglevel", "error", "-y", ...inputs, "-filter_complex", filter, "-map", "[vout]", "-c:v", "libx264", "-preset", PRESET, "-crf", CRF, "-pix_fmt", "yuv420p", "-r", String(FPS), "-t", String(total.toFixed(3)), path.join(workDir, "video_only.mp4")]);
 
   // ---- 8. voice + music, finish ------------------------------------------------------------------------
