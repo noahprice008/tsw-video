@@ -24,6 +24,9 @@ const SCREEN = { x: 270, y: 470, w: 540, h: 1170 }; // the phone screen hole in 
 const MIN = { intro: 2.4, scene: 3.4, outro: 3.6 };
 const TRANSITIONS = ["smoothleft", "fade", "smoothright", "circleopen", "slideup", "fade"];
 
+// on-screen caption text: the spoken URL ("Elevex apps dot Elevex dot digital") is written as the real address
+const capText = (p) => p.spec.caption || (p.say || "").replace(/elevex apps dot elevex dot digital/gi, "elevexapps.elevex.digital");
+
 export async function renderElevexApps(spec, { workDir, outFile, log = () => {} }) {
   await fs.mkdir(workDir, { recursive: true });
   const CRF = String(spec.crf || process.env.RENDER_CRF || "17");
@@ -40,7 +43,7 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   if (!parts.some((p) => p.kind === "scene")) throw new Error("spec.scenes is required");
 
   // ---- 2. the voice-over decides how long every part is -----------------------------------
-  const job = { voice: spec.voice || "bm_daniel", speed: spec.speed ?? 1.02, lang: spec.lang || "en-us", scenes: parts.map((p) => ({ say: p.spec.audio ? "" : p.say, caption: p.spec.caption, hold: MIN[p.kind] })) };
+  const job = { voice: spec.voice || "bm_daniel", speed: spec.speed ?? 1.02, lang: spec.lang || "en-us", scenes: parts.map((p) => ({ say: p.spec.audio ? "" : p.say, caption: capText(p), hold: MIN[p.kind] })) };
   await fs.writeFile(path.join(workDir, "job.json"), JSON.stringify(job));
   await run(PY, [path.join(HERE, "tts.py"), path.join(workDir, "job.json"), workDir]);
   const timed = JSON.parse(await fs.readFile(path.join(workDir, "timed.json"), "utf8"));
@@ -59,7 +62,7 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   // closed-caption words per part: the TTS timings, or an even spread over a recorded voice-over
   parts.forEach((p, i) => {
     const ts = timed.scenes[i]; let w = ts.words && ts.words.length ? ts.words : null;
-    if (!w) { const txt = (p.spec.caption || p.say || "").split(/\s+/).filter(Boolean); const wt = txt.map((x) => x.length + 2 + (/[.,?!:]$/.test(x) ? 3 : 0)), tot = wt.reduce((a, b) => a + b, 0); let tt = 0.25; w = txt.map((x, k) => { const r = [x, Math.round(tt * 1000) / 1000]; tt += (ts.speech || 0) * wt[k] / (tot || 1); return r; }); }
+    if (!w) { const txt = capText(p).split(/\s+/).filter(Boolean); const wt = txt.map((x) => x.length + 2 + (/[.,?!:]$/.test(x) ? 3 : 0)), tot = wt.reduce((a, b) => a + b, 0); let tt = 0.25; w = txt.map((x, k) => { const r = [x, Math.round(tt * 1000) / 1000]; tt += (ts.speech || 0) * wt[k] / (tot || 1); return r; }); }
     p.words = w; p.speechEnd = 0.25 + (ts.speech || 0);
   });
   let t = 0; parts.forEach((p) => { p.start = t; t += p.dur; });
