@@ -162,7 +162,7 @@ export async function renderFreeApps(spec, { workDir, outFile, log = () => {} })
       await page.waitForTimeout(150);
       await page.screenshot({ path: file, type: "png", omitBackground: !!alpha, scale: "device" });
     };
-    const common = { accent: spec.accent, bg: spec.bg };
+    const common = { accent: spec.accent, bg: spec.bg, site: spec.site_accent, site_url: spec.site_url };
     await shot("bg", common, path.join(workDir, "bg.png"), false);
     // a still of the real app, used behind styled hooks and covers
     let still = null;

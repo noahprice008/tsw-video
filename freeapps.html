@@ -9,12 +9,12 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 #stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Inter,sans-serif}
 .abs{position:absolute}
 #bg{inset:0}
-.head{left:70px;width:940px;top:64px;text-align:center;color:#fff;font:800 86px/1.04 Inter;letter-spacing:-2px;text-shadow:0 6px 28px rgba(0,0,0,.45)}
+.head{left:70px;width:940px;top:116px;text-align:center;color:#fff;font:800 76px/1.04 Inter;letter-spacing:-2px;text-shadow:0 6px 28px rgba(0,0,0,.45)}
 .fa{white-space:nowrap;box-sizing:border-box;padding:0 70px}
 .fa2{white-space:nowrap}
 .head em{font-style:normal;color:var(--accent)}
-.pillTop{left:0;width:1080px;top:246px;display:flex;justify-content:center}
-.pillTop span{font:700 30px Inter;color:#fff;border:3px solid rgba(255,255,255,.85);border-radius:40px;padding:6px 26px;background:rgba(0,0,0,.28)}
+.pillTop{left:0;width:1080px;top:284px;display:flex;justify-content:center}
+.pillTop span{font:700 26px Inter;color:#fff;border:3px solid rgba(255,255,255,.85);border-radius:40px;padding:2px 22px;background:rgba(0,0,0,.28)}
 /* phone: screen hole is exactly 680x1470 at (200,330) */
 .bezel{left:182px;top:312px;width:716px;height:1506px;box-sizing:border-box;border:18px solid #0a0a0f;border-radius:86px;box-shadow:0 0 0 3px rgba(255,255,255,.14),0 40px 90px rgba(0,0,0,.55)}
 .notch{left:420px;top:362px;width:240px;height:34px;border-radius:20px;background:#0a0a0f}
@@ -47,6 +47,13 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .cvphone img{width:100%;height:100%;object-fit:cover;object-position:top}
 .cvst{left:60px;width:960px;top:420px;height:900px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font:900 156px/0.98 Inter;letter-spacing:-6px;text-shadow:0 10px 0 rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.5)}
 .cvstamp{left:560px;top:300px;transform:rotate(9deg);font:900 58px/1 Inter;color:#fff;background:var(--accent);border:6px solid #fff;border-radius:20px;padding:18px 30px;box-shadow:0 12px 30px rgba(0,0,0,.4);white-space:nowrap}
+/* ELEVEX Apps header (top-left) and link footer (bottom), in the site colour */
+.bh{left:64px;top:26px;pointer-events:none}
+.bh .n{font:900 46px/1 Inter;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.5);-webkit-text-stroke:3px rgba(5,10,25,.6);paint-order:stroke fill;white-space:nowrap}
+.bh .n b{color:var(--site)}
+.bh .u{font:600 28px/1 Inter;color:rgba(225,232,248,.92);margin-top:8px;text-shadow:0 3px 8px rgba(0,0,0,.7)}
+.bf{left:0;width:1080px;top:1690px;display:flex;justify-content:center}
+.bf span{background:var(--site);color:#fff;font:900 48px/1 Inter;padding:32px 64px;border-radius:56px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 /* end card */
 .icon{left:420px;top:380px;width:240px;height:240px;border-radius:56px;box-shadow:0 20px 50px rgba(0,0,0,.45);object-fit:cover}
 .iconfb{left:420px;top:380px;width:240px;height:240px;border-radius:56px;background:var(--accent);box-shadow:0 20px 50px rgba(0,0,0,.45)}
@@ -67,7 +74,7 @@ const hl=s=>esc(s).replace(/\*(.+?)\*/g,'<em>$1</em>');
 // layer: 'bg' | 'front' | 'end-bg' | 'end'
 window.draw=(layer,d)=>{
   const st=document.getElementById('stage'), root=document.getElementById('root');
-  st.style.setProperty('--accent',d.accent||'#F5A623');
+  st.style.setProperty('--accent',d.accent||'#F5A623');st.style.setProperty('--site',d.site||'#9D7BFF');
   const base=d.bg||'#0b1424', acc=d.accent||'#F5A623';
   document.body.style.background='transparent';
   if(layer==='bg'||layer==='end-bg'){
@@ -114,13 +121,15 @@ window.draw=(layer,d)=>{
       `<div class="abs badges"><div class="badge">Google Play<small>${soon?'COMING SOON':'GET IT NOW'}</small></div><div class="badge">App Store<small>${soon?'COMING SOON':'GET IT NOW'}</small></div></div>`+
       `<div class="abs enote fa">${esc(e.note||'Use it free on the web today')}</div>`;
   }
+  if(layer==='front'||layer==='hook'||layer==='end')root.insertAdjacentHTML('beforeend',`<div class="abs bh"><div class="n">ELEVEX <b>APPS</b></div><div class="u">${esc(d.site_url||'elevexapps.elevex.digital')}</div></div>`);
+  if(layer==='end')root.insertAdjacentHTML('beforeend',`<div class="abs bf"><span class="fa2">${esc(d.site_url||'elevexapps.elevex.digital')}</span></div>`);
   fit(root);
 };
 // Fit text to its box in both directions; then list anything still outside the 1080x1920 frame.
 // freeapps.mjs refuses to render a card with a non-empty list, so cut-off copy can never be posted.
 function fit(root){
   const head=root.querySelector('#fhead');
-  if(head){let fs=parseFloat(getComputedStyle(head).fontSize);const over=()=>head.scrollHeight>184||head.scrollWidth>head.clientWidth+1;while(over()&&fs>40){fs-=2;head.style.fontSize=fs+'px';}}
+  if(head){let fs=parseFloat(getComputedStyle(head).fontSize);const over=()=>head.scrollHeight>160||head.scrollWidth>head.clientWidth+1;while(over()&&fs>40){fs-=2;head.style.fontSize=fs+'px';}}
   const hk=root.querySelector('#hkhead');
   if(hk){let fs=parseFloat(getComputedStyle(hk).fontSize);const over=()=>hk.scrollHeight>940||hk.scrollWidth>hk.clientWidth+1;while(over()&&fs>56){fs-=4;hk.style.fontSize=fs+'px';}}
   const cv=root.querySelector('#cvhead');
@@ -137,7 +146,7 @@ function fit(root){
     const t=el.textContent.trim().slice(0,40);
     if(el.closest('.sticker')||el.closest('.cvstamp')||el.closest('.cvbox'))return; // fixed words, rotated on purpose
     if(b.left<39||b.right>1041||b.top<0||b.bottom>1920)bad.push(`"${t}" runs off the frame`);
-    else if(el.id==='fhead'&&el.scrollHeight>186)bad.push(`headline "${t}" is too tall`);
+    else if(el.id==='fhead'&&el.scrollHeight>162)bad.push(`headline "${t}" is too tall`);
     else if(!el.classList.contains('fa')&&el.scrollWidth>el.clientWidth+1&&getComputedStyle(el).display!=='inline')bad.push(`"${t}" is wider than its box`);});
   window.__problems=bad;
 }

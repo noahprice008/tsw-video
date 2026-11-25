@@ -122,3 +122,20 @@ New optional spec fields (all old specs still render as before):
 ### Coverr backgrounds and the founder scene (Nov 2026)
 - `bg_query: "laptop desk"` - the server looks up a clip on Coverr (free API) and uses it as `bg`. Needs env `COVERR_API_KEY` on the server (add `-e COVERR_API_KEY=...` to the `docker run` line); the key is never stored in n8n or this repo. `GET /coverr-test?q=laptop+desk` (with the X-Render-Key header) checks that the key works. The response of `/render` has `credits: ["Footage: Coverr"]` - add it to the post description.
 - Scene `{ "type": "founder", "mode": "desk"|"call"|"studio", "headline": "...", "say": "..." }` - the founder cut-out in front of footage, in a video-call tile, or on a branded studio background. The photo lives **outside the repo** (this repo is public): `/data/assets/founder.png` on the server volume (override with `ASSET_DIR`). Without it the scene falls back to a plain point scene.
+
+---
+
+## Site header, footer and captions (all videos)
+
+Every video from this renderer shows the same elements as the ELEVEX videos, with one colour per site:
+- Header, top-left on every frame: site name and URL.
+- Footer: a link pill at the bottom of the last scene / end card.
+- Captions (`template.html`): Inter Black, uppercase, up to 3 words, the spoken word in the site colour.
+
+| Site | `spec.brand` | Colour | URL |
+|---|---|---|---|
+| Travel Safety Watch | `tsw` (default) | coral `#FF7A59` | travelsafetywatch.com |
+| ELEVEX | `elevex` | blue `#2868F8` | elevex.digital |
+| ELEVEX Apps | `apps` | violet `#9D7BFF` | elevexapps.elevex.digital |
+
+`brand:false` switches it all off. The `freeapps` format (`freeapps.html`) uses the ELEVEX Apps header on scenes, hook card and end card and the footer pill on the end card; `site_accent` / `site_url` in the spec override the colour and URL. Scene headlines keep each app's own accent colour.

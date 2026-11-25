@@ -12,8 +12,8 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 #stage.solid{background:radial-gradient(1200px 1200px at 50% 38%,#15364d 0%,#0F2A3D 60%,#0b2232 100%)}
 #stage.overlay{background:linear-gradient(180deg,rgba(11,29,43,.82) 0%,rgba(11,29,43,.25) 30%,rgba(11,29,43,.15) 55%,rgba(11,29,43,.85) 78%,rgba(11,29,43,.9) 100%)}
 .abs{position:absolute}
-#tag{left:80px;top:250px;font:600 30px Inter;letter-spacing:8px;color:#E2765A}
-#tagline{left:80px;top:300px;width:90px;height:4px;background:#E2765A;border-radius:2px}
+#tag{left:80px;top:300px;font:600 30px Inter;letter-spacing:8px;color:#E2765A}
+#tagline{left:80px;top:350px;width:90px;height:4px;background:#E2765A;border-radius:2px}
 .scene{position:absolute;inset:0;display:none}
 .serif{font-family:Fraunces,serif}
 .fitw{white-space:nowrap}
@@ -28,20 +28,23 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 .lvl i{width:16px;height:16px;border-radius:8px;background:currentColor;display:inline-block}
 .row{left:90px;width:900px;height:160px;border-radius:28px;background:rgba(246,239,227,.08);border:2px solid rgba(207,230,233,.25);box-sizing:border-box;padding:0 34px;display:flex;align-items:center;justify-content:space-between}
 .row .n{color:#F6EFE3;font:600 54px Fraunces}.row .t{color:#CFE6E9;font:500 30px Inter;margin-top:6px}
-#cap{left:70px;top:1305px;width:880px;text-align:center;font:800 68px/1.18 Inter;color:#fff;text-shadow:0 5px 0 rgba(0,0,0,.35),0 8px 26px rgba(0,0,0,.6);-webkit-text-stroke:2px rgba(8,20,30,.55);paint-order:stroke fill}
-#cap span{display:inline-block;margin:0 13px}
-#cap .on{color:#FFD166;-webkit-text-stroke:2px rgba(60,30,0,.6)}#cap .off{opacity:.5}
+#cap{left:40px;top:1290px;width:1000px;text-align:center;font:900 92px/1.1 Inter;text-transform:uppercase;white-space:nowrap;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.4),0 8px 20px rgba(0,0,0,.45);-webkit-text-stroke:7px #050A19;paint-order:stroke fill}
+#cap span{display:inline-block;margin:0 14px}
+#cap .on{color:var(--acc,#FF7A59)}#cap .off{opacity:1}
 #flash{left:0;top:0;width:1080px;height:1920px;background:#fff;opacity:0;pointer-events:none}
-#brand{left:0;top:200px;width:1080px;height:240px;display:none;text-align:center;background:linear-gradient(180deg,rgba(11,18,32,.75),rgba(11,18,32,0));pointer-events:none}
-#brand img{width:270px;margin-top:0;display:block;margin-left:auto;margin-right:auto}
-#brand div{font:600 40px Inter;color:#38BDF8;margin-top:12px;text-shadow:0 3px 8px rgba(0,0,0,.7)}
+#brand{left:64px;top:160px;width:900px;display:none;pointer-events:none;font-family:Inter,sans-serif}
+#brand .n{font:900 58px/1 Inter;color:#fff;letter-spacing:0;text-shadow:0 4px 0 rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.5);-webkit-text-stroke:3px rgba(5,10,25,.6);paint-order:stroke fill;white-space:nowrap}
+#brand .n b{color:var(--acc)}
+#brand .u{font:600 34px/1 Inter;color:rgba(225,232,248,.9);margin-top:12px;text-shadow:0 3px 8px rgba(0,0,0,.7)}
+#foot{left:0;width:1080px;top:1690px;display:none;justify-content:center;pointer-events:none}
+#foot span{background:var(--acc);color:#fff;font:900 48px/1 Inter;padding:32px 64px;border-radius:56px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #prog{left:0;top:0;height:10px;background:linear-gradient(90deg,#E2765A,#FFD166);width:0}
 </style></head><body>
 <div id="stage" class="solid">
  <svg id="rings" class="abs" width="1080" height="1920" style="left:0;top:0"></svg>
  <div id="tag" class="abs"></div><div id="tagline" class="abs"></div>
  <div id="scenes"></div>
- <div id="brand" class="abs"></div>
+ <div id="brand" class="abs"></div><div id="foot" class="abs"></div>
  <div id="cap" class="abs"></div>
  <div id="flash" class="abs"></div><div id="prog" class="abs"></div>
  <div id="cover" class="abs" style="left:0;top:0;width:1080px;height:1920px;display:none"></div>
@@ -194,9 +197,12 @@ function layoutProblems(root,label){const bad=[];const FR={l:40,r:1040,t:0,b:192
 
 window.setSpec=async spec=>{SPEC=spec;SPEC.total=spec.scenes.reduce((a,sc)=>a+(sc.dur||0),0);SPEC.variant=Number.isFinite(+spec.variant)?+spec.variant%3:(Number(spec.seed)||0)%3;const root=document.getElementById('scenes');
  document.getElementById('tag').textContent=spec.series||'';
- // Brand header (spec.brand: "elevex"): small logo + website on every frame, so viewers always see where to find us.
- const BR={elevex:{logo:'assets/elevex-wordmark.png',url:'elevex.digital'}}[spec.brand];const bh=document.getElementById('brand');
- bh.style.display=BR?'block':'none';bh.innerHTML=BR?`<img src="${BR.logo}"><div>${esc(BR.url)}</div>`:'';
+ // Brand header + footer link: every video shows who and where, in the site's own colour (spec.brand: "tsw" default | "elevex" | "apps" | false).
+ const TH={tsw:{a:'#FF7A59',n:'TRAVEL SAFETY <b>WATCH</b>',url:'travelsafetywatch.com'},elevex:{a:'#2868F8',n:'ELEV<b>EX</b>',url:'elevex.digital'},apps:{a:'#9D7BFF',n:'ELEVEX <b>APPS</b>',url:'elevexapps.elevex.digital'}};
+ const BR=spec.brand===false?null:TH[spec.brand||'tsw'];const bh=document.getElementById('brand'),fo=document.getElementById('foot');
+ document.getElementById('stage').style.setProperty('--acc',BR?BR.a:'#FF7A59');
+ bh.style.display=BR?'block':'none';bh.innerHTML=BR?`<div class="n">${BR.n}</div><div class="u">${esc(BR.url)}</div>`:'';
+ fo.innerHTML=BR?`<span>${esc(BR.url)}</span>`:'';
  root.innerHTML=spec.scenes.map((sc,i)=>`<div class="scene" id="sc${i}">${(B[sc.type]||B.point)(sc)}</div>`).join('');
  const cv=document.getElementById('cover');cv.innerHTML=coverHTML(spec);
  await Promise.all(['600 100px Fraunces','700 100px Fraunces','500 30px Inter','600 30px Inter','700 30px Inter'].map(f=>document.fonts.load(f,'Aa0')));await document.fonts.ready; // fonts load lazily: without this, text was measured in a narrower fallback font
@@ -228,7 +234,7 @@ window.renderCover=()=>{document.querySelectorAll('.scene').forEach(e=>e.style.d
  const cv=document.getElementById('cover');cv.style.display='block';};
 function rings(T){let h='';for(let i=0;i<9;i++){const r=140+i*120+((T*18)%120);const o=.28*(1-(r-140)/1100);h+=`<circle cx="900" cy="1560" r="${r}" fill="none" stroke="#1F7A8C" stroke-width="2" opacity="${Math.max(0,o).toFixed(3)}"/>`;}document.getElementById('rings').innerHTML=h;}
 function captions(sc,t){const cap=document.getElementById('cap');const ws=sc.words||[];if(!ws.length||sc.type==='endcard'){cap.innerHTML='';return;}
- const chunks=[];let cur=[];ws.forEach((w,i)=>{cur.push(i);if(cur.length>=5||/[.?!:]$/.test(w[0])){chunks.push(cur);cur=[];}});if(cur.length)chunks.push(cur);
+ const chunks=[];let cur=[];ws.forEach((w,i)=>{cur.push(i);const nx=ws[i+1];if(cur.length>=3||/[.?!:,]$/.test(w[0])||(nx&&cur.reduce((q,j)=>q+ws[j][0].length,0)+nx[0].length>14)){chunks.push(cur);cur=[];}});if(cur.length)chunks.push(cur);
  let a=-1;ws.forEach((w,i)=>{if(t>=w[1])a=i;});if(a<0){cap.innerHTML='';return;}
  const ch=chunks.find(c=>c.includes(a));const age=t-ws[a][1],k=clamp(age/.14);const pop=1+.28*Math.pow(1-k,2); // active word pops in
  cap.innerHTML=ch.map(i=>`<span class="${i===a?'on':(i<a?'':'off')}">${esc(ws[i][0])}</span>`).join(' ');}
@@ -245,5 +251,6 @@ window.render=(idx,t,T)=>{const sc=SPEC.scenes[idx];document.querySelectorAll('.
  const tagVis=!['app','outro','endcard'].includes(sc.type);const tg=tagVis?1:Math.max(0,1-t/.4);document.getElementById('tag').style.opacity=tg;document.getElementById('tagline').style.opacity=tg;
  el.querySelectorAll('[data-in]').forEach(n=>{const p=ease((t-parseFloat(n.dataset.in))/(n.dataset.fx==='fade'?.6:.45));const fx=n.dataset.fx;n.style.opacity=p;
   n.style.transform=fx==='pop'?`scale(${.85+.15*p})`:fx==='rise'?`translateY(${(1-p)*80}px)`:fx==='fade'?'none':`translateY(${(1-p)*40}px)`;});
+ document.getElementById('foot').style.display=(idx===SPEC.scenes.length-1&&SPEC.brand!==false)?'flex':'none';
  captions(sc,t);};
 </script></body></html>
