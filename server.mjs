@@ -12,6 +12,7 @@ import crypto from "node:crypto";
 import { spawn } from "node:child_process";
 import { render, coverrFind } from "./render.mjs";
 import { renderFreeApps } from "./freeapps.mjs";
+import { renderElevexApps } from "./elevexapps.mjs";
 
 const PORT = Number(process.env.PORT || 8090);
 const KEY = process.env.RENDER_KEY || "";
@@ -81,7 +82,7 @@ http.createServer(async (req, res) => {
       const job = busy.then(async () => {
         const workDir = path.join(WORK, id);
         const started = Date.now();
-        const r = await (spec.format === "freeapps" ? renderFreeApps : render)(spec, { workDir, outFile: path.join(OUT, `${id}.mp4`), log: (m) => console.log(id, m) });
+        const r = await (spec.format === "elevexapps" ? renderElevexApps : spec.format === "freeapps" ? renderFreeApps : render)(spec, { workDir, outFile: path.join(OUT, `${id}.mp4`), log: (m) => console.log(id, m) });
         await fsp.rm(workDir, { recursive: true, force: true });
         console.log(id, `done in ${Math.round((Date.now() - started) / 1000)}s`);
         return r;

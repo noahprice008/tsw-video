@@ -24,7 +24,7 @@ const END_SECONDS = 2.6;
 const HOOK_SECONDS = 1.7;
 const SCREEN = { x: 200, y: 330, w: 680, h: 1470 }; // the phone screen hole in freeapps.html
 
-function run(cmd, args) {
+export function run(cmd, args) {
   return new Promise((resolve, reject) => {
     const p = spawn(cmd, args, { stdio: ["ignore", "pipe", "pipe"] });
     let out = "", err = "";
@@ -32,8 +32,8 @@ function run(cmd, args) {
     p.on("close", (c) => (c === 0 ? resolve(out) : reject(new Error(`${cmd} failed (${c}): ${err.slice(-800)}`))));
   });
 }
-const sleep = (s) => new Promise((r) => setTimeout(r, s * 1000));
-const launch = () => chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH, args: ["--no-sandbox"] } : {});
+export const sleep = (s) => new Promise((r) => setTimeout(r, s * 1000));
+export const launch = () => chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH, args: ["--no-sandbox"] } : {});
 
 const RIPPLE_CSS = `@keyframes __r{from{transform:translate(-50%,-50%) scale(.3);opacity:.8}to{transform:translate(-50%,-50%) scale(1.7);opacity:0}}
 .__rip{position:fixed;width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.45);border:3px solid rgba(255,255,255,.95);pointer-events:none;z-index:2147483647;animation:__r .6s ease-out forwards}`;
@@ -68,7 +68,8 @@ async function runStep(page, st, warnings, idx) {
 }
 
 // Records one scene of a live app as a CFR mp4 at 2x size. Returns { file, icon }.
-async function captureScene(browser, sc, dir, i, warnings, log) {
+export async function captureScene(browser, sc, dir, i, warnings, log) {
+  const SCR = sc.screen || SCREEN; // phone screen size in the composed frame (default: FreeApps layout)
   const [vw, vh] = sc.viewport || [360, 778];
   const DSF = 2;
   const ctx = await browser.newContext({ viewport: { width: vw, height: vh }, deviceScaleFactor: DSF, isMobile: true, hasTouch: true, colorScheme: sc.colorScheme || "light" });
@@ -107,7 +108,7 @@ async function captureScene(browser, sc, dir, i, warnings, log) {
     list += `file '${path.join(dir, `cap${i}_${frames.length - 1}.jpg`)}'\n`;
     await fs.writeFile(path.join(dir, `cap${i}.txt`), list);
     const out = path.join(dir, `cap${i}.mp4`);
-    await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(dir, `cap${i}.txt`), "-vf", `fps=${FPS},scale=${SCREEN.w * 2}:${SCREEN.h * 2}:flags=lanczos`,
+    await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(dir, `cap${i}.txt`), "-vf", `fps=${FPS},scale=${SCR.w * 2}:${SCR.h * 2}:flags=lanczos`,
       "-t", String(sc.dur), "-c:v", "libx264", "-preset", "veryfast", "-crf", "12", "-pix_fmt", "yuv420p", out]);
     await Promise.all(frames.map((_, k) => fs.rm(path.join(dir, `cap${i}_${k}.jpg`), { force: true })));
     log(`captured scene ${i + 1}: ${frames.length} frames`);
@@ -115,7 +116,7 @@ async function captureScene(browser, sc, dir, i, warnings, log) {
   } finally { await ctx.close(); }
 }
 
-async function fetchIcon(browser, url) {
+export async function fetchIcon(browser, url) {
   if (!url) return null;
   const ctx = await browser.newContext();
   try {
