@@ -110,7 +110,7 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
     await shot("bg", common, path.join(workDir, "bg.png"), false);
 
     // closed captions: one transparent strip per spoken word (3-word chunks, the spoken word in the site colour)
-    const CAPY = 1450, CAPH = 260;
+    const CAPY = 1300, CAPH = 260;
     for (const p of parts) {
       const ws = p.words || []; const chunks = []; let cur = [];
       ws.forEach((w, i) => { cur.push(i); const nx = ws[i + 1]; if (cur.length >= 3 || /[.?!:,]$/.test(w[0]) || (nx && cur.reduce((q, j) => q + ws[j][0].length, 0) + nx[0].length > 14)) { chunks.push(cur); cur = []; } });
@@ -176,16 +176,14 @@ export async function renderElevexApps(spec, { workDir, outFile, log = () => {} 
   let last = "[vc]";
   capEvents.forEach((c, k) => {
     inputs.push("-i", c.file);
-    filter += `;[${live.length + k}:v]scale=1080:260,format=rgba[cp${k}];${last}[cp${k}]overlay=0:1450:enable='gte(t,${c.a.toFixed(2)})*lt(t,${c.e.toFixed(2)})':eof_action=repeat[o${k}]`; last = `[o${k}]`;
+    filter += `;[${live.length + k}:v]scale=1080:260,format=rgba[cp${k}];${last}[cp${k}]overlay=0:1300:enable='gte(t,${c.a.toFixed(2)})*lt(t,${c.e.toFixed(2)})':eof_action=repeat[o${k}]`; last = `[o${k}]`;
   });
   filter += `;${last}null[vout]`;
   await run("ffmpeg", ["-loglevel", "error", "-y", ...inputs, "-filter_complex", filter, "-map", "[vout]", "-c:v", "libx264", "-preset", PRESET, "-crf", CRF, "-pix_fmt", "yuv420p", "-r", String(FPS), "-t", String(total.toFixed(3)), path.join(workDir, "video_only.mp4")]);
 
   // ---- 8. voice + music, finish ------------------------------------------------------------------------
   const music = spec.music || "upbeat";
-  if (music === "none") {
-    await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono", "-t", String(total), path.join(workDir, "mix.wav")]);
-  } else await run(PY, [path.join(HERE, "audio.py"), workDir, String(seed), music === "calm" ? "calm" : "upbeat"]);
+  await run(PY, [path.join(HERE, "audio.py"), workDir, String(seed), music === "none" ? "none" : music === "calm" ? "calm" : "upbeat"]);  // "none" = voice only
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "mix.wav"), "-af", "loudnorm=I=-14:TP=-1.5:LRA=7", "-ar", "48000", path.join(workDir, "mix14.wav")]);
   const tmpOut = outFile.replace(/\.mp4$/, ".tmp.mp4");
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "video_only.mp4"), "-i", path.join(workDir, "mix14.wav"),

@@ -32,12 +32,12 @@ html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:transpa
 #cap span{display:inline-block;margin:0 14px}
 #cap .on{color:var(--acc,#FF7A59)}#cap .off{opacity:1}
 #flash{left:0;top:0;width:1080px;height:1920px;background:#fff;opacity:0;pointer-events:none}
-#brand{left:64px;top:160px;width:900px;display:none;pointer-events:none;font-family:Inter,sans-serif}
-#brand .n{font:900 58px/1 Inter;color:#fff;letter-spacing:0;text-shadow:0 4px 0 rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.5);-webkit-text-stroke:3px rgba(5,10,25,.6);paint-order:stroke fill;white-space:nowrap}
+#brand{left:64px;top:252px;width:900px;display:none;pointer-events:none;font-family:Inter,sans-serif}
+#brand .n{font:900 44px/1 Inter;color:#fff;letter-spacing:0;text-shadow:0 4px 0 rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.5);-webkit-text-stroke:3px rgba(5,10,25,.6);paint-order:stroke fill;white-space:nowrap}
 #brand .n b{color:var(--acc)}
-#brand .u{font:600 34px/1 Inter;color:rgba(225,232,248,.9);margin-top:12px;text-shadow:0 3px 8px rgba(0,0,0,.7)}
-#foot{left:0;width:1080px;top:1690px;display:none;justify-content:center;pointer-events:none}
-#foot span{background:var(--acc);color:#fff;font:900 48px/1 Inter;padding:32px 64px;border-radius:56px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#brand .u{display:none;font:600 34px/1 Inter;color:rgba(225,232,248,.9);margin-top:12px;text-shadow:0 3px 8px rgba(0,0,0,.7)}
+#foot{left:0;width:1080px;top:1468px;display:none;justify-content:center;pointer-events:none}
+#foot span{background:var(--acc);color:#fff;font:900 42px/1 Inter;padding:22px 52px;border-radius:48px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #prog{left:0;top:0;height:10px;background:linear-gradient(90deg,#E2765A,#FFD166);width:0}
 </style></head><body>
 <div id="stage" class="solid">
@@ -224,7 +224,7 @@ function coverHTML(spec){const first=spec.scenes[0]||{};const c=spec.cover||{};
  h+=big?`<div class="abs serif fitw" data-min="90" style="left:80px;width:860px;top:540px;text-align:center;color:#E2765A;font:700 300px/1 Fraunces">${esc(big)}</div>`
    :`<div class="abs" style="left:0;width:1080px;top:560px;display:flex;justify-content:center">${icon(ic,240,'#F6EFE3',1.6)}</div>`;
  h+=`<div class="abs serif fith" style="left:80px;width:860px;top:${big?880:840}px;text-align:center;color:#F6EFE3;font:600 108px/1.04 Fraunces;max-height:390px">${esc(title)}</div>
-  <div class="abs" style="left:0;width:1080px;top:1410px;display:flex;justify-content:center;align-items:center;gap:22px">
+  <div class="abs" style="left:0;width:1080px;top:1290px;display:flex;justify-content:center;align-items:center;gap:22px">
    <img src="assets/icon.png" style="width:96px;height:96px;border-radius:24px;box-shadow:0 12px 30px rgba(0,0,0,.35)">
    <div><div style="color:#F6EFE3;font:600 46px Fraunces">Travel Safety Watch</div><div style="color:#E2765A;font:600 28px Inter;letter-spacing:4px;margin-top:4px">TRAVEL INFORMED</div></div></div>`;
  return h;}

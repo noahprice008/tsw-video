@@ -223,7 +223,7 @@ export async function render(inputSpec, { workDir, outFile, log = () => {} }) {
   const list = spec.scenes.map((_, i) => `file '${path.join(workDir, `part_${i}.mp4`)}'`).join("\n");
   await fs.writeFile(path.join(workDir, "list.txt"), list);
   await run("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(workDir, "list.txt"), "-c", "copy", path.join(workDir, "video_only.mp4")]);
-  await run(PY, [path.join(HERE, "audio.py"), workDir, String(spec.seed), spec.music === "upbeat" ? "upbeat" : "calm"]);
+  await run(PY, [path.join(HERE, "audio.py"), workDir, String(spec.seed), spec.music === "none" ? "none" : spec.music === "upbeat" ? "upbeat" : "calm"]);
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "mix.wav"), "-af", "loudnorm=I=-14:TP=-1.5:LRA=7", "-ar", "48000", path.join(workDir, "mix14.wav")]);
   const tmpOut = outFile.replace(/\.mp4$/, ".tmp.mp4");
   await run("ffmpeg", ["-loglevel", "error", "-y", "-i", path.join(workDir, "video_only.mp4"), "-i", path.join(workDir, "mix14.wav"),

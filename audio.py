@@ -11,6 +11,10 @@ for s in T["scenes"]:
         a, _ = sf.read(s["wav"]); i = int((t + LEAD) * SR); m = min(len(a), n - i)
         if m > 0: voice[i:i + m] += a[:m]
     t += s["dur"]
+if MODE == "none":  # voice only: no music bed at all (platforms add trending sound)
+    if np.max(np.abs(voice)) > 0: voice = voice / np.max(np.abs(voice)) * 0.92
+    sf.write(os.path.join(wd, "mix.wav"), voice, SR)
+    print(json.dumps({"audio": round(total, 2), "music": "none"})); sys.exit(0)
 # calm progressions (pad chord, arpeggio), bar length in seconds
 PROGS = [
  ([[48,55,64,71],[45,52,60,67],[41,48,57,64],[43,50,59,64]], [[72,76,79,83],[69,72,76,79],[65,69,72,76],[67,71,74,79]], 3.33),
